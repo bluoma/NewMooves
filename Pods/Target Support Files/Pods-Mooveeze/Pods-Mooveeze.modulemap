@@ -1,0 +1,6 @@
+framework module Pods_Mooveeze {
+  umbrella header "Pods-Mooveeze-umbrella.h"
+
+  export *
+  module * { export * }
+}

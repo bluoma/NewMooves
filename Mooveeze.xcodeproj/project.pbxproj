@@ -3,25 +3,49 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		70711900F789459AACFE134E /* Pods_Mooveeze.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D34648410E1F0D8B0B57B33 /* Pods_Mooveeze.framework */; };
 		F7C9F84422FD462000E8BC19 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7C9F84322FD462000E8BC19 /* AppDelegate.swift */; };
-		F7C9F84622FD462000E8BC19 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7C9F84522FD462000E8BC19 /* ViewController.swift */; };
 		F7C9F84922FD462000E8BC19 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F7C9F84722FD462000E8BC19 /* Main.storyboard */; };
 		F7C9F84B22FD462000E8BC19 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F7C9F84A22FD462000E8BC19 /* Assets.xcassets */; };
 		F7C9F84E22FD462000E8BC19 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F7C9F84C22FD462000E8BC19 /* LaunchScreen.storyboard */; };
+		F7DFBB7E22FD4C0400E03277 /* MovieModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7DFBB7722FD4C0400E03277 /* MovieModel.swift */; };
+		F7DFBB7F22FD4C0400E03277 /* MovieDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7DFBB7822FD4C0400E03277 /* MovieDetailViewController.swift */; };
+		F7DFBB8022FD4C0400E03277 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7DFBB7922FD4C0400E03277 /* Constants.swift */; };
+		F7DFBB8122FD4C0400E03277 /* MoviesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7DFBB7A22FD4C0400E03277 /* MoviesViewController.swift */; };
+		F7DFBB8222FD4C0400E03277 /* JsonDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7DFBB7B22FD4C0400E03277 /* JsonDownloader.swift */; };
+		F7DFBB8322FD4C0400E03277 /* MovieSummaryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7DFBB7C22FD4C0400E03277 /* MovieSummaryTableViewCell.swift */; };
+		F7DFBB8422FD4C0400E03277 /* AppearanceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7DFBB7D22FD4C0400E03277 /* AppearanceManager.swift */; };
+		F7DFBB8622FD5E9F00E03277 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = F7DFBB8522FD5E9E00E03277 /* README.md */; };
+		F7DFBB8A22FE240900E03277 /* MovieVideoWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7DFBB8922FE240900E03277 /* MovieVideoWebViewController.swift */; };
+		F7DFBB8C22FE2AD200E03277 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7DFBB8B22FE2AD200E03277 /* WebKit.framework */; };
+		F7DFBB8E22FE32B700E03277 /* MovieDetailVideoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7DFBB8D22FE32B700E03277 /* MovieDetailVideoTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2D34648410E1F0D8B0B57B33 /* Pods_Mooveeze.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Mooveeze.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		82F6FF0215D44267F9F8088D /* Pods-Mooveeze.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mooveeze.release.xcconfig"; path = "Target Support Files/Pods-Mooveeze/Pods-Mooveeze.release.xcconfig"; sourceTree = "<group>"; };
+		9C9281C0F1D79AF998B3B542 /* Pods-Mooveeze.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mooveeze.debug.xcconfig"; path = "Target Support Files/Pods-Mooveeze/Pods-Mooveeze.debug.xcconfig"; sourceTree = "<group>"; };
 		F7C9F84022FD462000E8BC19 /* Mooveeze.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mooveeze.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7C9F84322FD462000E8BC19 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		F7C9F84522FD462000E8BC19 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		F7C9F84822FD462000E8BC19 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		F7C9F84A22FD462000E8BC19 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F7C9F84D22FD462000E8BC19 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F7C9F84F22FD462000E8BC19 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F7DFBB7722FD4C0400E03277 /* MovieModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MovieModel.swift; sourceTree = "<group>"; };
+		F7DFBB7822FD4C0400E03277 /* MovieDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MovieDetailViewController.swift; sourceTree = "<group>"; };
+		F7DFBB7922FD4C0400E03277 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		F7DFBB7A22FD4C0400E03277 /* MoviesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MoviesViewController.swift; sourceTree = "<group>"; };
+		F7DFBB7B22FD4C0400E03277 /* JsonDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JsonDownloader.swift; sourceTree = "<group>"; };
+		F7DFBB7C22FD4C0400E03277 /* MovieSummaryTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MovieSummaryTableViewCell.swift; sourceTree = "<group>"; };
+		F7DFBB7D22FD4C0400E03277 /* AppearanceManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppearanceManager.swift; sourceTree = "<group>"; };
+		F7DFBB8522FD5E9E00E03277 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		F7DFBB8922FE240900E03277 /* MovieVideoWebViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MovieVideoWebViewController.swift; sourceTree = "<group>"; };
+		F7DFBB8B22FE2AD200E03277 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		F7DFBB8D22FE32B700E03277 /* MovieDetailVideoTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieDetailVideoTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -29,17 +53,40 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F7DFBB8C22FE2AD200E03277 /* WebKit.framework in Frameworks */,
+				70711900F789459AACFE134E /* Pods_Mooveeze.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		69CADFC024481D65B5FA26B9 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				9C9281C0F1D79AF998B3B542 /* Pods-Mooveeze.debug.xcconfig */,
+				82F6FF0215D44267F9F8088D /* Pods-Mooveeze.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		8633344E682340AD4163D0E7 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F7DFBB8B22FE2AD200E03277 /* WebKit.framework */,
+				2D34648410E1F0D8B0B57B33 /* Pods_Mooveeze.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		F7C9F83722FD462000E8BC19 = {
 			isa = PBXGroup;
 			children = (
+				F7DFBB8522FD5E9E00E03277 /* README.md */,
 				F7C9F84222FD462000E8BC19 /* Mooveeze */,
 				F7C9F84122FD462000E8BC19 /* Products */,
+				69CADFC024481D65B5FA26B9 /* Pods */,
+				8633344E682340AD4163D0E7 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -54,8 +101,16 @@
 		F7C9F84222FD462000E8BC19 /* Mooveeze */ = {
 			isa = PBXGroup;
 			children = (
+				F7DFBB7D22FD4C0400E03277 /* AppearanceManager.swift */,
+				F7DFBB7922FD4C0400E03277 /* Constants.swift */,
+				F7DFBB7B22FD4C0400E03277 /* JsonDownloader.swift */,
+				F7DFBB7722FD4C0400E03277 /* MovieModel.swift */,
+				F7DFBB7A22FD4C0400E03277 /* MoviesViewController.swift */,
+				F7DFBB7822FD4C0400E03277 /* MovieDetailViewController.swift */,
+				F7DFBB8922FE240900E03277 /* MovieVideoWebViewController.swift */,
+				F7DFBB7C22FD4C0400E03277 /* MovieSummaryTableViewCell.swift */,
+				F7DFBB8D22FE32B700E03277 /* MovieDetailVideoTableViewCell.swift */,
 				F7C9F84322FD462000E8BC19 /* AppDelegate.swift */,
-				F7C9F84522FD462000E8BC19 /* ViewController.swift */,
 				F7C9F84722FD462000E8BC19 /* Main.storyboard */,
 				F7C9F84A22FD462000E8BC19 /* Assets.xcassets */,
 				F7C9F84C22FD462000E8BC19 /* LaunchScreen.storyboard */,
@@ -71,9 +126,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = F7C9F85222FD462000E8BC19 /* Build configuration list for PBXNativeTarget "Mooveeze" */;
 			buildPhases = (
+				0005C1300CBD9D29DF36F981 /* [CP] Check Pods Manifest.lock */,
 				F7C9F83C22FD462000E8BC19 /* Sources */,
 				F7C9F83D22FD462000E8BC19 /* Frameworks */,
 				F7C9F83E22FD462000E8BC19 /* Resources */,
+				5C42FC5B052DBD7E9D78FCCE /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -124,19 +181,70 @@
 			files = (
 				F7C9F84E22FD462000E8BC19 /* LaunchScreen.storyboard in Resources */,
 				F7C9F84B22FD462000E8BC19 /* Assets.xcassets in Resources */,
+				F7DFBB8622FD5E9F00E03277 /* README.md in Resources */,
 				F7C9F84922FD462000E8BC19 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		0005C1300CBD9D29DF36F981 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Mooveeze-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		5C42FC5B052DBD7E9D78FCCE /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Mooveeze/Pods-Mooveeze-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Mooveeze/Pods-Mooveeze-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Mooveeze/Pods-Mooveeze-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		F7C9F83C22FD462000E8BC19 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F7C9F84622FD462000E8BC19 /* ViewController.swift in Sources */,
+				F7DFBB8022FD4C0400E03277 /* Constants.swift in Sources */,
+				F7DFBB7F22FD4C0400E03277 /* MovieDetailViewController.swift in Sources */,
+				F7DFBB8222FD4C0400E03277 /* JsonDownloader.swift in Sources */,
+				F7DFBB8322FD4C0400E03277 /* MovieSummaryTableViewCell.swift in Sources */,
+				F7DFBB8422FD4C0400E03277 /* AppearanceManager.swift in Sources */,
 				F7C9F84422FD462000E8BC19 /* AppDelegate.swift in Sources */,
+				F7DFBB7E22FD4C0400E03277 /* MovieModel.swift in Sources */,
+				F7DFBB8122FD4C0400E03277 /* MoviesViewController.swift in Sources */,
+				F7DFBB8A22FE240900E03277 /* MovieVideoWebViewController.swift in Sources */,
+				F7DFBB8E22FE32B700E03277 /* MovieDetailVideoTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -280,6 +388,7 @@
 		};
 		F7C9F85322FD462000E8BC19 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9C9281C0F1D79AF998B3B542 /* Pods-Mooveeze.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -289,7 +398,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.thang.Mooveeze;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yothang.Mooveeze;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -298,6 +407,7 @@
 		};
 		F7C9F85422FD462000E8BC19 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 82F6FF0215D44267F9F8088D /* Pods-Mooveeze.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -307,7 +417,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.thang.Mooveeze;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yothang.Mooveeze;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
