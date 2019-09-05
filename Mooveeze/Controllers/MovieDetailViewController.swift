@@ -32,6 +32,8 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate, JsonDow
     var dateFormatter = DateFormatter()
     var movieSummary: MovieSummary!
     
+    var didSelectVideo: ((Int, MovieSummary) -> Void)?
+    
     var jsonDownloader = JsonDownloader()
     var downloadTaskDict: [String: URLSessionDataTask] = [:]
     let videoSegueIdentifier = "DetailToVideoPushSegue"
@@ -117,9 +119,8 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate, JsonDow
         let blur = UIBlurEffect(style: UIBlurEffect.Style.light)
         let blurView = UIVisualEffectView(effect: blur)
         blurView.frame = self.videosTableView.bounds
-        
+        blurView.alpha = 0.75
         self.videosTableView.backgroundView = blurView
-        self.videosTableView.backgroundView?.alpha = 0.75
         
         if movieSummary.movieVideos.isEmpty
         {
@@ -135,7 +136,9 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate, JsonDow
         blurView.frame = self.bottomContainerView.bounds
         self.bottomContainerView.backgroundColor = .clear
         self.bottomContainerView.insertSubview(blurView, at: 0)
-        self.bottomContainerView.alpha = 0.70
+        self.bottomContainerView.alpha = 0.75
+        self.bottomContainerView.layer.cornerRadius = 4
+        self.bottomContainerView.layer.masksToBounds = true
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -316,9 +319,10 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate, JsonDow
     }
 }
 
+//MARK: - UITableViewDataSource
 extension MovieDetailViewController: UITableViewDataSource
 {
-    //MARK: - UITableViewDataSource
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         if let summary = self.movieSummary {
@@ -345,6 +349,7 @@ extension MovieDetailViewController: UITableViewDataSource
     }
 }
 
+//MARK: - UITableViewDataDelegate
 extension MovieDetailViewController: UITableViewDelegate
 {
 
@@ -356,7 +361,10 @@ extension MovieDetailViewController: UITableViewDelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
         dlog("row: \(indexPath.row)")
-        self.performSegue(withIdentifier: videoSegueIdentifier, sender: indexPath)
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        self.didSelectVideo?(indexPath.row, self.movieSummary)
+        
     }
     
 }

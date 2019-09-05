@@ -6,6 +6,8 @@
 //  Copyright © 2016 Bill. All rights reserved.
 //
 
+//2080651782
+
 import UIKit
 
 class MovieDetail: CustomStringConvertible, CustomDebugStringConvertible {
@@ -119,7 +121,17 @@ class MovieSummary: CustomStringConvertible, CustomDebugStringConvertible {
     var overview: String = ""
     var releaseDateString: String = ""
     var releaseDate: Date?
-    var genreIds: [Int] = []
+    var genreNames: [String] = []
+    var genreIds: [Int] = [] {
+        didSet {
+            genreNames.removeAll()
+            for genreId in genreIds {
+                if let genreName = genreMap[genreId] {
+                    genreNames.append(genreName)
+                }
+            }
+        }
+    }
     var originalTitle: String = ""
     var originalLanguage: String = ""
     var posterPath: String = ""
@@ -159,6 +171,12 @@ class MovieSummary: CustomStringConvertible, CustomDebugStringConvertible {
         }
         if let genreIds = jsonDict["genre_ids"] as? [Int] {
             self.genreIds = genreIds
+            genreNames.removeAll()
+            for genreId in genreIds {
+                if let genreName = genreMap[genreId] {
+                    genreNames.append(genreName)
+                }
+            }
         }
         if let originalTitle = jsonDict["original_title"] as? String {
             self.originalTitle = originalTitle

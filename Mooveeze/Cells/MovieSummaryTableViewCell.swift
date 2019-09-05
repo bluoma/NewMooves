@@ -11,9 +11,7 @@ import UIKit
 class MovieSummaryTableViewCell: UITableViewCell {
 
     @IBOutlet weak var movieThumbnailImageView: UIImageView!
-    
     @IBOutlet weak var movieTitleLabel: UILabel!
-    
     @IBOutlet weak var movieOverviewLabel: UILabel!
     
     var moviePosterUrlString: String!
@@ -24,6 +22,10 @@ class MovieSummaryTableViewCell: UITableViewCell {
         selectionStyle = .default
         selectedBackgroundView = UIView(frame: frame)
         selectedBackgroundView?.backgroundColor = UIColor(red: 0.5, green: 0.7, blue: 0.9, alpha: 0.8)
+        
+        movieThumbnailImageView.layer.cornerRadius = 8
+        movieThumbnailImageView.layer.masksToBounds = true
+        
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

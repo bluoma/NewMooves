@@ -162,8 +162,9 @@ public let theMovieDbTopRatedPath = "/movie/top_rated"
 public let theMovieDbSearchPath = "/search/movie"
 public let theMovieDbMovieDetailPath = "/movie"
 public let theMovieDbMovieVideoPath = "/videos"
+public let theMovieDbProfilePath = "/account"
 
-
+/* request token for auth: d33dd4e678031307f192237db532b15d8e0cb5ca */
 //https://api.themoviedb.org/3/search/movie?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed&language=en-US&query=seven
 //https://api.themoviedb.org/3/movie/now_playing?api_key=d2f534caef1352faf672a1d1b1528999&language=en-US
 
@@ -212,4 +213,27 @@ public let still_sizes = [
 "original"
 ]
 
- 
+
+public let genreMap: [Int: String] = [
+    28: "Action",
+    12: "Adventure",
+    16: "Animation",
+    35: "Comedy",
+    80: "Crime",
+    99: "Documentary",
+    18: "Drama",
+    10751: "Family",
+    14: "Fantasy",
+    36: "History",
+    27: "Horror",
+    10402: "Music",
+    9648: "Mystery",
+    10749: "Romance",
+    878: "Science Fiction",
+    10770: "TV Movie",
+    53: "Thriller",
+    10752: "War",
+    37: "Western"
+]
+
+
