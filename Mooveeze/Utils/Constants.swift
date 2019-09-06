@@ -149,7 +149,8 @@ public let defaultAppearanceKey = "defaultAppearanceKey"
  
  */
 
-public let theMovieDbApiKeyName="api_key"
+public let theMovieDbApiKeyName = "api_key"
+public let theMovieDbSessionKeyName = "session_id"
 public let theMovieDbApiKey = "d2f534caef1352faf672a1d1b1528999"
 public let theMovieDbApiKeyParam = theMovieDbApiKeyName + "=" + theMovieDbApiKey
 public let theMovieDbBaseImageUrl = "http://image.tmdb.org/t/p"
@@ -163,6 +164,9 @@ public let theMovieDbSearchPath = "/search/movie"
 public let theMovieDbMovieDetailPath = "/movie"
 public let theMovieDbMovieVideoPath = "/videos"
 public let theMovieDbProfilePath = "/account"
+public let theMovieDbAuthTokenPath = "/authentication/token/new"
+public let theMovieDbAuthTokenValidationPath = "/authentication/token/validate_with_login"
+public let theMovieDbNewSessionPath = "/authentication/session/new"
 
 /* request token for auth: d33dd4e678031307f192237db532b15d8e0cb5ca */
 //https://api.themoviedb.org/3/search/movie?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed&language=en-US&query=seven

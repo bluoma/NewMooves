@@ -267,7 +267,6 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate, JsonDow
                         }
                     }
                 }
-                
             }
             else {
                 dlog("no json or task description")

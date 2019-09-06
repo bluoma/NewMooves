@@ -116,24 +116,84 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="You don't have a profile yet" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="S9b-Rs-eBc">
-                                <rect key="frame" x="103.5" y="438" width="207" height="20.5"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nae-hM-Ka2" userLabel="EmptyStateView">
+                                <rect key="frame" x="103.5" y="358" width="207" height="180"/>
+                                <subviews>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="I3N-vR-osf">
+                                        <rect key="frame" x="0.0" y="0.0" width="207" height="180"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="You don't have a profile yet" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="S9b-Rs-eBc">
+                                                <rect key="frame" x="0.0" y="0.0" width="207" height="52"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Mv1-6D-cel">
+                                                <rect key="frame" x="0.0" y="64" width="207" height="52"/>
+                                                <state key="normal" title="Login to TMDb"/>
+                                                <connections>
+                                                    <action selector="loginButtonPressed:" destination="CJB-zT-oZO" eventType="touchUpInside" id="OmF-vR-VFc"/>
+                                                </connections>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1bN-f8-jZN">
+                                                <rect key="frame" x="0.0" y="128" width="207" height="52"/>
+                                                <state key="normal" title="Create account on TMDb"/>
+                                                <connections>
+                                                    <action selector="createAccountPressed:" destination="CJB-zT-oZO" eventType="touchUpInside" id="hXX-90-p7R"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                    </stackView>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstItem="I3N-vR-osf" firstAttribute="leading" secondItem="nae-hM-Ka2" secondAttribute="leading" id="0ac-fX-Y4b"/>
+                                    <constraint firstAttribute="height" constant="180" id="RQT-BZ-a58"/>
+                                    <constraint firstAttribute="bottom" secondItem="I3N-vR-osf" secondAttribute="bottom" id="TX4-uQ-4Zs"/>
+                                    <constraint firstAttribute="trailing" secondItem="I3N-vR-osf" secondAttribute="trailing" id="qlG-9J-zgQ"/>
+                                    <constraint firstItem="I3N-vR-osf" firstAttribute="top" secondItem="nae-hM-Ka2" secondAttribute="top" id="zZB-R7-mHl"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="S9b-Rs-eBc" firstAttribute="centerX" secondItem="q91-EL-pfw" secondAttribute="centerX" id="GYq-mx-Fxz"/>
-                            <constraint firstItem="S9b-Rs-eBc" firstAttribute="centerY" secondItem="q91-EL-pfw" secondAttribute="centerY" id="OVa-VR-Y8E"/>
+                            <constraint firstItem="nae-hM-Ka2" firstAttribute="centerY" secondItem="q91-EL-pfw" secondAttribute="centerY" id="lWq-5m-AV3"/>
+                            <constraint firstItem="nae-hM-Ka2" firstAttribute="centerX" secondItem="q91-EL-pfw" secondAttribute="centerX" id="sXI-Jy-1Jl"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="eq0-4I-WHa"/>
                     </view>
+                    <connections>
+                        <outlet property="createAccountButton" destination="1bN-f8-jZN" id="113-oB-EMb"/>
+                        <outlet property="emptyStateView" destination="nae-hM-Ka2" id="A2e-av-54O"/>
+                        <outlet property="loginButton" destination="Mv1-6D-cel" id="ZDH-Zj-R2A"/>
+                        <outlet property="statusLabel" destination="S9b-Rs-eBc" id="0Vb-nl-wlQ"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="skp-Qa-Gae" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="423" y="745"/>
+        </scene>
+        <!--Login-->
+        <scene sceneID="5J6-sF-bGL">
+            <objects>
+                <viewController restorationIdentifier="LoginViewController" storyboardIdentifier="LoginViewController" title="Login" id="QED-nG-hEK" customClass="LoginViewController" customModule="Mooveeze" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="SEH-CT-WN1">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="7lC-jN-YB0"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Login" id="hno-c7-VlI">
+                        <barButtonItem key="rightBarButtonItem" style="done" systemItem="done" id="m8n-f5-Y3f">
+                            <connections>
+                                <action selector="donePressed:" destination="QED-nG-hEK" id="lj3-X4-FrT"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="2oS-U5-5iF" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1177" y="745"/>
         </scene>
         <!--MovieDetailViewController-->
         <scene sceneID="U80-GZ-9Ww">
