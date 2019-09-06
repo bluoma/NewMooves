@@ -17,6 +17,16 @@ class LoginViewController: UIViewController, JsonDownloaderDelegate {
         case session = "session"
     }
     
+    enum TextFieldTag: Int {
+        case username = 0
+        case password = 1
+    }
+    
+    @IBOutlet weak var statusLabel: UILabel!
+    @IBOutlet weak var usernameTextField: UITextField!
+    @IBOutlet weak var passwordTextField: UITextField!
+    @IBOutlet weak var loginButton: UIButton!
+    
     var downloadIsInProgress: Bool = false
     var jsonDownloader = JsonDownloader()
     var downloadTaskDict: [String: URLSessionDataTask] = [:]
@@ -26,8 +36,8 @@ class LoginViewController: UIViewController, JsonDownloaderDelegate {
 
     var authToken: String = ""
     var validatedAuthToken: String = ""
-    var username: String = "bluoma"
-    var password: String = "max88max"
+    var username: String = ""
+    var password: String = ""
     
     var loginDidSucceed: ((String) -> Void)?
     var loginDidErr: ((NSError?) -> Void)?
@@ -35,10 +45,18 @@ class LoginViewController: UIViewController, JsonDownloaderDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        jsonDownloader.delegate = self
-        doAuthTokenDownload()
+        
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        usernameTextField.becomeFirstResponder()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        view.endEditing(true)
+    }
 
     func doAuthTokenDownload() {
         
@@ -125,7 +143,7 @@ class LoginViewController: UIViewController, JsonDownloaderDelegate {
         
         if error != nil {
             dlog("err: \(String(describing: error))")
-            self.loginDidErr?(error)
+            self.statusLabel.text = error?.localizedDescription
         }
         else {
             
@@ -144,7 +162,7 @@ class LoginViewController: UIViewController, JsonDownloaderDelegate {
                         doAuthTokenValidationDownload()
                     }
                     else {
-                        self.loginDidErr?(nil)
+                        self.statusLabel.text = "\(response.statusCode) for authToken: \(String(describing: jsonObj))"
                     }
                     
                 case .validateToken:
@@ -155,7 +173,7 @@ class LoginViewController: UIViewController, JsonDownloaderDelegate {
                         doSessionDownload()
                     }
                     else {
-                        self.loginDidErr?(nil)
+                        self.statusLabel.text = "\(response.statusCode) validateToken: \(String(describing: jsonObj))"
                     }
                     
                 case .session:
@@ -164,12 +182,12 @@ class LoginViewController: UIViewController, JsonDownloaderDelegate {
                         self.loginDidSucceed?(sessionId)
                     }
                     else {
-                        self.loginDidErr?(nil)
+                        self.statusLabel.text = "\(response.statusCode) for session: \(String(describing: jsonObj))"
                     }
                 }
             }
             else {
-                self.loginDidErr?(nil)
+                self.statusLabel.text = "\(response.statusCode): response can not be parsed"
             }
         }
     }
@@ -197,4 +215,67 @@ class LoginViewController: UIViewController, JsonDownloaderDelegate {
         dlog("")
         self.loginDidCancel?()
     }
+    
+    @IBAction func loginPressed(_ sender: UIButton) {
+        
+        if textFieldsDidValidate() {
+            self.jsonDownloader.delegate = self
+            self.doAuthTokenDownload()
+        }
+    }
+    
+    func textFieldsDidValidate() -> Bool {
+        var userNameIsValid = false
+        var passwordIsValid = false
+
+        if var usernameText = usernameTextField.text {
+            usernameText = usernameText.trimmingCharacters(in: .whitespaces)
+            if usernameText.count >= 8 && usernameText.count <= 16 {
+                userNameIsValid = true
+                username = usernameText
+            }
+            else {
+                statusLabel.text = "Username length must be 8-16"
+            }
+        }
+        else {
+            statusLabel.text = "Username length must be 8-16"
+        }
+        
+        if !userNameIsValid { return false }
+        
+        if var passwordText = passwordTextField.text {
+            passwordText = passwordText.trimmingCharacters(in: .whitespaces)
+            if passwordText.count >= 8 && passwordText.count <= 16 {
+                passwordIsValid = true
+                password = passwordText
+            }
+            else {
+                statusLabel.text = "Password length must be 8-16"
+            }
+        }
+        else {
+            statusLabel.text = "Password length must be 8-16"
+        }
+        
+        return userNameIsValid && passwordIsValid
+    }
+}
+
+extension LoginViewController: UITextFieldDelegate {
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        
+        if var text = textField.text {
+            text += string
+            if text.count >= 8 {
+                statusLabel.text = "Status: Not Logged In"
+            }
+        }
+        
+        
+        
+        return true
+    }
+    
 }
