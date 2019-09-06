@@ -175,6 +175,26 @@ public let theMovieDbNewSessionPath = "/authentication/session/new"
 public let theMovieDbNowPlayingTitle = "Now Playing"
 public let theMovieDbTopRatedTitle = "Top Rated"
 
+public var sessionId: String? = nil
+
+public func userIsLoggedIn() -> Bool {
+    
+    guard let foundSessionId = sessionId, foundSessionId.count == 40 else {
+        return false
+    }
+    return true
+}
+
+public func loadSessionId() {
+    if let val = UserDefaults.standard.string(forKey: "sessionId") {
+        sessionId = val
+    }
+}
+
+public func saveSessionId(_ seshId: String) {
+    sessionId = seshId
+    UserDefaults.standard.setValue(seshId, forKey: "sessionId")
+}
 
 public let backdropSizes = [
 "w300",

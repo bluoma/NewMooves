@@ -50,7 +50,7 @@ class ProfileCoordinator: BaseRootNavigationCoordinator {
     
     func loginViewControllerDidSucceed(sessionId: String) {
         dlog("sessionId: \(sessionId)")
-        self.profileViewController.sessionId = sessionId
+        saveSessionId(sessionId)
         self.navigationController.dismiss(animated: true, completion: nil)
     }
     

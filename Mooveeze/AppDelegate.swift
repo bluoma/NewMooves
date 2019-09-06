@@ -18,9 +18,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         window = UIWindow(frame: UIScreen.main.bounds)
         let appCoordinator = ApplicationCoordinator()
+        loadSessionId()
         window?.rootViewController = appCoordinator.rootViewController
         
-        dlog("window: \(self.window?.rootViewController)")
         AppearanceManager.applyBlackTranslucentTheme(window: window)
         window?.makeKeyAndVisible()
         

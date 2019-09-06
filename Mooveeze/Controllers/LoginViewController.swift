@@ -230,32 +230,32 @@ class LoginViewController: UIViewController, JsonDownloaderDelegate {
 
         if var usernameText = usernameTextField.text {
             usernameText = usernameText.trimmingCharacters(in: .whitespaces)
-            if usernameText.count >= 8 && usernameText.count <= 16 {
+            if usernameText.count >= 6 && usernameText.count <= 16 {
                 userNameIsValid = true
                 username = usernameText
             }
             else {
-                statusLabel.text = "Username length must be 8-16"
+                statusLabel.text = "Username length must be 6-16"
             }
         }
         else {
-            statusLabel.text = "Username length must be 8-16"
+            statusLabel.text = "Username length must be 6-16"
         }
         
         if !userNameIsValid { return false }
         
         if var passwordText = passwordTextField.text {
             passwordText = passwordText.trimmingCharacters(in: .whitespaces)
-            if passwordText.count >= 8 && passwordText.count <= 16 {
+            if passwordText.count >= 6 && passwordText.count <= 16 {
                 passwordIsValid = true
                 password = passwordText
             }
             else {
-                statusLabel.text = "Password length must be 8-16"
+                statusLabel.text = "Password length must be 6-16"
             }
         }
         else {
-            statusLabel.text = "Password length must be 8-16"
+            statusLabel.text = "Password length must be 6-16"
         }
         
         return userNameIsValid && passwordIsValid
@@ -268,7 +268,7 @@ extension LoginViewController: UITextFieldDelegate {
         
         if var text = textField.text {
             text += string
-            if text.count >= 8 {
+            if text.count >= 6 {
                 statusLabel.text = "Status: Not Logged In"
             }
         }

@@ -24,7 +24,6 @@ class ProfileViewController: UIViewController, JsonDownloaderDelegate {
     var jsonDownloader = JsonDownloader()
     var downloadTaskDict: [String: URLSessionDataTask] = [:]
     var endpointPath: String = theMovieDbProfilePath
-    var sessionId: String?
     var userProfile: UserProfile?
     
     var didSelectLogin: (() -> Void)?
@@ -36,6 +35,9 @@ class ProfileViewController: UIViewController, JsonDownloaderDelegate {
         // Do any additional setup after loading the view.
         if sessionId == nil {
             self.emptyStateView.isHidden = false
+        }
+        else {
+            self.emptyStateView.isHidden = true
         }
     }
     
