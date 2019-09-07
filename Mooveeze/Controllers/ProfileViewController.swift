@@ -17,7 +17,6 @@ class ProfileViewController: UIViewController {
     
     var httpClient = UserAccountHttpClient()
     var downloadIsInProgress: Bool = false
-    var endpointPath: String = theMovieDbProfilePath
     var userProfile: UserProfile?
     
     var didSelectLogin: (() -> Void)?
@@ -27,7 +26,7 @@ class ProfileViewController: UIViewController {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        if sessionId == nil {
+        if Constants.sessionId == nil {
             self.emptyStateView.isHidden = false
         }
         else {
@@ -39,7 +38,7 @@ class ProfileViewController: UIViewController {
         super.viewWillAppear(animated)
         
         dlog("")
-        if let foundSessionId = sessionId, userProfile == nil {
+        if let foundSessionId = Constants.sessionId, userProfile == nil {
             dlog("foundSessionId: \(foundSessionId), getAccount")
             fetchUserProfile()
         }
@@ -47,7 +46,7 @@ class ProfileViewController: UIViewController {
     
     //MARK: - Network
     func fetchUserProfile() {
-        guard let foundSessionId = sessionId else { return }
+        guard let foundSessionId = Constants.sessionId else { return }
         if downloadIsInProgress { return }
         
         UIApplication.shared.isNetworkActivityIndicatorVisible = true

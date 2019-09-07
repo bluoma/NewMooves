@@ -22,7 +22,7 @@ class UserAccountHttpClient {
             return
         }
         
-        let urlString = theMovieDbSecureBaseUrl + theMovieDbProfilePath + "?" + theMovieDbApiKeyParam + "&" + theMovieDbSessionKeyName + "=" + localSessionId
+        let urlString = Constants.theMovieDbSecureBaseUrl + Constants.theMovieDbProfilePath + "?" + Constants.theMovieDbApiKeyParam + "&" + Constants.theMovieDbSessionKeyName + "=" + localSessionId
         
         guard let url = URL(string: urlString) else {
             let error = generateError(withCode: -400, msg: "url error: \(urlString)")
@@ -57,7 +57,7 @@ class UserAccountHttpClient {
     
     func fetchAuthToken(completion: @escaping ((String?, NSError?) -> Void)) {
         
-        let urlString = theMovieDbSecureBaseUrl + theMovieDbAuthTokenPath + "?" + theMovieDbApiKeyParam
+        let urlString = Constants.theMovieDbSecureBaseUrl + Constants.theMovieDbAuthTokenPath + "?" + Constants.theMovieDbApiKeyParam
         
         guard let url = URL(string: urlString) else {
             let error = generateError(withCode: -400, msg: "url error: \(urlString)")
@@ -98,7 +98,7 @@ class UserAccountHttpClient {
     func validateAuthToken(body: [String: AnyObject], completion: @escaping ((String?, NSError?) -> Void)) {
         
         //post
-        let urlString = theMovieDbSecureBaseUrl + theMovieDbAuthTokenValidationPath + "?" + theMovieDbApiKeyParam
+        let urlString = Constants.theMovieDbSecureBaseUrl + Constants.theMovieDbAuthTokenValidationPath + "?" + Constants.theMovieDbApiKeyParam
         
         guard let url = URL(string: urlString) else {
             let error = generateError(withCode: -400, msg: "url error: \(urlString)")
@@ -139,7 +139,7 @@ class UserAccountHttpClient {
     func createSession(body: [String: AnyObject], completion: @escaping ((String?, NSError?) -> Void)) {
         
         //post
-        let urlString = theMovieDbSecureBaseUrl + theMovieDbNewSessionPath + "?" + theMovieDbApiKeyParam
+        let urlString = Constants.theMovieDbSecureBaseUrl + Constants.theMovieDbNewSessionPath + "?" + Constants.theMovieDbApiKeyParam
     
         guard let url = URL(string: urlString) else {
             let error = generateError(withCode: -400, msg: "url error: \(urlString)")

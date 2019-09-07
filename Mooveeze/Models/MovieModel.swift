@@ -100,7 +100,7 @@ class Movie: Codable, CustomStringConvertible, CustomDebugStringConvertible {
     func populateGenres() {
         var genreNames: [String] = []
         for genreId in self.genreIds {
-            if let genreName = genreMap[genreId] {
+            if let genreName = Constants.genreMap[genreId] {
                 genreNames.append(genreName)
             }
         }

@@ -34,9 +34,9 @@ class ApplicationCoordinator {
         let navController2: UINavigationController = UINavigationController()
         
      
-        let config0 = CoordinatorConfig(vcIndex: index0, vcTitle: title0, vcUrlPath: theMovieDbNowPlayingPath)
-        let config1 = CoordinatorConfig(vcIndex: index1, vcTitle: title1, vcUrlPath: theMovieDbTopRatedPath)
-        let config2 = CoordinatorConfig(vcIndex: index2, vcTitle: title2, vcUrlPath: theMovieDbProfilePath)
+        let config0 = CoordinatorConfig(vcIndex: index0, vcTitle: title0, vcUrlPath: Constants.theMovieDbNowPlayingPath)
+        let config1 = CoordinatorConfig(vcIndex: index1, vcTitle: title1, vcUrlPath: Constants.theMovieDbTopRatedPath)
+        let config2 = CoordinatorConfig(vcIndex: index2, vcTitle: title2, vcUrlPath: Constants.theMovieDbProfilePath)
 
         let nowPlayingMoviesCoordinator = MoviesCoordinator(withNavVc: navController0, config: config0)
         navigationCoordinators.append(nowPlayingMoviesCoordinator)

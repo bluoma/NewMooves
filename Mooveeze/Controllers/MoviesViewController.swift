@@ -237,7 +237,7 @@ extension MoviesViewController: UITableViewDataSource
         cell.movieOverviewLabel.text = movieSummary.overview
         
         if movieSummary.posterPath.count > 0  {
-            let imageUrlString = theMovieDbSecureBaseImageUrl + "/" + poster_sizes[0] + movieSummary.posterPath
+            let imageUrlString = Constants.theMovieDbSecureBaseImageUrl + "/" + Constants.poster_sizes[0] + movieSummary.posterPath
             if let imageUrl = URL(string: imageUrlString) {
                 let defaultImage = UIImage(named: "default_movie_thumbnail.png")
                 

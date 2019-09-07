@@ -20,7 +20,7 @@ class MoviesHttpClient {
             page = foundPage
         }
         
-        let nowPlayingUrlString = theMovieDbSecureBaseUrl + theMovieDbNowPlayingPath + "?" + theMovieDbApiKeyParam + "&page=" + String(page)
+        let nowPlayingUrlString = Constants.theMovieDbSecureBaseUrl + Constants.theMovieDbNowPlayingPath + "?" + Constants.theMovieDbApiKeyParam + "&page=" + String(page)
         
         guard let url = URL(string: nowPlayingUrlString) else {
             let error = generateError(withCode: -400, msg: "url error: \(nowPlayingUrlString)")
@@ -68,8 +68,8 @@ class MoviesHttpClient {
             return
         }
         
-        let baseUrl = theMovieDbSecureBaseUrl + theMovieDbMovieDetailPath + "/"
-        let movieDetailUrlString = baseUrl + String(movieId) + "?" + theMovieDbApiKeyParam
+        let baseUrl = Constants.theMovieDbSecureBaseUrl + Constants.theMovieDbMovieDetailPath + "/"
+        let movieDetailUrlString = baseUrl + String(movieId) + "?" + Constants.theMovieDbApiKeyParam
         
         guard let url = URL(string: movieDetailUrlString) else {
             let error = generateError(withCode: -400, msg: "url error: \(movieDetailUrlString)")
@@ -110,8 +110,8 @@ class MoviesHttpClient {
             return
         }
         
-        let baseUrl = theMovieDbSecureBaseUrl + theMovieDbMovieDetailPath + "/"
-        let movieVideoUrlString = baseUrl + String(movieId) + theMovieDbMovieVideoPath + "?" + theMovieDbApiKeyParam
+        let baseUrl = Constants.theMovieDbSecureBaseUrl + Constants.theMovieDbMovieDetailPath + "/"
+        let movieVideoUrlString = baseUrl + String(movieId) + Constants.theMovieDbMovieVideoPath + "?" + Constants.theMovieDbApiKeyParam
         
         guard let url = URL(string: movieVideoUrlString) else {
             let error = generateError(withCode: -400, msg: "url error: \(movieVideoUrlString)")

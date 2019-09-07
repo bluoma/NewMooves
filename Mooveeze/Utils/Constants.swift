@@ -8,6 +8,7 @@
 
 import Foundation
 
+//global functions
 //MARK: dlog
 public func dlog(_ message: String, _ filePath: String = #file, _ functionName: String = #function, _ lineNum: Int = #line)
 {
@@ -31,8 +32,116 @@ public func generateError(withCode code: Int, msg: String, method: String = #fun
     return error
 }
 
-public let defaultAppearanceKey = "defaultAppearanceKey"
+public func loadSessionId() {
+    if let val = UserDefaults.standard.string(forKey: "sessionId") {
+        Constants.sessionId = val
+    }
+}
 
+public func saveSessionId(_ seshId: String) {
+    Constants.sessionId = seshId
+    UserDefaults.standard.setValue(seshId, forKey: "sessionId")
+}
+
+public func userIsLoggedIn() -> Bool {
+    
+    guard let foundSessionId = Constants.sessionId, foundSessionId.count == 40 else {
+        return false
+    }
+    return true
+}
+
+public struct Constants {
+    
+    public static let defaultAppearanceKey = "defaultAppearanceKey"
+    public static let theMovieDbApiKeyName = "api_key"
+    public static let theMovieDbSessionKeyName = "session_id"
+    public static let theMovieDbApiKey = "d2f534caef1352faf672a1d1b1528999"
+    public static let theMovieDbApiKeyParam = theMovieDbApiKeyName + "=" + theMovieDbApiKey
+    public static let theMovieDbBaseImageUrl = "http://image.tmdb.org/t/p"
+    public static let theMovieDbSecureBaseImageUrl = "https://image.tmdb.org/t/p"
+    public static let theMovieDbBaseUrl = "https://api.themoviedb.org/3"
+    public static let theMovieDbSecureBaseUrl = "https://api.themoviedb.org/3"
+
+    public static let theMovieDbNowPlayingPath = "/movie/now_playing"
+    public static let theMovieDbTopRatedPath = "/movie/top_rated"
+    public static let theMovieDbSearchPath = "/search/movie"
+    public static let theMovieDbMovieDetailPath = "/movie"
+    public static let theMovieDbMovieVideoPath = "/videos"
+    public static let theMovieDbProfilePath = "/account"
+    public static let theMovieDbAuthTokenPath = "/authentication/token/new"
+    public static let theMovieDbAuthTokenValidationPath = "/authentication/token/validate_with_login"
+    public static let theMovieDbNewSessionPath = "/authentication/session/new"
+
+    public static let theMovieDbNowPlayingTitle = "Now Playing"
+    public static let theMovieDbTopRatedTitle = "Top Rated"
+
+    public static var sessionId: String? = nil
+
+    public static let backdropSizes = [
+        "w300",
+        "w780",
+        "w1280",
+        "original"
+    ]
+
+    public static let logo_sizes = [
+        "w45",
+        "w92",
+        "w154",
+        "w185",
+        "w300",
+        "w500",
+        "original"
+    ]
+
+    public static let poster_sizes = [
+        "w92",
+        "w154",
+        "w185",
+        "w342",
+        "w500",
+        "w780",
+        "original"
+    ]
+
+    public static let profile_sizes = [
+        "w45",
+        "w185",
+        "h632",
+        "original"
+    ]
+
+    public static let still_sizes = [
+        "w92",
+        "w185",
+        "w300",
+        "original"
+    ]
+
+    public static let genreMap: [Int: String] = [
+        28: "Action",
+        12: "Adventure",
+        16: "Animation",
+        35: "Comedy",
+        80: "Crime",
+        99: "Documentary",
+        18: "Drama",
+        10751: "Family",
+        14: "Fantasy",
+        36: "History",
+        27: "Horror",
+        10402: "Music",
+        9648: "Mystery",
+        10749: "Romance",
+        878: "Science Fiction",
+        10770: "TV Movie",
+        53: "Thriller",
+        10752: "War",
+        37: "Western"
+    ]
+}
+//junk
 
 //MARK: MovieApi
 /*
@@ -43,14 +152,16 @@ public let defaultAppearanceKey = "defaultAppearanceKey"
  https://image.tmdb.org/t/p/w500/kqjL17yufvn9OVLyXYpvtyrFfak.jpg
  
  https://image.tmdb.org/t/p/w500/8uO0gUM8aNqYLs1OsTBQiXu0fEv.jpg
-
  
+ /* request token for auth: d33dd4e678031307f192237db532b15d8e0cb5ca */
+ //https://api.themoviedb.org/3/search/movie?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed&language=en-US&query=seven
+ //https://api.themoviedb.org/3/movie/now_playing?api_key=d2f534caef1352faf672a1d1b1528999&language=en-US
  */
 
 /*
  
  https://api.themoviedb.org/3/configuration?api_key=d2f534caef1352faf672a1d1b1528999
-
+ 
  
  current config:
  {
@@ -152,116 +263,3 @@ public let defaultAppearanceKey = "defaultAppearanceKey"
  }
  
  */
-
-public let theMovieDbApiKeyName = "api_key"
-public let theMovieDbSessionKeyName = "session_id"
-public let theMovieDbApiKey = "d2f534caef1352faf672a1d1b1528999"
-public let theMovieDbApiKeyParam = theMovieDbApiKeyName + "=" + theMovieDbApiKey
-public let theMovieDbBaseImageUrl = "http://image.tmdb.org/t/p"
-public let theMovieDbSecureBaseImageUrl = "https://image.tmdb.org/t/p"
-public let theMovieDbBaseUrl = "https://api.themoviedb.org/3"
-public let theMovieDbSecureBaseUrl = "https://api.themoviedb.org/3"
-
-public let theMovieDbNowPlayingPath = "/movie/now_playing"
-public let theMovieDbTopRatedPath = "/movie/top_rated"
-public let theMovieDbSearchPath = "/search/movie"
-public let theMovieDbMovieDetailPath = "/movie"
-public let theMovieDbMovieVideoPath = "/videos"
-public let theMovieDbProfilePath = "/account"
-public let theMovieDbAuthTokenPath = "/authentication/token/new"
-public let theMovieDbAuthTokenValidationPath = "/authentication/token/validate_with_login"
-public let theMovieDbNewSessionPath = "/authentication/session/new"
-
-/* request token for auth: d33dd4e678031307f192237db532b15d8e0cb5ca */
-//https://api.themoviedb.org/3/search/movie?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed&language=en-US&query=seven
-//https://api.themoviedb.org/3/movie/now_playing?api_key=d2f534caef1352faf672a1d1b1528999&language=en-US
-
-public let theMovieDbNowPlayingTitle = "Now Playing"
-public let theMovieDbTopRatedTitle = "Top Rated"
-
-public var sessionId: String? = nil
-
-public func userIsLoggedIn() -> Bool {
-    
-    guard let foundSessionId = sessionId, foundSessionId.count == 40 else {
-        return false
-    }
-    return true
-}
-
-public func loadSessionId() {
-    if let val = UserDefaults.standard.string(forKey: "sessionId") {
-        sessionId = val
-    }
-}
-
-public func saveSessionId(_ seshId: String) {
-    sessionId = seshId
-    UserDefaults.standard.setValue(seshId, forKey: "sessionId")
-}
-
-public let backdropSizes = [
-"w300",
-"w780",
-"w1280",
-"original"
-]
-
-public let logo_sizes = [
-"w45",
-"w92",
-"w154",
-"w185",
-"w300",
-"w500",
-"original"
-]
-
-public let poster_sizes = [
-"w92",
-"w154",
-"w185",
-"w342",
-"w500",
-"w780",
-"original"
-]
-
-public let profile_sizes = [
-"w45",
-"w185",
-"h632",
-"original"
-]
-
-public let still_sizes = [
-"w92",
-"w185",
-"w300",
-"original"
-]
-
-
-public let genreMap: [Int: String] = [
-    28: "Action",
-    12: "Adventure",
-    16: "Animation",
-    35: "Comedy",
-    80: "Crime",
-    99: "Documentary",
-    18: "Drama",
-    10751: "Family",
-    14: "Fantasy",
-    36: "History",
-    27: "Horror",
-    10402: "Music",
-    9648: "Mystery",
-    10749: "Romance",
-    878: "Science Fiction",
-    10770: "TV Movie",
-    53: "Thriller",
-    10752: "War",
-    37: "Western"
-]
-
-
