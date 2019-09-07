@@ -15,7 +15,7 @@ class ProfileViewController: UIViewController {
     @IBOutlet weak var loginButton: UIButton!
     @IBOutlet weak var createAccountButton: UIButton!
     
-    var httpClient = MoviesHttpClient()
+    var httpClient = UserAccountHttpClient()
     var downloadIsInProgress: Bool = false
     var endpointPath: String = theMovieDbProfilePath
     var userProfile: UserProfile?
@@ -66,8 +66,7 @@ class ProfileViewController: UIViewController {
             else if let foundProfile = profile {
                 dlog("profile: \(foundProfile)")
                 strongself.userProfile = foundProfile
-                let hash = foundProfile.avatar.gravatar.hash
-                strongself.title = foundProfile.username + hash
+                strongself.title = foundProfile.username
                 strongself.emptyStateView.isHidden = true
             }
             else {

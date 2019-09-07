@@ -8,14 +8,7 @@
 
 import UIKit
 
-class LoginViewController: UIViewController, JsonDownloaderDelegate {
-
-    enum DownloadType: String
-    {
-        case authToken = "authToken"
-        case validateToken = "validateToken"
-        case session = "session"
-    }
+class LoginViewController: UIViewController {
     
     enum TextFieldTag: Int {
         case username = 0
@@ -28,11 +21,7 @@ class LoginViewController: UIViewController, JsonDownloaderDelegate {
     @IBOutlet weak var loginButton: UIButton!
     
     var downloadIsInProgress: Bool = false
-    var jsonDownloader = JsonDownloader()
-    var downloadTaskDict: [String: URLSessionDataTask] = [:]
-    var authTokenEndpointPath: String = theMovieDbAuthTokenPath
-    var validationEndpointPath: String = theMovieDbAuthTokenValidationPath
-    var sessionEndpointPath: String = theMovieDbNewSessionPath
+    var httpClient = UserAccountHttpClient()
 
     var authToken: String = ""
     var validatedAuthToken: String = ""
@@ -58,27 +47,39 @@ class LoginViewController: UIViewController, JsonDownloaderDelegate {
         view.endEditing(true)
     }
 
-    func doAuthTokenDownload() {
+    func fetchAuthToken() {
         
         if downloadIsInProgress { return }
         
-        let urlString = theMovieDbSecureBaseUrl + authTokenEndpointPath + "?" + theMovieDbApiKeyParam
-        cancelJsonDownloadTask(urlString: urlString)
-        if let task: URLSessionDataTask = jsonDownloader.doDownload(urlString: urlString) {
-            UIApplication.shared.isNetworkActivityIndicatorVisible = true
-            task.taskDescription = DownloadType.authToken.rawValue
-            downloadTaskDict[urlString] = task
-        }
-        else {
-            self.loginDidErr?(nil)
+        UIApplication.shared.isNetworkActivityIndicatorVisible = true
+        downloadIsInProgress = true
+        
+        httpClient.fetchAuthToken { [weak self] (token: String?, error: NSError?) in
+            
+            guard let strongself = self else { return }
+            strongself.downloadIsInProgress = false
+            UIApplication.shared.isNetworkActivityIndicatorVisible = false
+
+            if let foundError = error {
+                strongself.loginDidErr?(foundError)
+            }
+            else if let foundToken = token {
+                strongself.authToken = foundToken
+                strongself.validateAuthToken()
+            }
+            else {
+                strongself.loginDidErr?(nil)
+            }
         }
     }
     
-    func doAuthTokenValidationDownload() {
+    func validateAuthToken() {
         
         if downloadIsInProgress { return }
+        UIApplication.shared.isNetworkActivityIndicatorVisible = true
+        downloadIsInProgress = true
+        
         //post
-        let urlString = theMovieDbSecureBaseUrl + validationEndpointPath + "?" + theMovieDbApiKeyParam
         /*
          {
          "username": "johnny_appleseed",
@@ -92,125 +93,57 @@ class LoginViewController: UIViewController, JsonDownloaderDelegate {
         postDict["password"] = password as AnyObject
         postDict["request_token"] = authToken as AnyObject
         
-        cancelJsonDownloadTask(urlString: urlString)
-        if let task: URLSessionDataTask = jsonDownloader.doPost(urlString: urlString, postBody: postDict) {
-            UIApplication.shared.isNetworkActivityIndicatorVisible = true
-            task.taskDescription = DownloadType.validateToken.rawValue
-            downloadTaskDict[urlString] = task
-        }
-        else {
-            self.loginDidErr?(nil)
-        }
-        
-    }
-    
-    func doSessionDownload() {
-        
-        if downloadIsInProgress { return }
-        //post
-        let urlString = theMovieDbSecureBaseUrl + sessionEndpointPath + "?" + theMovieDbApiKeyParam
-        /*
-         {
-         "request_token": "6bc047b88f669d1fb86574f06381005d93d3517a"
-         }
-        */
-        var postDict: [String: AnyObject] = [:]
-        postDict["request_token"] = authToken as AnyObject
-        cancelJsonDownloadTask(urlString: urlString)
-        if let task: URLSessionDataTask = jsonDownloader.doPost(urlString: urlString, postBody: postDict) {
-            UIApplication.shared.isNetworkActivityIndicatorVisible = true
-            task.taskDescription = DownloadType.session.rawValue
-            downloadTaskDict[urlString] = task
-        }
-        else {
-            self.loginDidErr?(nil)
-        }
-        
-    }
-    
-    func jsonDownloaderDidFinish(downloader: JsonDownloader, json: [String: AnyObject]?, response: HTTPURLResponse, error: NSError?)
-    {
-        UIApplication.shared.isNetworkActivityIndicatorVisible = false
-        
-        guard let urlString = response.url?.absoluteString,
-            let task = downloadTaskDict[urlString] else {
-                dlog("no url/task from response: \(response)")
-                return
-        }
-        downloadTaskDict[urlString] = nil
-        dlog("url from response: \(urlString)")
-        
-        
-        if error != nil {
-            dlog("err: \(String(describing: error))")
-            self.statusLabel.text = error?.localizedDescription
-        }
-        else {
+        httpClient.validateAuthToken(body: postDict, completion:
+        { [weak self] (validToken: String?, error: NSError?) in
+            guard let strongself = self else { return }
+            strongself.downloadIsInProgress = false
+            UIApplication.shared.isNetworkActivityIndicatorVisible = false
             
-            if let jsonObj: [String:AnyObject] = json,
-                let taskDescription = task.taskDescription,
-                let downloadType = DownloadType(rawValue: taskDescription) {
-                dlog("jsonObj: \(type(of:jsonObj)), type: \(downloadType) \n\(jsonObj)")
-                
-                switch downloadType
-                {
-                case .authToken:
-                    
-                    if let authToken = jsonObj["request_token"] as? String {
-                        dlog("authToken: \(authToken)")
-                        self.authToken = authToken
-                        doAuthTokenValidationDownload()
-                    }
-                    else {
-                        self.statusLabel.text = "\(response.statusCode) for authToken: \(String(describing: jsonObj))"
-                    }
-                    
-                case .validateToken:
-                    
-                    if let validToken = jsonObj["request_token"] as? String {
-                        dlog("authToken: \(validToken)")
-                        self.validatedAuthToken = validToken
-                        doSessionDownload()
-                    }
-                    else {
-                        self.statusLabel.text = "\(response.statusCode) validateToken: \(String(describing: jsonObj))"
-                    }
-                    
-                case .session:
-                    if let sessionId = jsonObj["session_id"] as? String {
-                        dlog("sessionId: \(sessionId)")
-                        self.loginDidSucceed?(sessionId)
-                    }
-                    else {
-                        self.statusLabel.text = "\(response.statusCode) for session: \(String(describing: jsonObj))"
-                    }
-                }
+            if let foundError = error {
+                strongself.statusLabel.text = foundError.localizedDescription
+            }
+            else if let foundToken = validToken {
+                strongself.validatedAuthToken = foundToken
+                strongself.createSession()
             }
             else {
-                self.statusLabel.text = "\(response.statusCode): response can not be parsed"
+                strongself.statusLabel.text = "Login Error"
             }
-        }
-    }
-    
-    func cancelJsonDownloadTask(urlString: String)
-    {
-        if let currentDowloadTask: URLSessionDataTask = downloadTaskDict[urlString] {
-            currentDowloadTask.cancel()
-            downloadTaskDict[urlString] = nil
-            UIApplication.shared.isNetworkActivityIndicatorVisible = false
-        }
+            
+        })
         
     }
     
-    func cancelAllJsonDownloadTasks()
-    {
-        for (_, task) in downloadTaskDict {
-            task.cancel()
-        }
-        downloadTaskDict.removeAll()
-        UIApplication.shared.isNetworkActivityIndicatorVisible = false
+    func createSession() {
+        
+        if downloadIsInProgress { return }
+        UIApplication.shared.isNetworkActivityIndicatorVisible = true
+        downloadIsInProgress = true
+        //post
+        /*
+         { "request_token": "6bc047b88f669d1fb86574f06381005d93d3517a" }
+        */
+        var postDict: [String: AnyObject] = [:]
+        postDict["request_token"] = validatedAuthToken as AnyObject
+        
+        httpClient.createSession(body: postDict, completion:
+        { [weak self] (validSessionId: String?, error: NSError?) in
+            guard let strongself = self else { return }
+            strongself.downloadIsInProgress = false
+            UIApplication.shared.isNetworkActivityIndicatorVisible = false
+            
+            if let foundError = error {
+                strongself.loginDidErr?(foundError)
+            }
+            else if let foundSessionId = validSessionId {
+               strongself.loginDidSucceed?(foundSessionId)
+            }
+            else {
+                strongself.loginDidErr?(nil)
+            }
+        })
     }
-
+    
     @IBAction func donePressed(_ sender: UIBarButtonItem){
         dlog("")
         self.loginDidCancel?()
@@ -219,8 +152,8 @@ class LoginViewController: UIViewController, JsonDownloaderDelegate {
     @IBAction func loginPressed(_ sender: UIButton) {
         
         if textFieldsDidValidate() {
-            self.jsonDownloader.delegate = self
-            self.doAuthTokenDownload()
+            
+            self.fetchAuthToken()
         }
     }
     
@@ -272,8 +205,6 @@ extension LoginViewController: UITextFieldDelegate {
                 statusLabel.text = "Status: Not Logged In"
             }
         }
-        
-        
         
         return true
     }

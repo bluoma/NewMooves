@@ -17,7 +17,6 @@
 		F7012D82232179A400A21887 /* MoviesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7012D79232179A400A21887 /* MoviesViewController.swift */; };
 		F7012D83232179A400A21887 /* MovieVideoWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7012D7A232179A400A21887 /* MovieVideoWebViewController.swift */; };
 		F7012D84232179A400A21887 /* MovieDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7012D7B232179A400A21887 /* MovieDetailViewController.swift */; };
-		F7012D85232179A400A21887 /* JsonDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7012D7D232179A400A21887 /* JsonDownloader.swift */; };
 		F7012D8723217DF200A21887 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7012D8623217DF200A21887 /* ProfileViewController.swift */; };
 		F7012D89232189EF00A21887 /* BaseCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7012D88232189EF00A21887 /* BaseCoordinator.swift */; };
 		F7012D8B23218F3500A21887 /* MoviesCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7012D8A23218F3500A21887 /* MoviesCoordinator.swift */; };
@@ -29,6 +28,7 @@
 		F7012D972322B34700A21887 /* JsonHttpService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7012D962322B34700A21887 /* JsonHttpService.swift */; };
 		F7012D992322C1EF00A21887 /* MoviesHttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7012D982322C1EF00A21887 /* MoviesHttpClient.swift */; };
 		F7012D9B232303ED00A21887 /* DateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7012D9A232303ED00A21887 /* DateFormatter.swift */; };
+		F7012D9F23241DBA00A21887 /* UserAccountHttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7012D9E23241DB900A21887 /* UserAccountHttpClient.swift */; };
 		F7C9F84422FD462000E8BC19 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7C9F84322FD462000E8BC19 /* AppDelegate.swift */; };
 		F7C9F84922FD462000E8BC19 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F7C9F84722FD462000E8BC19 /* Main.storyboard */; };
 		F7C9F84B22FD462000E8BC19 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F7C9F84A22FD462000E8BC19 /* Assets.xcassets */; };
@@ -50,7 +50,6 @@
 		F7012D79232179A400A21887 /* MoviesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MoviesViewController.swift; sourceTree = "<group>"; };
 		F7012D7A232179A400A21887 /* MovieVideoWebViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MovieVideoWebViewController.swift; sourceTree = "<group>"; };
 		F7012D7B232179A400A21887 /* MovieDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MovieDetailViewController.swift; sourceTree = "<group>"; };
-		F7012D7D232179A400A21887 /* JsonDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JsonDownloader.swift; sourceTree = "<group>"; };
 		F7012D8623217DF200A21887 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		F7012D88232189EF00A21887 /* BaseCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCoordinator.swift; sourceTree = "<group>"; };
 		F7012D8A23218F3500A21887 /* MoviesCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoviesCoordinator.swift; sourceTree = "<group>"; };
@@ -62,6 +61,7 @@
 		F7012D962322B34700A21887 /* JsonHttpService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JsonHttpService.swift; sourceTree = "<group>"; };
 		F7012D982322C1EF00A21887 /* MoviesHttpClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoviesHttpClient.swift; sourceTree = "<group>"; };
 		F7012D9A232303ED00A21887 /* DateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatter.swift; sourceTree = "<group>"; };
+		F7012D9E23241DB900A21887 /* UserAccountHttpClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAccountHttpClient.swift; sourceTree = "<group>"; };
 		F7C9F84022FD462000E8BC19 /* Mooveeze.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mooveeze.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7C9F84322FD462000E8BC19 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F7C9F84822FD462000E8BC19 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -160,8 +160,8 @@
 			isa = PBXGroup;
 			children = (
 				F7012D962322B34700A21887 /* JsonHttpService.swift */,
-				F7012D7D232179A400A21887 /* JsonDownloader.swift */,
 				F7012D982322C1EF00A21887 /* MoviesHttpClient.swift */,
+				F7012D9E23241DB900A21887 /* UserAccountHttpClient.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -324,7 +324,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F7012D85232179A400A21887 /* JsonDownloader.swift in Sources */,
 				F7012D80232179A400A21887 /* MovieModel.swift in Sources */,
 				F7012D89232189EF00A21887 /* BaseCoordinator.swift in Sources */,
 				F7C9F84422FD462000E8BC19 /* AppDelegate.swift in Sources */,
@@ -337,6 +336,7 @@
 				F7012D702321799400A21887 /* MovieDetailVideoTableViewCell.swift in Sources */,
 				F7012D7E232179A400A21887 /* Constants.swift in Sources */,
 				F7012D992322C1EF00A21887 /* MoviesHttpClient.swift in Sources */,
+				F7012D9F23241DBA00A21887 /* UserAccountHttpClient.swift in Sources */,
 				F7012D8F2321AD5000A21887 /* BaseRootNavigationCoordinator.swift in Sources */,
 				F7012D8723217DF200A21887 /* ProfileViewController.swift in Sources */,
 				F7012D7F232179A400A21887 /* AppearanceManager.swift in Sources */,
