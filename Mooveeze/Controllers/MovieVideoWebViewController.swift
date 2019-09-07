@@ -11,26 +11,24 @@ import WebKit
 
 class MovieVideoWebViewController: UIViewController {
 
-    var movieSummary: MovieSummary?
+    var movie: Movie!
     var videoIndex: Int = 0
     @IBOutlet var videoWebView: WKWebView!
         
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if let summary = movieSummary, !summary.movieVideos.isEmpty
+        if !movie.movieVideos.isEmpty
         {
-            let video = summary.movieVideos[videoIndex]
+            let video = movie.movieVideos[videoIndex]
             if let vurl = self.constructVideoUrl(from: video)
             {
                 self.videoWebView.load(URLRequest(url: vurl))
             }
         }
-
     }
     
-
-    private func constructVideoUrl(from video: MovieVideo) -> URL? {
+    fileprivate func constructVideoUrl(from video: MovieVideo) -> URL? {
         var url: URL? = nil
         
         if video.site == "YouTube" {

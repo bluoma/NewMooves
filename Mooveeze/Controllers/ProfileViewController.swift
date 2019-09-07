@@ -139,6 +139,3 @@ class ProfileViewController: UIViewController, JsonDownloaderDelegate {
         self.didSelectCreateAccount?()
     }
 }
-
-//https://api.themoviedb.org/3/account?api_key=d2f534caef1352faf672a1d1b1528999&ssession_id=b5e31e54cedaff28be9d617bfce2ce45927310dc
-//https://api.themoviedb.org/3/account?api_key=d2f534caef1352faf672a1d1b1528999&session_id=b5e31e54cedaff28be9d617bfce2ce45927310dc

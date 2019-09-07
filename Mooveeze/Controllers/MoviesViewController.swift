@@ -15,10 +15,9 @@ class MoviesViewController: UIViewController {
     @IBOutlet weak var moviesTableView: UITableView!
     @IBOutlet weak var moviesSearchBar: UISearchBar!
     
-    var jsonDownloader = JsonDownloader()
-    var downloadTaskDict: [String:URLSessionDataTask] = [:]
-    var moviesArray: [MovieSummary] = []
-    var filteredMoviesArray: [MovieSummary] = []
+    let httpClient = MoviesHttpClient()
+    var moviesArray: [Movie] = []
+    var filteredMoviesArray: [Movie] = []
     var endpointPath: String = ""
     var isNetworkErrorShowing: Bool = false
     var header = UITableViewHeaderFooterView()
@@ -29,7 +28,7 @@ class MoviesViewController: UIViewController {
     var currentPage: Int = 1
     var totalCount: Int = 0
     
-    var didSelectDetail: ((MovieSummary) -> Void)?
+    var didSelectMovieDetail: ((Movie) -> Void)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,7 +46,7 @@ class MoviesViewController: UIViewController {
         tapRecognizer.numberOfTouchesRequired = 1
         header.addGestureRecognizer(tapRecognizer)
         
-        self.doMoviesDownload(page: currentPage)
+        fetchMovies(page: 1)
     }
 
     override func didReceiveMemoryWarning() {
@@ -62,31 +61,6 @@ class MoviesViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        cancelAllJsonDownloadTasks()
-    }
-
-
-    
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-        
-        //NowPlayingSummaryToDetailPushSegue
-        
-        dlog("segue: \(String(describing: segue.identifier)) sender: \(String(describing: sender))")
-        guard let segueId = segue.identifier else {
-            return
-        }
-        
-        if segueId == "NowPlayingSummaryToDetailPushSegue",
-            let movieSummary: MovieSummary = sender as? MovieSummary,
-            let destVc = segue.destination as? MovieDetailViewController {
-                destVc.movieSummary = movieSummary
-            self.navigationController?.show(destVc, sender: self)
-        }
     }
     
     @objc func handleTap(gestureRecognizer: UIGestureRecognizer)
@@ -96,7 +70,7 @@ class MoviesViewController: UIViewController {
         moviesTableView.reloadData()
     }
     
-    //MARK: - JsonDownloader
+    //MARK: - Network
     @objc func refreshControlAction(refreshControl: UIRefreshControl) {
         dlog("");
         if searchActive {
@@ -106,7 +80,7 @@ class MoviesViewController: UIViewController {
         }
         if downloadIsInProgress { return }
         currentPage = 1
-        doMoviesDownload(page: 1)
+        fetchMovies(page: 1)
     }
 
     fileprivate func beginDownload() {
@@ -128,114 +102,48 @@ class MoviesViewController: UIViewController {
         
     }
     
-    fileprivate func doMoviesDownload(page: Int = 1) {
+    fileprivate func fetchMovies(page: Int = 1) {
         
         if downloadIsInProgress || searchActive { return }
-        if page > 1 && page >= totalPages { return }
+        //if page > 1 && page >= totalPages { return }
         
         isNetworkErrorShowing = false
         header.textLabel?.text = ""
         downloadIsInProgress = true
         beginDownload()
         
-        let currentlyPlayingUrlString = theMovieDbSecureBaseUrl + endpointPath + "?" + theMovieDbApiKeyParam + "&page=" + String(page)
-        cancelJsonDownloadTask(urlString: currentlyPlayingUrlString)
-
-        if let task: URLSessionDataTask = jsonDownloader.doDownload(
-            urlString: currentlyPlayingUrlString,
-            completion:
-            { [weak self] (json: [String:AnyObject]?, response: HTTPURLResponse?, error: NSError?) in
-                guard let weakself = self else { return }
-                
-                weakself.endDownload()
-                weakself.downloadIsInProgress = false
-                
-                if error != nil {
-                    dlog("err: \(String(describing: error))")
-                    weakself.isNetworkErrorShowing = true
-                    weakself.moviesTableView.reloadData()
+        let params = ["page" : page as AnyObject]
+        
+        httpClient.fetchNowPlayingMovieList(params: params, completion:
+        { [weak self] (movieResults: MovieResults?, error: NSError?) in
+            guard let strongself = self else { return }
+            
+            strongself.endDownload()
+            strongself.downloadIsInProgress = false
+            
+            if error != nil {
+                dlog("err: \(String(describing: error))")
+                strongself.isNetworkErrorShowing = true
+                strongself.moviesTableView.reloadData()
+            }
+            else if let results = movieResults {
+                strongself.currentPage = page
+            
+                if strongself.currentPage > 1 {
+                    strongself.moviesArray += results.movies
                 }
                 else {
-                    
-                    if let jsonObj = json,
-                        let results = jsonObj["results"] as? NSArray {
-                        var resultsArray: [MovieSummary] = []
-                        
-                        if let count = jsonObj["total_results"] as? Int {
-                            weakself.totalCount = count
-                        }
-                        
-                        if let pageCount = jsonObj["total_pages"] as? Int {
-                            weakself.totalPages = pageCount
-                        }
-                        
-                        if let page = jsonObj["page"] as? Int {
-                            if page != weakself.currentPage {
-                                dlog("page: \(page) != currentPage: \(weakself.currentPage)")
-                            }
-                        }
-                        
-                        dlog("got json for page: \(weakself.currentPage) of: \(weakself.totalPages) for: \(weakself.totalCount) movie summaries")
-                        
-                        for movieObj in results {
-                            if let movieDict: NSDictionary = movieObj as? NSDictionary{
-                                let movieSummary: MovieSummary = MovieSummary(jsonDict: movieDict)
-                                resultsArray.append(movieSummary)
-                                dlog("summary: \(movieSummary.title), genres: \(movieSummary.genreNames)")
-                            }
-                        }
-                        weakself.currentPage = page
-
-                        if weakself.currentPage > 1 {
-                            weakself.moviesArray += resultsArray
-                        }
-                        else {
-                            weakself.moviesArray = resultsArray
-                        }
-                        weakself.moviesTableView.reloadData()
-                    }
-                    else {
-                        dlog("no json")
-                        weakself.isNetworkErrorShowing = true
-                        weakself.moviesTableView.reloadData()
-                    }
+                    strongself.moviesArray = results.movies
                 }
-                if let foundResponse = response, let urlString = foundResponse.url?.absoluteString {
-                    dlog("remove task url from dict: \(urlString)")
-                    weakself.downloadTaskDict[urlString] = nil
-                }
-            })
-            {
-                downloadTaskDict[currentlyPlayingUrlString] = task
-                task.resume()
+                strongself.moviesTableView.reloadData()
             }
+        })
     }
-    
-    fileprivate func cancelJsonDownloadTask(urlString: String)
-    {
-        if let currentDowloadTask: URLSessionDataTask = downloadTaskDict[urlString] {
-            currentDowloadTask.cancel()
-            downloadTaskDict[urlString] = nil
-            UIApplication.shared.isNetworkActivityIndicatorVisible = false
-        }
-
-    }
-    
-    fileprivate func cancelAllJsonDownloadTasks()
-    {
-        for (_, task) in downloadTaskDict {
-            task.cancel()
-        }
-        downloadTaskDict.removeAll()
-        UIApplication.shared.isNetworkActivityIndicatorVisible = false
-    }
-
 }
 
 //MARK: - UITableViewDelegate
 extension MoviesViewController: UITableViewDelegate
 {
-    
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableView.automaticDimension
     }
@@ -248,14 +156,14 @@ extension MoviesViewController: UITableViewDelegate
         dlog("row: \(indexPath.row)")
         tableView.deselectRow(at: indexPath, animated: true)
         
-        var movieSummary: MovieSummary!
+        var movie: Movie!
         if searchActive {
-            movieSummary = filteredMoviesArray[indexPath.row]
+            movie = filteredMoviesArray[indexPath.row]
         }
         else {
-            movieSummary = moviesArray[indexPath.row]
+            movie = moviesArray[indexPath.row]
         }
-        self.didSelectDetail?(movieSummary)
+        self.didSelectMovieDetail?(movie)
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -276,13 +184,12 @@ extension MoviesViewController: UITableViewDelegate
             footer.addSubview(spinner)
             tableView.tableFooterView = footer
             
-            doMoviesDownload(page: currentPage + 1)
+            fetchMovies(page: currentPage + 1)
         }
         
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        dlog("");
         if isNetworkErrorShowing {
             return 44.0;
         }
@@ -318,7 +225,7 @@ extension MoviesViewController: UITableViewDataSource
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "MovieSummaryCell") as? MovieSummaryTableViewCell else {
             return UITableViewCell()
         }
-        var movieSummary: MovieSummary! = nil
+        var movieSummary: Movie! = nil
         if searchActive {
             movieSummary = filteredMoviesArray[indexPath.row]
         }

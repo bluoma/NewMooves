@@ -10,99 +10,58 @@
 
 import UIKit
 
-class MovieDetail: CustomStringConvertible, CustomDebugStringConvertible {
+struct MovieDetail: Codable, CustomStringConvertible, CustomDebugStringConvertible {
     
+    let tagline: String
+    let runtime: Int
+    let homepage: String
     
-    var tagline: String = ""
-    var runtime: Int = 0
-    var homepage: String = ""
-    var genres: [String] = []
-    
-    
-    init() {
-        
+    enum CodingKeys: String, CodingKey {
+        case tagline
+        case runtime
+        case homepage
     }
-    
-    convenience init(jsonDict: NSDictionary) {
-        self.init()
-    
-        if let runtime = jsonDict["runtime"] as? Int {
-            self.runtime = runtime
-        }
-        if let tagline = jsonDict["tagline"] as? String {
-            self.tagline = tagline
-        }
-        if let homepage = jsonDict["homepage"] as? String {
-            self.homepage = homepage
-        }
-        if let genres = jsonDict["genres"] as? [[String:AnyObject]] {
-            for genre in genres {
-                
-                if let genreName = genre["name"] as? String {
-                    self.genres.append(genreName)
-                }
-            }
-        }
-    }
-
     
     var description: String {
-        return "tagline: \(tagline), runningTime: \(runtime), genres: \(genres), homepage: \(homepage)"
+        return "tagline: \(tagline), runningTime: \(runtime), homepage: \(homepage)"
     }
     
     var debugDescription: String {
-        return "tagline: \(tagline), runningTime: \(runtime), genres: \(genres), homepage: \(homepage)"
+        return "tagline: \(tagline), runningTime: \(runtime), homepage: \(homepage)"
     }
 
 }
 
-class MovieVideo: CustomStringConvertible, CustomDebugStringConvertible {
+struct MovieVideoResults: Codable {
+    let videos: [MovieVideo]
     
-    var videoId: String = ""
-    var language: String = "en" //"iso_639_1"
-    var region: String = "US"   //"iso_3166_1"
-    var key: String = ""
-    var name: String = ""
-    var site: String = ""
-    var size: Int = -1
-    var type: String = "Trailer"
-    
-    
-    init() {
-        
+     enum CodingKeys: String, CodingKey {
+        case videos = "results"
     }
+}
+
+struct MovieVideo: Codable, CustomStringConvertible, CustomDebugStringConvertible {
     
-    convenience init(jsonDict: NSDictionary) {
-        self.init()
-        
-        if let videoId = jsonDict["id"] as? String {
-            self.videoId = videoId
-        }
-        if let language = jsonDict["iso_639_1"] as? String {
-            self.language = language
-        }
-        if let region = jsonDict["iso_3166_1"] as? String {
-            self.region = region
-        }
-        if let key = jsonDict["key"] as? String {
-            self.key = key
-        }
-        if let name = jsonDict["name"] as? String {
-            self.name = name
-        }
-        if let site = jsonDict["site"] as? String {
-            self.site = site
-        }
-        if let size = jsonDict["size"] as? Int {
-            self.size = size
-        }
-        if let type = jsonDict["type"] as? String {
-            self.type = type
-        }
-       
+    let videoId: String
+    let language: String //"iso_639_1"
+    let region: String   //"iso_3166_1"
+    let key: String
+    let name: String
+    let site: String
+    let size: Int
+    let type: String
+    
+   
+    enum CodingKeys: String, CodingKey {
+        case videoId = "id"
+        case language = "iso_639_1"
+        case region = "iso_3166_1"
+        case key
+        case name
+        case site
+        case size
+        case type
     }
-    
-    
     var description: String {
         return "site: \(site), key: \(key), name: \(name)"
     }
@@ -113,107 +72,91 @@ class MovieVideo: CustomStringConvertible, CustomDebugStringConvertible {
     
 }
 
-class MovieSummary: CustomStringConvertible, CustomDebugStringConvertible {
-
-    var movieId: Int = -1
-    var title: String = ""
-    var adult: Bool = false
-    var overview: String = ""
-    var releaseDateString: String = ""
-    var releaseDate: Date?
-    var genreNames: [String] = []
-    var genreIds: [Int] = [] {
-        didSet {
-            genreNames.removeAll()
-            for genreId in genreIds {
-                if let genreName = genreMap[genreId] {
-                    genreNames.append(genreName)
-                }
-            }
-        }
-    }
-    var originalTitle: String = ""
-    var originalLanguage: String = ""
-    var posterPath: String = ""
-    var backdropPath: String = ""
-    var popularity: Double = 0.0
-    var voteCount: Int = 0
-    var video: Bool = false
-    var voteAverage: Double = 0.0
-    var movieDetail: MovieDetail? = nil
+//we want this by reference
+class Movie: Codable, CustomStringConvertible, CustomDebugStringConvertible {
+    
+    let movieId: Int
+    let title: String
+    let adult: Bool
+    let overview: String
+    let releaseDate: Date
+    let originalTitle: String
+    let originalLanguage: String
+    let posterPath: String
+    let backdropPath: String
+    let popularity: Double
+    let voteCount: Int
+    let video: Bool
+    let voteAverage: Double
+    let genreIds: [Int]
+    
+    //set manually
+    var movieDetail: MovieDetail?
     var movieVideos: [MovieVideo] = []
-    var dateFormatter = DateFormatter()
     
-    init() {
-        dateFormatter.dateFormat = "YYYY-MM-dd"
-    }
+    //calculated
+    var genreNames: [String] = []
     
-    convenience init(jsonDict: NSDictionary) {
-        self.init()
-        
-        //dlog("jsonDict: \(jsonDict)")
-        
-        if let movieId = jsonDict["id"] as? Int {
-            self.movieId = movieId
-        }
-        if let title = jsonDict["title"] as? String {
-            self.title = title
-        }
-        if let adult = jsonDict["adult"] as? String {
-            self.adult = NSString(string: adult).boolValue
-        }
-        if let overview = jsonDict["overview"] as? String {
-            self.overview = overview
-        }
-        if let releaseDate = jsonDict["release_date"] as? String {
-            self.releaseDateString = releaseDate
-            self.releaseDate = dateFormatter.date(from: releaseDateString)
-        }
-        if let genreIds = jsonDict["genre_ids"] as? [Int] {
-            self.genreIds = genreIds
-            genreNames.removeAll()
-            for genreId in genreIds {
-                if let genreName = genreMap[genreId] {
-                    genreNames.append(genreName)
-                }
+    func populateGenres() {
+        var genreNames: [String] = []
+        for genreId in self.genreIds {
+            if let genreName = genreMap[genreId] {
+                genreNames.append(genreName)
             }
         }
-        if let originalTitle = jsonDict["original_title"] as? String {
-            self.originalTitle = originalTitle
-        }
-        if let originalLanguage = jsonDict["original_language"] as? String {
-            self.originalLanguage = originalLanguage
-        }
-        if let posterPath = jsonDict["poster_path"] as? String {
-            self.posterPath = posterPath
-        }
-        if let backdropPath = jsonDict["backdrop_path"] as? String {
-            self.backdropPath = backdropPath
-        }
-        if let popularity = jsonDict["popularity"] as? Double {
-            self.popularity = popularity
-        }
-        if let voteCount = jsonDict["vote_count"] as? Int {
-            self.voteCount = voteCount
-        }
-        if let video = jsonDict["video"] as? String {
-            self.video = NSString(string: video).boolValue
-        }
-        if let voteAverage = jsonDict["vote_average"] as? Double {
-            self.voteAverage = voteAverage
-        }
-        
+        self.genreNames = genreNames
     }
     
     var description: String {
-        return "id: \(movieId), title: \(title), postePath: \(posterPath), backdropPath: \(backdropPath), overview: \(overview)"
+        return "title: \(title), genreIds: \(genreIds), genreNames: \(genreNames), releaseDate: \(String(describing: releaseDate))"
     }
     
     var debugDescription: String {
         
-        return "id: \(movieId), title: \(title), postePath: \(posterPath), backdropPath: \(backdropPath), overview: \(overview)"
+        return "title: \(title), genreIds: \(genreIds), genreNames: \(genreNames), releaseDate: \(String(describing: releaseDate))"
     }
     
+    enum CodingKeys: String, CodingKey {
+        
+        case movieId = "id"
+        case title
+        case adult
+        case overview
+        case releaseDate = "release_date"
+        case originalTitle = "original_title"
+        case originalLanguage = "original_language"
+        case posterPath = "poster_path"
+        case backdropPath = "backdrop_path"
+        case popularity
+        case voteCount = "vote_count"
+        case video
+        case voteAverage = "vote_average"
+        case genreIds = "genre_ids"
+    }
+}
+
+struct MovieResults: Codable, CustomStringConvertible, CustomDebugStringConvertible {
+    
+    let totalResults: Int
+    let totalPages: Int
+    let page: Int
+    let movies: [Movie]
+    
+    enum CodingKeys: String, CodingKey {
+        
+        case totalResults = "total_results"
+        case totalPages = "total_pages"
+        case page
+        case movies = "results"
+    }
+    
+    var description: String {
+        return "totalResults: \(totalResults), totalPages: \(totalPages), page: \(page), count: \(movies.count)"
+    }
+    
+    var debugDescription: String {
+        return "totalResults: \(totalResults), totalPages: \(totalPages), page: \(page), count: \(movies.count)"
+    }
 }
 
 
@@ -236,6 +179,37 @@ class MovieSummary: CustomStringConvertible, CustomDebugStringConvertible {
     "video": false,
     "vote_average": 4.63
 }
+ 
+ {
+ "results": [
+ {
+ "popularity": 287.8,
+ "vote_count": 72,
+ "video": false,
+ "poster_path": "/wF6SNPcUrTKFA4fOFfukm7zQ3ob.jpg",
+ "id": 474350,
+ "adult": false,
+ "backdrop_path": "/2V5RR4Ps1i4x7ifjjDvlmrSYzvL.jpg",
+ "original_language": "en",
+ "original_title": "It: Chapter Two",
+ "genre_ids": [
+ 27
+ ],
+ "title": "It: Chapter Two",
+ "vote_average": 7.3,
+ "overview": "27 years after overcoming the malevolent supernatural entity Pennywise, the former members of the Losers' Club, who have grown up and moved away from Derry, are brought back together by a devastating phone call.",
+ "release_date": "2019-09-06"
+ }
+ ],
+ "page": 1,
+ "total_results": 1132,
+ "dates": {
+ "maximum": "2019-09-11",
+ "minimum": "2019-07-25"
+ },
+ "total_pages": 57
+ }
+ 
  
   */
 

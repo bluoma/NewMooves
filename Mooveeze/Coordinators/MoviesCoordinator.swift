@@ -24,31 +24,30 @@ class MoviesCoordinator: BaseRootNavigationCoordinator {
         moviesViewController.title = config.vcTitle
         moviesViewController.endpointPath = config.vcUrlPath
         navVc.viewControllers.append(moviesViewController)
-        moviesViewController.didSelectDetail = moviesViewControllerDidSelectDetail
+        moviesViewController.didSelectMovieDetail = moviesViewControllerDidSelectMovieDetail
 
     }
     
     
-    func moviesViewControllerDidSelectDetail(summary: MovieSummary) {
-        dlog("summary: \(summary)")
+    func moviesViewControllerDidSelectMovieDetail(movie: Movie) {
+        dlog("movie: \(movie)")
         
         guard let detailVc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: String(describing: MovieDetailViewController.self)) as? MovieDetailViewController else {
             fatalError()
         }
-        
-        detailVc.movieSummary = summary
+        detailVc.movie = movie
         detailVc.didSelectVideo = detailViewControllerDidSelectVideo
         navigationController.show(detailVc, sender: self)
     }
     
-    func detailViewControllerDidSelectVideo(index: Int, summary: MovieSummary) {
-        dlog("summary: \(summary)")
+    func detailViewControllerDidSelectVideo(index: Int, movie: Movie) {
+        dlog("summary: \(movie)")
         
         guard let videoVc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: String(describing: MovieVideoWebViewController.self)) as? MovieVideoWebViewController else {
             fatalError()
         }
         
-        videoVc.movieSummary = summary
+        videoVc.movie = movie
         videoVc.videoIndex = index
         navigationController.show(videoVc, sender: self)
     }

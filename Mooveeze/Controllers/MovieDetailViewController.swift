@@ -10,13 +10,7 @@ import UIKit
 import Alamofire
 import AlamofireImage
 
-class MovieDetailViewController: UIViewController, UIScrollViewDelegate, JsonDownloaderDelegate {
-
-    enum DownloadType: String
-    {
-        case movieDetail = "movieDetail"
-        case movieVideos = "movieVideos"
-    }
+class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
     
     @IBOutlet weak var backdropImageView: UIImageView!
     @IBOutlet weak var titleLabel: UILabel!
@@ -30,19 +24,16 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate, JsonDow
     @IBOutlet weak var videosTableView: UITableView!
 
     var dateFormatter = DateFormatter()
-    var movieSummary: MovieSummary!
+    var movie: Movie!
+    let httpClient = MoviesHttpClient()
     
-    var didSelectVideo: ((Int, MovieSummary) -> Void)?
-    
-    var jsonDownloader = JsonDownloader()
-    var downloadTaskDict: [String: URLSessionDataTask] = [:]
-    let videoSegueIdentifier = "DetailToVideoPushSegue"
+    var didSelectVideo: ((Int, Movie) -> Void)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
 
-        self.title = movieSummary.title
+        self.title = movie.title
         
         titleLabel.text = ""
         runningTimeLabel.text = ""
@@ -51,19 +42,18 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate, JsonDow
         runningTimeLabel.text = ""
         releaseDateLabel.text = ""
         
-        overviewLabel.text = movieSummary.overview
+        overviewLabel.text = movie.overview
         overviewLabel.sizeToFit()
         
-        ratingLabel.text = String(movieSummary.voteAverage) + " / 10.00"
-        if let releaseDate = movieSummary.releaseDate {
-            dateFormatter.dateStyle = .medium
-            releaseDateLabel.text = dateFormatter.string(from: releaseDate)
-        }
+        ratingLabel.text = String(movie.voteAverage) + " / 10.00"
+        dateFormatter.dateStyle = .medium
+        releaseDateLabel.text = dateFormatter.string(from: movie.releaseDate)
+        
         
         contentScrollView.contentSize = CGSize(width: contentScrollView.frame.size.width, height: bottomContainerView.frame.origin.y + bottomContainerView.frame.size.height)
         
-        if movieSummary.posterPath.count > 0  {
-            let imageUrlString = theMovieDbSecureBaseImageUrl + "/" + poster_sizes[4] + movieSummary.posterPath
+        if movie.posterPath.count > 0  {
+            let imageUrlString = theMovieDbSecureBaseImageUrl + "/" + poster_sizes[4] + movie.posterPath
             if let imageUrl = URL(string: imageUrlString) {
                 let defaultImage = UIImage(named: "default_poster_image.png")
                 let urlRequest: URLRequest = URLRequest(url:imageUrl)
@@ -96,19 +86,18 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate, JsonDow
             }
         }
         else {
-            dlog("no url for posterPath: \(movieSummary.posterPath)")
+            dlog("no url for posterPath: \(movie.posterPath)")
             let defaultImage = UIImage(named: "default_poster_image.png")
             self.backdropImageView.image = defaultImage
         }
         
         
         
-        if let movieDetails = movieSummary.movieDetail {
-            displayMovieDetails(details: movieDetails)
+        if let movieDetails = movie.movieDetail {
+            displayMovieDetails(detail: movieDetails)
         }
         else {
-            jsonDownloader.delegate = self
-            doDownload()
+            fetchMovieDetail()
         }
         self.videosTableView.backgroundColor = .clear
         self.videosTableView.separatorStyle = .singleLine
@@ -122,9 +111,8 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate, JsonDow
         blurView.alpha = 0.75
         self.videosTableView.backgroundView = blurView
         
-        if movieSummary.movieVideos.isEmpty
-        {
-            doVideoDownload()
+        if movie.movieVideos.isEmpty {
+            fetchMovieVideos()
         }
     }
     
@@ -143,7 +131,6 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate, JsonDow
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        cancelAllJsonDownloadTasks()
     }
 
 
@@ -151,28 +138,6 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate, JsonDow
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
-
-    
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-        
-        guard let segueIdentifier = segue.identifier else { return }
-        
-        if segueIdentifier == self.videoSegueIdentifier, let indexPath = sender as? IndexPath,
-            let dest = segue.destination as? MovieVideoWebViewController {
-            
-            dest.videoIndex = indexPath.row
-            dest.movieSummary = self.movieSummary
-            
-        }
-    }
-    
-
         
     //MARK: - UIScrollViewDelegate
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -189,114 +154,54 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate, JsonDow
     
     
     //MARK: - JsonDownloader
-    
-    func doDownload() {
-        let baseUrl = theMovieDbSecureBaseUrl + theMovieDbMovieDetailPath + "/"
-        let movieDetailUrlString = baseUrl + String(movieSummary.movieId) + "?" + theMovieDbApiKeyParam
-        cancelJsonDownloadTask(urlString: movieDetailUrlString)
-        if let task: URLSessionDataTask = jsonDownloader.doDownload(urlString: movieDetailUrlString) {
-            UIApplication.shared.isNetworkActivityIndicatorVisible = true
-            task.taskDescription = DownloadType.movieDetail.rawValue
-            downloadTaskDict[movieDetailUrlString] = task
-        }
+    func fetchMovieDetail() {
         
-    }
-    
-    func doVideoDownload() {
-        let baseUrl = theMovieDbSecureBaseUrl + theMovieDbMovieDetailPath + "/"
-        let movieVideoUrlString = baseUrl + String(movieSummary.movieId) + theMovieDbMovieVideoPath + "?" + theMovieDbApiKeyParam
-        cancelJsonDownloadTask(urlString: movieVideoUrlString)
-        if let task: URLSessionDataTask = jsonDownloader.doDownload(urlString: movieVideoUrlString) {
-            UIApplication.shared.isNetworkActivityIndicatorVisible = true
-            task.taskDescription = DownloadType.movieVideos.rawValue
-            downloadTaskDict[movieVideoUrlString] = task
-        }
+        UIApplication.shared.isNetworkActivityIndicatorVisible = true
         
-    }
-    
-    func jsonDownloaderDidFinish(downloader: JsonDownloader, json: [String: AnyObject]?, response: HTTPURLResponse, error: NSError?)
-    {
-        UIApplication.shared.isNetworkActivityIndicatorVisible = false
-        
-        guard let urlString = response.url?.absoluteString,
-            let task = downloadTaskDict[urlString] else {
-            dlog("no url/task from response: \(response)")
-            return
-        }
-        
-        dlog("url from response: \(urlString)")
-        
-        
-        if error != nil {
-            dlog("err: \(String(describing: error))")
+        let params = ["movieId": movie.movieId as AnyObject]
+        httpClient.fetchMovieDetail(params: params, completion:
+        { [weak self] (detail: MovieDetail?, error: NSError?) -> Void in
             
-        }
-        else {
-                    
-            if let jsonObj: [String:AnyObject] = json,
-                let taskDescription = task.taskDescription,
-                let downloadType = DownloadType(rawValue: taskDescription) {
-                dlog("jsonObj: \(type(of:jsonObj)), type: \(downloadType)")
-                
-                switch downloadType
-                {
-                case .movieDetail:
-                    let movieDetail = MovieDetail(jsonDict: jsonObj as NSDictionary)
-                    
-                    dlog("movieDetail: \(movieDetail)")
-                    
-                    self.movieSummary.movieDetail = movieDetail
-                    self.displayMovieDetails(details: movieDetail)
-                    
-                case .movieVideos:
-                    let movieVideosWrapper = jsonObj as NSDictionary
-                    if let videos = movieVideosWrapper["results"] as? NSArray {
-                    
-                        dlog("movieVIdeos: \(videos)")
-                        var videoArray: [MovieVideo] = []
-                        for videoJson in videos {
-                            if let videoDict = videoJson as? NSDictionary {
-                                let video = MovieVideo(jsonDict: videoDict)
-                                videoArray.append(video)
-                            }
-                        }
-                        if !videoArray.isEmpty {
-                            self.movieSummary.movieVideos = videoArray
-                            dlog("videoArray: \(videoArray)")
-                            self.videosTableView.reloadData()
-                        }
-                    }
-                }
+            UIApplication.shared.isNetworkActivityIndicatorVisible = false
+            guard let strongself = self else { return }
+            
+            if error != nil {
+                dlog("err: \(String(describing: error))")
+                strongself.movie.movieDetail = detail
+                strongself.displayMovieDetails(detail: detail)
             }
             else {
-                dlog("no json or task description")
-                
+                strongself.movie.movieDetail = detail
             }
-        }
-        downloadTaskDict[urlString] = nil
-        
+        })
     }
     
-    func cancelJsonDownloadTask(urlString: String)
-    {
-        if let currentDowloadTask: URLSessionDataTask = downloadTaskDict[urlString] {
-            currentDowloadTask.cancel()
-            downloadTaskDict[urlString] = nil
+    func fetchMovieVideos() {
+        UIApplication.shared.isNetworkActivityIndicatorVisible = true
+        
+        let params = ["movieId": movie.movieId as AnyObject]
+        httpClient.fetchMovieVideos(params: params, completion:
+        { [weak self] (videos: [MovieVideo], error: NSError?) -> Void in
+            
             UIApplication.shared.isNetworkActivityIndicatorVisible = false
-        }
+            guard let strongself = self else { return }
+            
+            if error != nil {
+                dlog("err: \(String(describing: error))")
+            }
+            else {
+                strongself.movie.movieVideos = videos
+                strongself.videosTableView.reloadData()
+            }
+        })
+    }
+    
+    func displayMovieDetails(detail: MovieDetail?) -> Void {
         
-    }
-    
-    func cancelAllJsonDownloadTasks()
-    {
-        for (_, task) in downloadTaskDict {
-            task.cancel()
+        guard let details = detail else {
+            //TODO handle empty state
+            return
         }
-        downloadTaskDict.removeAll()
-        UIApplication.shared.isNetworkActivityIndicatorVisible = false
-    }
-    
-    func displayMovieDetails(details: MovieDetail) -> Void {
         
         if details.runtime > 0 {
             let hours = details.runtime / 60
@@ -312,34 +217,26 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate, JsonDow
                 self.titleLabel.alpha = 1.0
             })
         }
-        if details.genres.count > 0 {
-            genreLabel.text = details.genres.first
+        if movie.genreNames.count > 0 {
+            genreLabel.text = movie.genreNames.first
         }
     }
 }
 
 //MARK: - UITableViewDataSource
-extension MovieDetailViewController: UITableViewDataSource
-{
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
-    {
-        if let summary = self.movieSummary {
-            return summary.movieVideos.count
-        }
-        return 0
+extension MovieDetailViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return movie.movieVideos.count
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
-    {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cellIdentifier = String(describing: MovieDetailVideoTableViewCell.self)
         
-        guard let summary = self.movieSummary,
-            let videoCell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as? MovieDetailVideoTableViewCell else {
+        guard let videoCell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as? MovieDetailVideoTableViewCell else {
                 return UITableViewCell()
         }
         
-        let video = summary.movieVideos[indexPath.row]
+        let video = movie.movieVideos[indexPath.row]
         
         videoCell.videoSiteLabel.text = video.site + " " + video.type
         videoCell.videoTitleLabel.text = video.name
@@ -351,19 +248,15 @@ extension MovieDetailViewController: UITableViewDataSource
 //MARK: - UITableViewDataDelegate
 extension MovieDetailViewController: UITableViewDelegate
 {
-
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
-    {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 64.0
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
-    {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         dlog("row: \(indexPath.row)")
         tableView.deselectRow(at: indexPath, animated: true)
         
-        self.didSelectVideo?(indexPath.row, self.movieSummary)
-        
+        self.didSelectVideo?(indexPath.row, self.movie)
     }
     
 }
