@@ -62,9 +62,10 @@ class MoviesHttpClient {
     
     func fetchMovieDetail(params: [String: AnyObject], completion: @escaping ((MovieDetail?, NSError?) -> Void)) {
         
-        var movieId = 1
-        if let foundmovieId = params["movieId"] as? Int {
-            movieId = foundmovieId
+        guard let movieId = params["movieId"] as? Int else {
+            let error = generateError(withCode: -400, msg: "no movieId")
+            completion(nil, error)
+            return
         }
         
         let baseUrl = theMovieDbSecureBaseUrl + theMovieDbMovieDetailPath + "/"
@@ -102,9 +103,11 @@ class MoviesHttpClient {
     }
     
     func fetchMovieVideos(params: [String: AnyObject], completion: @escaping (([MovieVideo], NSError?) -> Void)) {
-        var movieId = 1
-        if let foundmovieId = params["movieId"] as? Int {
-            movieId = foundmovieId
+        
+        guard let movieId = params["movieId"] as? Int else {
+            let error = generateError(withCode: -400, msg: "no movieId")
+            completion([], error)
+            return
         }
         
         let baseUrl = theMovieDbSecureBaseUrl + theMovieDbMovieDetailPath + "/"
@@ -117,28 +120,69 @@ class MoviesHttpClient {
         }
         
         jsonService.doGet(url: url, completion:
-            { [weak self] (data: Data?, response: HTTPURLResponse?, error: NSError?) in
-                guard let _ = self else { return }
-                
-                if error != nil {
-                    dlog("err: \(String(describing: error))")
-                    completion([], error)
+        { [weak self] (data: Data?, response: HTTPURLResponse?, error: NSError?) in
+            guard let _ = self else { return }
+            
+            if error != nil {
+                dlog("err: \(String(describing: error))")
+                completion([], error)
+            }
+            else if let foundData = data {
+                do {
+                    let decoder = JSONDecoder()
+                    let videoResuls: MovieVideoResults = try decoder.decode(MovieVideoResults.self, from: foundData)
+                    
+                    dlog("videos: \(videoResuls.videos)")
+                    completion(videoResuls.videos, nil)
                 }
-                else if let foundData = data {
-                    do {
-                        let decoder = JSONDecoder()
-                        let videoResuls: MovieVideoResults = try decoder.decode(MovieVideoResults.self, from: foundData)
-                        
-                        dlog("videos: \(videoResuls.videos)")
-                        completion(videoResuls.videos, nil)
-                    }
-                    catch {
-                        completion([], error as NSError)
-                    }
+                catch {
+                    completion([], error as NSError)
                 }
-                else {
-                    completion([], generateError(withCode: -404, msg: "no data or error"))
+            }
+            else {
+                completion([], generateError(withCode: -404, msg: "no data or error"))
+            }
+        })
+    }
+    
+    func fetchUserProfile(params: [String: AnyObject], completion: @escaping ((UserProfile?, NSError?) -> Void)) {
+        
+        guard let localSessionId = params["sessionId"] as? String else {
+            let error = generateError(withCode: -400, msg: "no sessionId")
+            completion(nil, error)
+            return
+        }
+        
+        let urlString = theMovieDbSecureBaseUrl + theMovieDbProfilePath + "?" + theMovieDbApiKeyParam + "&" + theMovieDbSessionKeyName + "=" + localSessionId
+        
+        guard let url = URL(string: urlString) else {
+            let error = generateError(withCode: -400, msg: "url error: \(urlString)")
+            completion(nil, error)
+            return
+        }
+        
+        jsonService.doGet(url: url, completion:
+        { [weak self] (data: Data?, response: HTTPURLResponse?, error: NSError?) in
+            guard let _ = self else { return }
+            
+            if error != nil {
+                dlog("err: \(String(describing: error))")
+                completion(nil, error)
+            }
+            else if let foundData = data {
+                do {
+                    let decoder = JSONDecoder()
+                    let profile: UserProfile = try decoder.decode(UserProfile.self, from: foundData)
+                    dlog("profile: \(profile)")
+                    completion(profile, nil)
                 }
+                catch {
+                    completion(nil, error as NSError)
+                }
+            }
+            else {
+                completion(nil, generateError(withCode: -404, msg: "no data or error"))
+            }
         })
     }
 }

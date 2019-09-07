@@ -153,7 +153,7 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
     }
     
     
-    //MARK: - JsonDownloader
+    //MARK: - Network
     func fetchMovieDetail() {
         
         UIApplication.shared.isNetworkActivityIndicatorVisible = true

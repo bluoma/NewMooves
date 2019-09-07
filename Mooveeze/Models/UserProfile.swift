@@ -8,7 +8,7 @@
 
 import Foundation
 
-class UserProfile: CustomStringConvertible, CustomDebugStringConvertible {
+struct UserProfile: Codable, CustomStringConvertible, CustomDebugStringConvertible {
 
     /*
      {
@@ -26,47 +26,45 @@ class UserProfile: CustomStringConvertible, CustomDebugStringConvertible {
      }
     */
     
-    var avatarHash: String = ""
-    var profileId: Int = -1
-    var language: String = ""
-    var location: String = ""
-    var fullname = ""
-    var includeAdult: Bool = true
-    var username: String = ""
-
-    
-    convenience init(jsonDict: NSDictionary) {
-        self.init()
+    struct Avatar: Codable {
+        struct Gravatar: Codable {
+            let hash: String
+            
+            enum CodingKeys: String, CodingKey {
+                case hash
+            }
+        }
+        let gravatar: Gravatar
         
-        if let profileId = jsonDict["id"] as? Int {
-            self.profileId = profileId
+        enum CodingKeys: String, CodingKey {
+            case gravatar
         }
-        if let avatarHash = jsonDict.value(forKeyPath: "avatar.gavatar.hash") as? String {
-            self.avatarHash = avatarHash
-        }
-        if let language = jsonDict["iso_639_1"] as? String {
-            self.language = language
-        }
-        if let location = jsonDict["iso_3166_1"] as? String {
-            self.location = location
-        }
-        if let fullname = jsonDict["name"] as? String {
-            self.fullname = fullname
-        }
-        if let includeAdult = jsonDict["include_adult"] as? Bool {
-            self.includeAdult = includeAdult
-        }
-        if let username = jsonDict["username"] as? String {
-            self.username = username
-        }
+    }
+    let avatar: Avatar
+    let profileId: Int
+    let language: String
+    let region: String
+    let fullname: String
+    let includeAdult: Bool
+    let username: String
+
+    enum CodingKeys: String, CodingKey {
+        
+        case avatar
+        case profileId = "id"
+        case language = "iso_639_1"
+        case region = "iso_3166_1"
+        case fullname = "name"
+        case includeAdult = "include_adult"
+        case username
     }
     
     var description: String {
-        return "profileId: \(profileId), fullname: \(fullname), username: \(username)"
+        return "profileId: \(profileId), hash: \(avatar.gravatar.hash), username: \(username)"
     }
     
     var debugDescription: String {
-        return "profileId: \(profileId), fullname: \(fullname), username: \(username)"
+        return "profileId: \(profileId), hash: \(avatar.gravatar.hash), username: \(username)"
     }
 
 }

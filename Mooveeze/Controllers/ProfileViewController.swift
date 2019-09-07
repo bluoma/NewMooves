@@ -8,21 +8,15 @@
 
 import UIKit
 
-class ProfileViewController: UIViewController, JsonDownloaderDelegate {
+class ProfileViewController: UIViewController {
 
-    enum DownloadType: String
-    {
-        case profile = "profile"
-    }
-    
     @IBOutlet weak var statusLabel: UILabel!
     @IBOutlet weak var emptyStateView: UIView!
     @IBOutlet weak var loginButton: UIButton!
     @IBOutlet weak var createAccountButton: UIButton!
     
+    var httpClient = MoviesHttpClient()
     var downloadIsInProgress: Bool = false
-    var jsonDownloader = JsonDownloader()
-    var downloadTaskDict: [String: URLSessionDataTask] = [:]
     var endpointPath: String = theMovieDbProfilePath
     var userProfile: UserProfile?
     
@@ -46,88 +40,41 @@ class ProfileViewController: UIViewController, JsonDownloaderDelegate {
         
         dlog("")
         if let foundSessionId = sessionId, userProfile == nil {
-            
             dlog("foundSessionId: \(foundSessionId), getAccount")
-
-            jsonDownloader.delegate = self
-            doDownload()
-            
+            fetchUserProfile()
         }
     }
     
-
-    func doDownload() {
-        
+    //MARK: - Network
+    func fetchUserProfile() {
         guard let foundSessionId = sessionId else { return }
         if downloadIsInProgress { return }
         
-        let urlString = theMovieDbSecureBaseUrl + endpointPath + "?" + theMovieDbApiKeyParam + "&" + theMovieDbSessionKeyName + "=" + foundSessionId
-        cancelJsonDownloadTask(urlString: urlString)
-        if let task: URLSessionDataTask = jsonDownloader.doDownload(urlString: urlString) {
-            UIApplication.shared.isNetworkActivityIndicatorVisible = true
-            task.taskDescription = DownloadType.profile.rawValue
-            downloadTaskDict[urlString] = task
-        }
+        UIApplication.shared.isNetworkActivityIndicatorVisible = true
         
-    }
-    
-    func jsonDownloaderDidFinish(downloader: JsonDownloader, json: [String: AnyObject]?, response: HTTPURLResponse, error: NSError?)
-    {
-        UIApplication.shared.isNetworkActivityIndicatorVisible = false
+        let params: [String: AnyObject] = ["sessionId": foundSessionId as AnyObject]
         
-        guard let urlString = response.url?.absoluteString,
-            let task = downloadTaskDict[urlString] else {
-                dlog("no url/task from response: \(response)")
-                return
-        }
-        downloadTaskDict[urlString] = nil
-        
-        dlog("url from response: \(urlString)")
-        
-        
-        if error != nil {
-            dlog("err: \(String(describing: error))")
+        httpClient.fetchUserProfile(params: params, completion:
+        { [weak self] (profile: UserProfile?, error: NSError?) -> Void in
             
-        }
-        else {
-            
-            if let jsonObj: [String:AnyObject] = json,
-                let taskDescription = task.taskDescription,
-                let downloadType = DownloadType(rawValue: taskDescription) {
-                dlog("jsonObj: \(type(of:jsonObj)), type: \(downloadType), json: \n\(jsonObj)")
-                
-                switch downloadType
-                {
-                case .profile:
-                    let userProfile = UserProfile(jsonDict: jsonObj as NSDictionary)
-                    self.userProfile = userProfile
-                    self.title = userProfile.username
-                    self.emptyStateView.isHidden = true
-                    dlog("userProfile: \(userProfile)")
-                }
-            }
-        }
-    }
-    
-    func cancelJsonDownloadTask(urlString: String)
-    {
-        if let currentDowloadTask: URLSessionDataTask = downloadTaskDict[urlString] {
-            currentDowloadTask.cancel()
-            downloadTaskDict[urlString] = nil
             UIApplication.shared.isNetworkActivityIndicatorVisible = false
-        }
-        
+            guard let strongself = self else { return }
+            
+            if error != nil {
+                dlog("err: \(String(describing: error))")
+            }
+            else if let foundProfile = profile {
+                dlog("profile: \(foundProfile)")
+                strongself.userProfile = foundProfile
+                let hash = foundProfile.avatar.gravatar.hash
+                strongself.title = foundProfile.username + hash
+                strongself.emptyStateView.isHidden = true
+            }
+            else {
+                dlog("no error, no profile...?")
+            }
+        })
     }
-    
-    func cancelAllJsonDownloadTasks()
-    {
-        for (_, task) in downloadTaskDict {
-            task.cancel()
-        }
-        downloadTaskDict.removeAll()
-        UIApplication.shared.isNetworkActivityIndicatorVisible = false
-    }
-    
     
     @IBAction func loginButtonPressed(_ sender: UIButton) {
         dlog("")
