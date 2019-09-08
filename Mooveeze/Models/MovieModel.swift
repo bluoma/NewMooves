@@ -82,8 +82,8 @@ class Movie: Codable, CustomStringConvertible, CustomDebugStringConvertible {
     let releaseDate: Date
     let originalTitle: String
     let originalLanguage: String
-    let posterPath: String
-    let backdropPath: String
+    let posterPath: String?
+    let backdropPath: String?
     let popularity: Double
     let voteCount: Int
     let video: Bool
@@ -107,15 +107,6 @@ class Movie: Codable, CustomStringConvertible, CustomDebugStringConvertible {
         self.genreNames = genreNames
     }
     
-    var description: String {
-        return "title: \(title), genreIds: \(genreIds), genreNames: \(genreNames), releaseDate: \(String(describing: releaseDate))"
-    }
-    
-    var debugDescription: String {
-        
-        return "title: \(title), genreIds: \(genreIds), genreNames: \(genreNames), releaseDate: \(String(describing: releaseDate))"
-    }
-    
     enum CodingKeys: String, CodingKey {
         
         case movieId = "id"
@@ -132,6 +123,15 @@ class Movie: Codable, CustomStringConvertible, CustomDebugStringConvertible {
         case video
         case voteAverage = "vote_average"
         case genreIds = "genre_ids"
+    }
+    
+    var description: String {
+        return "title: \(title), genreIds: \(genreIds), genreNames: \(genreNames), releaseDate: \(String(describing: releaseDate))"
+    }
+    
+    var debugDescription: String {
+        
+        return "title: \(title), genreIds: \(genreIds), genreNames: \(genreNames), releaseDate: \(String(describing: releaseDate))"
     }
 }
 

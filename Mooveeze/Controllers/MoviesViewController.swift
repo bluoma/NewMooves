@@ -105,7 +105,7 @@ class MoviesViewController: UIViewController {
     fileprivate func fetchMovies(page: Int = 1) {
         
         if downloadIsInProgress || searchActive { return }
-        //if page > 1 && page >= totalPages { return }
+        if page > 1 && page >= totalPages { return }
         
         isNetworkErrorShowing = false
         header.textLabel?.text = ""
@@ -126,7 +126,9 @@ class MoviesViewController: UIViewController {
             }
             else if let results = movieResults {
                 myself.currentPage = page
-            
+                myself.totalCount = results.totalResults
+                myself.totalPages = results.totalPages
+                
                 if myself.currentPage > 1 {
                     myself.moviesArray += results.movies
                 }
@@ -234,8 +236,8 @@ extension MoviesViewController: UITableViewDataSource
         cell.movieTitleLabel.text = movieSummary.title
         cell.movieOverviewLabel.text = movieSummary.overview
         
-        if movieSummary.posterPath.count > 0  {
-            let imageUrlString = Constants.theMovieDbSecureBaseImageUrl + "/" + Constants.poster_sizes[0] + movieSummary.posterPath
+        if let posterPath = movieSummary.posterPath, posterPath.count > 0  {
+            let imageUrlString = Constants.theMovieDbSecureBaseImageUrl + "/" + Constants.poster_sizes[0] + posterPath
             if let imageUrl = URL(string: imageUrlString) {
                 let defaultImage = UIImage(named: "default_movie_thumbnail.png")
                 

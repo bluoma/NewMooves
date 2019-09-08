@@ -53,12 +53,7 @@ class MoviesService {
                     let decoder = JSONDecoder()
                     decoder.dateDecodingStrategy = .formatted(DateFormatter.yyyyMMdd)
                     let results: MovieResults = try decoder.decode(MovieResults.self, from: foundData)
-                    dlog("results: \(results)")
-                    
                     results.movies.forEach { $0.populateGenres() }
-                    
-                    dlog("movies: \(results.movies)")
-
                     completion(results, nil)
                 }
                 catch {

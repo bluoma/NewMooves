@@ -52,8 +52,8 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
         
         contentScrollView.contentSize = CGSize(width: contentScrollView.frame.size.width, height: bottomContainerView.frame.origin.y + bottomContainerView.frame.size.height)
         
-        if movie.posterPath.count > 0  {
-            let imageUrlString = Constants.theMovieDbSecureBaseImageUrl + "/" + Constants.poster_sizes[4] + movie.posterPath
+        if let posterPath = movie.posterPath, posterPath.count > 0  {
+            let imageUrlString = Constants.theMovieDbSecureBaseImageUrl + "/" + Constants.poster_sizes[4] + posterPath
             if let imageUrl = URL(string: imageUrlString) {
                 let defaultImage = UIImage(named: "default_poster_image.png")
                 let urlRequest: URLRequest = URLRequest(url:imageUrl)
