@@ -248,28 +248,30 @@ extension MoviesViewController: UITableViewDataSource
                     withURLRequest: urlRequest,
                     placeholderImage: defaultImage,
                     completion:
-                    { (response: DataResponse<UIImage>) in
+                    { [weak cell] (response: DataResponse<UIImage>) in
+                        
+                        guard let mycell = cell else { return }
                         
                         if let image: UIImage = response.value
                         {
-                            if imageUrlString == cell.moviePosterUrlString {
+                            if imageUrlString == mycell.moviePosterUrlString {
                                 //if response == nil, image came from cache
-                                cell.movieThumbnailImageView.alpha = 0.0
-                                cell.movieThumbnailImageView.image = image
+                                mycell.movieThumbnailImageView.alpha = 0.0
+                                mycell.movieThumbnailImageView.image = image
                                 UIView.animate(withDuration: 0.3, animations:
                                     { () -> Void in
-                                        cell.movieThumbnailImageView.alpha = 1.0
+                                        mycell.movieThumbnailImageView.alpha = 1.0
                                 })
                             }
                             else {
                                 let defaultImage = UIImage(named: "default_movie_thumbnail.png")
-                                cell.movieThumbnailImageView.image = defaultImage
+                                mycell.movieThumbnailImageView.image = defaultImage
                                 dlog("our cell might have been recycled before the image returned, skip")
                             }
                         }
                         else {
                             let defaultImage = UIImage(named: "default_movie_thumbnail.png")
-                            cell.movieThumbnailImageView.image = defaultImage
+                            mycell.movieThumbnailImageView.image = defaultImage
                             dlog("response is not a uiimage")
                         }
                 })

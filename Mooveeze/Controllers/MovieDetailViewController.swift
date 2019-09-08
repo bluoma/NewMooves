@@ -62,22 +62,24 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
                     withURLRequest: urlRequest,
                     placeholderImage: defaultImage,
                     completion:
-                    { (response: DataResponse<UIImage>) in
+                    { [weak self] (response: DataResponse<UIImage>) in
+                        guard let myself = self else { return }
                         dlog("got imagewrapper: \(type(of: response)), response: \(response)")
                         
                         if let image: UIImage = response.value
                         {
-                            self.backdropImageView.alpha = 0.0;
-                            self.backdropImageView.image = image
+                            myself.backdropImageView.alpha = 0.0;
+                            myself.backdropImageView.image = image
                             UIView.animate(withDuration: 0.3, animations:
                             { () -> Void in
-                                self.backdropImageView.alpha = 1.0
+                                myself.backdropImageView.alpha = 1.0
                             })
                         }
                         else {
                             dlog("response is not a uiimage")
                         }
-                })
+                    }
+                )
             }
             else {
                 dlog("bad url for image: \(imageUrlString)")
@@ -86,7 +88,7 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
             }
         }
         else {
-            dlog("no url for posterPath: \(movie.posterPath)")
+            dlog("no url for posterPath: \(String(describing: movie.posterPath))")
             let defaultImage = UIImage(named: "default_poster_image.png")
             self.backdropImageView.image = defaultImage
         }

@@ -75,6 +75,8 @@ public struct Constants {
 
     public static let theMovieDbNowPlayingTitle = "Now Playing"
     public static let theMovieDbTopRatedTitle = "Top Rated"
+    
+    public static let gravatarBaseUrl = "https://secure.gravatar.com/avatar"
 
     public static var sessionId: String? = nil
 

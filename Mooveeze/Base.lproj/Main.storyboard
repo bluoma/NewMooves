@@ -154,11 +154,41 @@
                                     <constraint firstItem="I3N-vR-osf" firstAttribute="top" secondItem="nae-hM-Ka2" secondAttribute="top" id="zZB-R7-mHl"/>
                                 </constraints>
                             </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FX4-L5-dnS" userLabel="ProfileContainer">
+                                <rect key="frame" x="24" y="88" width="366" height="240"/>
+                                <subviews>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="profile_icon" translatesAutoresizingMaskIntoConstraints="NO" id="Xo1-v1-Fzw">
+                                        <rect key="frame" x="12" y="24" width="75" height="75"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="75" id="7sg-As-DUu"/>
+                                            <constraint firstAttribute="width" constant="75" id="T2Q-Bm-I9W"/>
+                                        </constraints>
+                                    </imageView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Username" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1Jd-5q-ii6">
+                                        <rect key="frame" x="99" y="24" width="259" height="20.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="240" id="9tf-mq-W6Q"/>
+                                    <constraint firstAttribute="trailing" secondItem="1Jd-5q-ii6" secondAttribute="trailing" constant="8" id="E8k-Sd-ekQ"/>
+                                    <constraint firstItem="Xo1-v1-Fzw" firstAttribute="top" secondItem="FX4-L5-dnS" secondAttribute="top" constant="24" id="ECS-MQ-7X2"/>
+                                    <constraint firstItem="Xo1-v1-Fzw" firstAttribute="leading" secondItem="FX4-L5-dnS" secondAttribute="leading" constant="12" id="Ge3-kN-Tx9"/>
+                                    <constraint firstItem="1Jd-5q-ii6" firstAttribute="top" secondItem="FX4-L5-dnS" secondAttribute="top" constant="24" id="Lp8-gq-seI"/>
+                                    <constraint firstItem="1Jd-5q-ii6" firstAttribute="leading" secondItem="Xo1-v1-Fzw" secondAttribute="trailing" constant="12" id="qnJ-7f-t4z"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="FX4-L5-dnS" firstAttribute="leading" secondItem="eq0-4I-WHa" secondAttribute="leading" constant="24" id="0bM-4p-bYE"/>
                             <constraint firstItem="nae-hM-Ka2" firstAttribute="centerY" secondItem="q91-EL-pfw" secondAttribute="centerY" id="lWq-5m-AV3"/>
                             <constraint firstItem="nae-hM-Ka2" firstAttribute="centerX" secondItem="q91-EL-pfw" secondAttribute="centerX" id="sXI-Jy-1Jl"/>
+                            <constraint firstItem="eq0-4I-WHa" firstAttribute="trailing" secondItem="FX4-L5-dnS" secondAttribute="trailing" constant="24" id="tda-nM-GWn"/>
+                            <constraint firstItem="FX4-L5-dnS" firstAttribute="top" secondItem="eq0-4I-WHa" secondAttribute="top" constant="44" id="u8G-Z5-R2w"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="eq0-4I-WHa"/>
                     </view>
@@ -166,12 +196,15 @@
                         <outlet property="createAccountButton" destination="1bN-f8-jZN" id="113-oB-EMb"/>
                         <outlet property="emptyStateView" destination="nae-hM-Ka2" id="A2e-av-54O"/>
                         <outlet property="loginButton" destination="Mv1-6D-cel" id="ZDH-Zj-R2A"/>
+                        <outlet property="profileContainer" destination="FX4-L5-dnS" id="zq7-yR-ZUY"/>
                         <outlet property="statusLabel" destination="S9b-Rs-eBc" id="0Vb-nl-wlQ"/>
+                        <outlet property="userAvatar" destination="Xo1-v1-Fzw" id="gCq-7E-oEZ"/>
+                        <outlet property="usernameLabel" destination="1Jd-5q-ii6" id="2Mn-oB-LQ8"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="skp-Qa-Gae" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="423" y="745"/>
+            <point key="canvasLocation" x="421.73913043478262" y="744.64285714285711"/>
         </scene>
         <!--Login-->
         <scene sceneID="5J6-sF-bGL">
@@ -469,4 +502,7 @@
             <point key="canvasLocation" x="2107.2463768115945" y="91.071428571428569"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="profile_icon" width="25" height="25"/>
+    </resources>
 </document>
