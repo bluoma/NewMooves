@@ -21,7 +21,7 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var loginButton: UIButton!
     
     var downloadIsInProgress: Bool = false
-    var httpClient = UserAccountHttpClient()
+    var userService = UserAccountService()
 
     var authToken: String = ""
     var validatedAuthToken: String = ""
@@ -54,21 +54,21 @@ class LoginViewController: UIViewController {
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
         downloadIsInProgress = true
         
-        httpClient.fetchAuthToken { [weak self] (token: String?, error: NSError?) in
+        userService.fetchAuthToken { [weak self] (token: String?, error: NSError?) in
             
-            guard let strongself = self else { return }
-            strongself.downloadIsInProgress = false
+            guard let myself = self else { return }
+            myself.downloadIsInProgress = false
             UIApplication.shared.isNetworkActivityIndicatorVisible = false
 
             if let foundError = error {
-                strongself.loginDidErr?(foundError)
+                myself.loginDidErr?(foundError)
             }
             else if let foundToken = token {
-                strongself.authToken = foundToken
-                strongself.validateAuthToken()
+                myself.authToken = foundToken
+                myself.validateAuthToken()
             }
             else {
-                strongself.loginDidErr?(nil)
+                myself.loginDidErr?(nil)
             }
         }
     }
@@ -79,35 +79,21 @@ class LoginViewController: UIViewController {
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
         downloadIsInProgress = true
         
-        //post
-        /*
-         {
-         "username": "johnny_appleseed",
-         "password": "test123",
-         "request_token": "1531f1a558c8357ce8990cf887ff196e8f5402ec"
-         }
-         */
-        
-        var postDict: [String: AnyObject] = [:]
-        postDict["username"] = username as AnyObject
-        postDict["password"] = password as AnyObject
-        postDict["request_token"] = authToken as AnyObject
-        
-        httpClient.validateAuthToken(body: postDict, completion:
+        userService.validateAuthToken(withAuthToken: authToken, username: username, password: password, completion:
         { [weak self] (validToken: String?, error: NSError?) in
-            guard let strongself = self else { return }
-            strongself.downloadIsInProgress = false
+            guard let myself = self else { return }
+            myself.downloadIsInProgress = false
             UIApplication.shared.isNetworkActivityIndicatorVisible = false
             
             if let foundError = error {
-                strongself.statusLabel.text = foundError.localizedDescription
+                myself.statusLabel.text = foundError.localizedDescription
             }
             else if let foundToken = validToken {
-                strongself.validatedAuthToken = foundToken
-                strongself.createSession()
+                myself.validatedAuthToken = foundToken
+                myself.createSession()
             }
             else {
-                strongself.statusLabel.text = "Login Error"
+                myself.statusLabel.text = "Login Error"
             }
             
         })
@@ -119,27 +105,21 @@ class LoginViewController: UIViewController {
         if downloadIsInProgress { return }
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
         downloadIsInProgress = true
-        //post
-        /*
-         { "request_token": "6bc047b88f669d1fb86574f06381005d93d3517a" }
-        */
-        var postDict: [String: AnyObject] = [:]
-        postDict["request_token"] = validatedAuthToken as AnyObject
         
-        httpClient.createSession(body: postDict, completion:
+        userService.createSession(withValidatedToken: validatedAuthToken, completion:
         { [weak self] (validSessionId: String?, error: NSError?) in
-            guard let strongself = self else { return }
-            strongself.downloadIsInProgress = false
+            guard let myself = self else { return }
+            myself.downloadIsInProgress = false
             UIApplication.shared.isNetworkActivityIndicatorVisible = false
             
             if let foundError = error {
-                strongself.loginDidErr?(foundError)
+                myself.loginDidErr?(foundError)
             }
             else if let foundSessionId = validSessionId {
-               strongself.loginDidSucceed?(foundSessionId)
+               myself.loginDidSucceed?(foundSessionId)
             }
             else {
-                strongself.loginDidErr?(nil)
+                myself.loginDidErr?(nil)
             }
         })
     }

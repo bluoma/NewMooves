@@ -9,20 +9,14 @@
 import Foundation
 
 
-class UserAccountHttpClient {
+class UserAccountService {
     
     let jsonService = JsonHttpService()
     
     
-    func fetchUserProfile(params: [String: AnyObject], completion: @escaping ((UserProfile?, NSError?) -> Void)) {
+    func fetchUserProfile(withSessionId sessionId: String, completion: @escaping ((UserProfile?, NSError?) -> Void)) {
         
-        guard let localSessionId = params["sessionId"] as? String else {
-            let error = generateError(withCode: -400, msg: "no sessionId")
-            completion(nil, error)
-            return
-        }
-        
-        let urlString = Constants.theMovieDbSecureBaseUrl + Constants.theMovieDbProfilePath + "?" + Constants.theMovieDbApiKeyParam + "&" + Constants.theMovieDbSessionKeyName + "=" + localSessionId
+        let urlString = Constants.theMovieDbSecureBaseUrl + Constants.theMovieDbProfilePath + "?" + Constants.theMovieDbApiKeyParam + "&" + Constants.theMovieDbSessionKeyName + "=" + sessionId
         
         guard let url = URL(string: urlString) else {
             let error = generateError(withCode: -400, msg: "url error: \(urlString)")
@@ -95,7 +89,7 @@ class UserAccountHttpClient {
     }
     
     //authtoken plus username and password in body (login)
-    func validateAuthToken(body: [String: AnyObject], completion: @escaping ((String?, NSError?) -> Void)) {
+    func validateAuthToken(withAuthToken authToken: String, username: String, password: String, completion: @escaping ((String?, NSError?) -> Void)) {
         
         //post
         let urlString = Constants.theMovieDbSecureBaseUrl + Constants.theMovieDbAuthTokenValidationPath + "?" + Constants.theMovieDbApiKeyParam
@@ -105,6 +99,11 @@ class UserAccountHttpClient {
             completion(nil, error)
             return
         }
+        
+        var body: [String: AnyObject] = [:]
+        body["username"] = username as AnyObject
+        body["password"] = password as AnyObject
+        body["request_token"] = authToken as AnyObject
         
         jsonService.doPost(url: url, postBody: body, completion:
         { [weak self] (data: Data?, response: HTTPURLResponse?, error: NSError?) in
@@ -136,7 +135,7 @@ class UserAccountHttpClient {
     }
     
     //validated request_token in body
-    func createSession(body: [String: AnyObject], completion: @escaping ((String?, NSError?) -> Void)) {
+    func createSession(withValidatedToken validatedAuthToken: String, completion: @escaping ((String?, NSError?) -> Void)) {
         
         //post
         let urlString = Constants.theMovieDbSecureBaseUrl + Constants.theMovieDbNewSessionPath + "?" + Constants.theMovieDbApiKeyParam
@@ -147,7 +146,10 @@ class UserAccountHttpClient {
             return
         }
         
-        jsonService.doPost(url: url, postBody: body, completion:
+        var postDict: [String: AnyObject] = [:]
+        postDict["request_token"] = validatedAuthToken as AnyObject
+        
+        jsonService.doPost(url: url, postBody: postDict, completion:
         { [weak self] (data: Data?, response: HTTPURLResponse?, error: NSError?) in
             guard let _ = self else { return }
             

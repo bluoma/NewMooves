@@ -15,10 +15,10 @@ class MoviesViewController: UIViewController {
     @IBOutlet weak var moviesTableView: UITableView!
     @IBOutlet weak var moviesSearchBar: UISearchBar!
     
-    let httpClient = MoviesHttpClient()
+    let moviesService = MoviesService()
     var moviesArray: [Movie] = []
     var filteredMoviesArray: [Movie] = []
-    var endpointPath: String = ""
+    var movieListType: MovieListType = .nowPlaying
     var isNetworkErrorShowing: Bool = false
     var header = UITableViewHeaderFooterView()
     var searchActive = false
@@ -112,30 +112,28 @@ class MoviesViewController: UIViewController {
         downloadIsInProgress = true
         beginDownload()
         
-        let params = ["page" : page as AnyObject]
-        
-        httpClient.fetchNowPlayingMovieList(params: params, completion:
+        moviesService.fetchMovieList(withType: movieListType, page: page, completion:
         { [weak self] (movieResults: MovieResults?, error: NSError?) in
-            guard let strongself = self else { return }
+            guard let myself = self else { return }
             
-            strongself.endDownload()
-            strongself.downloadIsInProgress = false
+            myself.endDownload()
+            myself.downloadIsInProgress = false
             
             if error != nil {
                 dlog("err: \(String(describing: error))")
-                strongself.isNetworkErrorShowing = true
-                strongself.moviesTableView.reloadData()
+                myself.isNetworkErrorShowing = true
+                myself.moviesTableView.reloadData()
             }
             else if let results = movieResults {
-                strongself.currentPage = page
+                myself.currentPage = page
             
-                if strongself.currentPage > 1 {
-                    strongself.moviesArray += results.movies
+                if myself.currentPage > 1 {
+                    myself.moviesArray += results.movies
                 }
                 else {
-                    strongself.moviesArray = results.movies
+                    myself.moviesArray = results.movies
                 }
-                strongself.moviesTableView.reloadData()
+                myself.moviesTableView.reloadData()
             }
         })
     }

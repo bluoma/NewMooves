@@ -25,7 +25,7 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
 
     var dateFormatter = DateFormatter()
     var movie: Movie!
-    let httpClient = MoviesHttpClient()
+    let moviesService = MoviesService()
     
     var didSelectVideo: ((Int, Movie) -> Void)?
     
@@ -158,20 +158,19 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
         
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
         
-        let params = ["movieId": movie.movieId as AnyObject]
-        httpClient.fetchMovieDetail(params: params, completion:
+        moviesService.fetchMovieDetail(byId: movie.movieId, completion:
         { [weak self] (detail: MovieDetail?, error: NSError?) -> Void in
             
             UIApplication.shared.isNetworkActivityIndicatorVisible = false
-            guard let strongself = self else { return }
+            guard let myself = self else { return }
             
             if error != nil {
                 dlog("err: \(String(describing: error))")
-                strongself.movie.movieDetail = detail
-                strongself.displayMovieDetails(detail: detail)
+                myself.movie.movieDetail = detail
+                myself.displayMovieDetails(detail: detail)
             }
             else {
-                strongself.movie.movieDetail = detail
+                myself.movie.movieDetail = detail
             }
         })
     }
@@ -179,19 +178,18 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
     func fetchMovieVideos() {
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
         
-        let params = ["movieId": movie.movieId as AnyObject]
-        httpClient.fetchMovieVideos(params: params, completion:
+        moviesService.fetchMovieVideos(byId: movie.movieId, completion:
         { [weak self] (videos: [MovieVideo], error: NSError?) -> Void in
             
             UIApplication.shared.isNetworkActivityIndicatorVisible = false
-            guard let strongself = self else { return }
+            guard let myself = self else { return }
             
             if error != nil {
                 dlog("err: \(String(describing: error))")
             }
             else {
-                strongself.movie.movieVideos = videos
-                strongself.videosTableView.reloadData()
+                myself.movie.movieVideos = videos
+                myself.videosTableView.reloadData()
             }
         })
     }

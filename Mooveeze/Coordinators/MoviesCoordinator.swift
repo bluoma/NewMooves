@@ -22,7 +22,9 @@ class MoviesCoordinator: BaseRootNavigationCoordinator {
         super.init(withNavVc: navVc, config: config)
         
         moviesViewController.title = config.vcTitle
-        moviesViewController.endpointPath = config.vcUrlPath
+        if let listType: MovieListType = MovieListType(rawValue: config.vcIndex) {
+            moviesViewController.movieListType = listType
+        }
         navVc.viewControllers.append(moviesViewController)
         moviesViewController.didSelectMovieDetail = moviesViewControllerDidSelectMovieDetail
 

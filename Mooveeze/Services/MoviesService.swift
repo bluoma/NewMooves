@@ -8,22 +8,33 @@
 
 import Foundation
 
-class MoviesHttpClient {
+enum MovieListType: Int {
+    
+    case nowPlaying
+    case topRated
+}
+
+class MoviesService {
     
     let jsonService = JsonHttpService()
     
-    func fetchNowPlayingMovieList(params: [String: AnyObject], completion: @escaping ((MovieResults?, NSError?) -> Void)) {
+    func fetchMovieList(withType listType: MovieListType, page: Int, completion: @escaping ((MovieResults?, NSError?) -> Void)) {
         
-        var page = 1
+        var urlString = ""
         
-        if let foundPage = params["page"] as? Int {
-            page = foundPage
+        switch listType {
+            
+        case .nowPlaying:
+            let nowPlayingUrlString = Constants.theMovieDbSecureBaseUrl + Constants.theMovieDbNowPlayingPath + "?" + Constants.theMovieDbApiKeyParam + "&page=" + String(page)
+            urlString = nowPlayingUrlString
+            
+        case .topRated:
+            let topRatedUrlString = Constants.theMovieDbSecureBaseUrl + Constants.theMovieDbTopRatedPath + "?" + Constants.theMovieDbApiKeyParam + "&page=" + String(page)
+            urlString = topRatedUrlString
         }
         
-        let nowPlayingUrlString = Constants.theMovieDbSecureBaseUrl + Constants.theMovieDbNowPlayingPath + "?" + Constants.theMovieDbApiKeyParam + "&page=" + String(page)
-        
-        guard let url = URL(string: nowPlayingUrlString) else {
-            let error = generateError(withCode: -400, msg: "url error: \(nowPlayingUrlString)")
+        guard let url = URL(string: urlString) else {
+            let error = generateError(withCode: -400, msg: "url error: \(urlString)")
             completion(nil, error)
             return
         }
@@ -60,13 +71,7 @@ class MoviesHttpClient {
         })
     }
     
-    func fetchMovieDetail(params: [String: AnyObject], completion: @escaping ((MovieDetail?, NSError?) -> Void)) {
-        
-        guard let movieId = params["movieId"] as? Int else {
-            let error = generateError(withCode: -400, msg: "no movieId")
-            completion(nil, error)
-            return
-        }
+    func fetchMovieDetail(byId movieId: Int, completion: @escaping ((MovieDetail?, NSError?) -> Void)) {
         
         let baseUrl = Constants.theMovieDbSecureBaseUrl + Constants.theMovieDbMovieDetailPath + "/"
         let movieDetailUrlString = baseUrl + String(movieId) + "?" + Constants.theMovieDbApiKeyParam
@@ -102,13 +107,7 @@ class MoviesHttpClient {
         })
     }
     
-    func fetchMovieVideos(params: [String: AnyObject], completion: @escaping (([MovieVideo], NSError?) -> Void)) {
-        
-        guard let movieId = params["movieId"] as? Int else {
-            let error = generateError(withCode: -400, msg: "no movieId")
-            completion([], error)
-            return
-        }
+    func fetchMovieVideos(byId movieId: Int, completion: @escaping (([MovieVideo], NSError?) -> Void)) {
         
         let baseUrl = Constants.theMovieDbSecureBaseUrl + Constants.theMovieDbMovieDetailPath + "/"
         let movieVideoUrlString = baseUrl + String(movieId) + Constants.theMovieDbMovieVideoPath + "?" + Constants.theMovieDbApiKeyParam

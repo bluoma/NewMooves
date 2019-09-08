@@ -15,7 +15,7 @@ class ProfileViewController: UIViewController {
     @IBOutlet weak var loginButton: UIButton!
     @IBOutlet weak var createAccountButton: UIButton!
     
-    var httpClient = UserAccountHttpClient()
+    var userService = UserAccountService()
     var downloadIsInProgress: Bool = false
     var userProfile: UserProfile?
     
@@ -51,22 +51,20 @@ class ProfileViewController: UIViewController {
         
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
         
-        let params: [String: AnyObject] = ["sessionId": foundSessionId as AnyObject]
-        
-        httpClient.fetchUserProfile(params: params, completion:
+        userService.fetchUserProfile(withSessionId: foundSessionId, completion:
         { [weak self] (profile: UserProfile?, error: NSError?) -> Void in
             
             UIApplication.shared.isNetworkActivityIndicatorVisible = false
-            guard let strongself = self else { return }
+            guard let myself = self else { return }
             
             if error != nil {
                 dlog("err: \(String(describing: error))")
             }
             else if let foundProfile = profile {
                 dlog("profile: \(foundProfile)")
-                strongself.userProfile = foundProfile
-                strongself.title = foundProfile.username
-                strongself.emptyStateView.isHidden = true
+                myself.userProfile = foundProfile
+                myself.title = foundProfile.username
+                myself.emptyStateView.isHidden = true
             }
             else {
                 dlog("no error, no profile...?")
