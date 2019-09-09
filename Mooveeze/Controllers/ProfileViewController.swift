@@ -72,7 +72,7 @@ class ProfileViewController: UIViewController {
                 myself.userProfile = foundProfile
                 myself.title = foundProfile.username
                 myself.emptyStateView.isHidden = true
-                myself.emptyStateView.isHidden = false
+                myself.profileContainer.isHidden = false
                 myself.updateProfileContainer()
             }
             else {
