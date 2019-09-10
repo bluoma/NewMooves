@@ -66,8 +66,7 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
                         guard let myself = self else { return }
                         dlog("got imagewrapper: \(type(of: response)), response: \(response)")
                         
-                        if let image: UIImage = response.value
-                        {
+                        if let image: UIImage = response.value {
                             myself.backdropImageView.alpha = 0.0;
                             myself.backdropImageView.image = image
                             UIView.animate(withDuration: 0.3, animations:

@@ -19,109 +19,81 @@ class ProfileViewController: UIViewController {
     @IBOutlet weak var profileContainer: UIView!
     @IBOutlet weak var userAvatar: UIImageView!
     @IBOutlet weak var usernameLabel: UILabel!
+    @IBOutlet weak var loadingActivityIndicatorView: UIActivityIndicatorView!
     
-    var userService = UserAccountService()
-    var downloadIsInProgress: Bool = false
-    var userProfile: UserProfile?
+    var profileViewModel: ProfileViewModel = ProfileViewModel()
+    var dynamicUserProfile: DynamicUserProfile? {
+        
+        didSet {
+            
+            guard let dynProfile = dynamicUserProfile else {
+                dlog("got nil for newValue")
+                return
+            }
+            
+            dynProfile.username.bindAndFire {
+                [unowned self] (username: String) in
+                dlog("username bindAndFire: \(username)")
+                self.usernameLabel.text = username
+                if username.count > 0 {
+                    self.title = username
+                }
+                else {
+                    self.title = "Profile"
+                }
+            }
+            dynProfile.userAvatar.bindAndFire {
+                [unowned self] (image: UIImage?) in
+                dlog("userAvatar.bindAndFire\(String(describing: image))")
+                self.userAvatar.alpha = 0.0;
+                self.userAvatar.image = image
+                UIView.animate(withDuration: 0.3, animations:
+                { () -> Void in
+                    self.userAvatar.alpha = 1.0
+                })
+            }
+            dynProfile.isProfileLoading.bindAndFire {
+                [unowned self] (isProfileLoading: Bool) in
+                dlog("isProfileLoading.bindAndFire: \(isProfileLoading)")
+                if isProfileLoading {
+                    self.loadingActivityIndicatorView.startAnimating()
+                }
+                else {
+                   self.loadingActivityIndicatorView.stopAnimating()
+                }
+            }
+            dynProfile.isEmptyState.bindAndFire {
+                [unowned self] (isEmptyState: Bool) in
+                dlog("isEmptyState: \(isEmptyState)")
+                if isEmptyState {
+                    self.emptyStateView.isHidden = false
+                    self.profileContainer.isHidden = true
+                }
+                else {
+                    self.emptyStateView.isHidden = true
+                    self.profileContainer.isHidden = false
+                }
+            }
+        }
+    }
     
     var didSelectLogin: (() -> Void)?
     var didSelectCreateAccount: (() -> Void)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
-        if Constants.sessionId == nil {
-            emptyStateView.isHidden = false
-            profileContainer.isHidden = true
-        }
-        else {
-            emptyStateView.isHidden = true
-            profileContainer.isHidden = false
-        }
+        dynamicUserProfile = profileViewModel.dynamicUserProfile
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        dlog("")
-        if let foundSessionId = Constants.sessionId, userProfile == nil {
-            dlog("foundSessionId: \(foundSessionId), getAccount")
-            fetchUserProfile()
-        }
-    }
-    
-    //MARK: - Network
-    func fetchUserProfile() {
-        guard let foundSessionId = Constants.sessionId else { return }
-        if downloadIsInProgress { return }
-        
-        UIApplication.shared.isNetworkActivityIndicatorVisible = true
-        
-        userService.fetchUserProfile(withSessionId: foundSessionId, completion:
-        { [weak self] (profile: UserProfile?, error: NSError?) -> Void in
-            
-            UIApplication.shared.isNetworkActivityIndicatorVisible = false
-            guard let myself = self else { return }
-            
-            if error != nil {
-                dlog("err: \(String(describing: error))")
-            }
-            else if let foundProfile = profile {
-                dlog("profile: \(foundProfile)")
-                myself.userProfile = foundProfile
-                myself.title = foundProfile.username
-                myself.emptyStateView.isHidden = true
-                myself.emptyStateView.isHidden = false
-                myself.updateProfileContainer()
-            }
-            else {
-                dlog("no error, no profile...?")
-            }
-        })
-    }
-    
-    fileprivate func updateProfileContainer() {
-        self.usernameLabel.text = userProfile?.username
-        guard let grId = userProfile?.avatar.gravatar else { return }
-        fetchUserGravatar(with: grId.hash)
-    }
-    
-    fileprivate func fetchUserGravatar(with grId: String) {
-        
-        //https://secure.gravatar.com/avatar/568ca559077995e89a812dff68afc914.jpg?s=150
-        
-        let imageUrlString = Constants.gravatarBaseUrl + "/" + grId + ".png?s=75"
-        if let imageUrl = URL(string: imageUrlString) {
-            let defaultImage = UIImage(named: "profile_icon")
-            let urlRequest: URLRequest = URLRequest(url:imageUrl)
-            
-            userAvatar.af_setImage(
-                withURLRequest: urlRequest,
-                placeholderImage: defaultImage,
-                completion:
-                { [weak self] (response: DataResponse<UIImage>) in
-                    guard let myself = self else { return }
-                    dlog("got imagewrapper: \(type(of: response)), response: \(response) for url: \n\(imageUrlString)")
-                    
-                    if let image: UIImage = response.value
-                    {
-                        myself.userAvatar.alpha = 0.0;
-                        myself.userAvatar.image = image
-                        UIView.animate(withDuration: 0.3, animations:
-                            { () -> Void in
-                                myself.userAvatar.alpha = 1.0
-                        })
-                    }
-                    else {
-                        dlog("response is not a uiimage")
-                    }
-            })
+        if Constants.sessionId == nil {
+            dynamicUserProfile?.isEmptyState.value = true
         }
         else {
-            dlog("bad url for image: \(imageUrlString)")
-            let defaultImage = UIImage(named: "profile_icon")
-            self.userAvatar.image = defaultImage
+            dynamicUserProfile?.isEmptyState.value = false
+            self.profileViewModel.fetchUserProfile()
         }
     }
     

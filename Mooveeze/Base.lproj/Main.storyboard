@@ -181,10 +181,16 @@
                                     <constraint firstItem="1Jd-5q-ii6" firstAttribute="leading" secondItem="Xo1-v1-Fzw" secondAttribute="trailing" constant="12" id="qnJ-7f-t4z"/>
                                 </constraints>
                             </view>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="31a-bL-pYQ">
+                                <rect key="frame" x="188.5" y="429.5" width="37" height="37"/>
+                                <color key="color" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="FX4-L5-dnS" firstAttribute="leading" secondItem="eq0-4I-WHa" secondAttribute="leading" constant="24" id="0bM-4p-bYE"/>
+                            <constraint firstItem="31a-bL-pYQ" firstAttribute="centerX" secondItem="q91-EL-pfw" secondAttribute="centerX" id="CkN-Bm-T3N"/>
+                            <constraint firstItem="31a-bL-pYQ" firstAttribute="centerY" secondItem="q91-EL-pfw" secondAttribute="centerY" id="a5v-lj-13C"/>
                             <constraint firstItem="nae-hM-Ka2" firstAttribute="centerY" secondItem="q91-EL-pfw" secondAttribute="centerY" id="lWq-5m-AV3"/>
                             <constraint firstItem="nae-hM-Ka2" firstAttribute="centerX" secondItem="q91-EL-pfw" secondAttribute="centerX" id="sXI-Jy-1Jl"/>
                             <constraint firstItem="eq0-4I-WHa" firstAttribute="trailing" secondItem="FX4-L5-dnS" secondAttribute="trailing" constant="24" id="tda-nM-GWn"/>
@@ -195,6 +201,7 @@
                     <connections>
                         <outlet property="createAccountButton" destination="1bN-f8-jZN" id="113-oB-EMb"/>
                         <outlet property="emptyStateView" destination="nae-hM-Ka2" id="A2e-av-54O"/>
+                        <outlet property="loadingActivityIndicatorView" destination="31a-bL-pYQ" id="FR7-tB-gVf"/>
                         <outlet property="loginButton" destination="Mv1-6D-cel" id="ZDH-Zj-R2A"/>
                         <outlet property="profileContainer" destination="FX4-L5-dnS" id="zq7-yR-ZUY"/>
                         <outlet property="statusLabel" destination="S9b-Rs-eBc" id="0Vb-nl-wlQ"/>

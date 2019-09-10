@@ -21,7 +21,9 @@ class ProfileCoordinator: BaseRootNavigationCoordinator {
         profileViewController = vc
         
         super.init(withNavVc: navVc, config: config)
-        
+        //let viewModel = ProfileViewModel()
+        //viewModel.dynamicUserProfileDidUpdate = profileViewController.userProfileDidUpdate
+        //profileViewController.profileViewModel = viewModel
         profileViewController.title = config.vcTitle
         profileViewController.didSelectLogin = profileViewControllerDidSelectLogin
         profileViewController.didSelectCreateAccount = profileViewControllerDidSelectCreateAccount
