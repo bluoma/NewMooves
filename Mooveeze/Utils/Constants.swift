@@ -43,6 +43,11 @@ public func saveSessionId(_ seshId: String) {
     UserDefaults.standard.setValue(seshId, forKey: "sessionId")
 }
 
+public func deleteSessionId(_ seshId: String) {
+    Constants.sessionId = nil
+    UserDefaults.standard.setValue(nil, forKey: "sessionId")
+}
+
 public func userIsLoggedIn() -> Bool {
     
     guard let foundSessionId = Constants.sessionId, foundSessionId.count == 40 else {

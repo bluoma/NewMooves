@@ -19,6 +19,7 @@ class ProfileViewController: UIViewController {
     @IBOutlet weak var profileContainer: UIView!
     @IBOutlet weak var userAvatar: UIImageView!
     @IBOutlet weak var usernameLabel: UILabel!
+    @IBOutlet weak var logoutButton: UIButton!
     @IBOutlet weak var loadingActivityIndicatorView: UIActivityIndicatorView!
     
     var profileViewModel: ProfileViewModel = ProfileViewModel()
@@ -107,4 +108,13 @@ class ProfileViewController: UIViewController {
         dlog("")
         self.didSelectCreateAccount?()
     }
+    
+    @IBAction func logoutButtonPressed(_ sender: UIButton) {
+        dlog("")
+        if let seshId = Constants.sessionId {
+            dynamicUserProfile?.resetProfile()
+            deleteSessionId(seshId)
+        }
+    }
+    
 }

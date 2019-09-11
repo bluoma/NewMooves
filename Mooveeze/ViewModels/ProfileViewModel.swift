@@ -27,6 +27,8 @@ protocol DynamicUserProfile {
     //view state
     var isProfileLoading: Dynamic<Bool> { get }
     var isEmptyState: Dynamic<Bool> { get }
+    
+    func resetProfile()
 }
 
 fileprivate class UserProfileViewWrapper: DynamicUserProfile {
@@ -58,6 +60,16 @@ fileprivate class UserProfileViewWrapper: DynamicUserProfile {
             isProfileLoading = Dynamic(false)
             isEmptyState = Dynamic(false)
         }
+    }
+    
+    func resetProfile() {
+        let defaultImage = UIImage(named: "profile_icon")
+        profileId.value = -1
+        username.value = ""
+        fullname.value = ""
+        userAvatar.value = defaultImage
+        isProfileLoading.value = false
+        isEmptyState.value = true
     }
     
     func updateProfile(_ profile: UserProfile) {

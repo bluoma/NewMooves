@@ -5,8 +5,8 @@
 //  Created by Bill on 9/9/19.
 //  Copyright © 2019 Bill. All rights reserved.
 //
-// copied from http://rasic.info/bindings-generics-swift-and-mvvm/
-// implements unidirection binding for simple types
+// adapted from http://rasic.info/bindings-generics-swift-and-mvvm/
+// implements unidirectional binding for simple scalar types
 import Foundation
 
 class Dynamic<T> {

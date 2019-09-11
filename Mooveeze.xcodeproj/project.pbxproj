@@ -31,6 +31,8 @@
 		F7012D9F23241DBA00A21887 /* UserAccountService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7012D9E23241DB900A21887 /* UserAccountService.swift */; };
 		F7A5C3CE23255CD300B80991 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A5C3CD23255CD300B80991 /* ProfileViewModel.swift */; };
 		F7A5C3D02326B2C900B80991 /* Dynamic.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A5C3CF2326B2C900B80991 /* Dynamic.swift */; };
+		F7A5C3D2232742F600B80991 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A5C3D1232742F600B80991 /* LoginViewModel.swift */; };
+		F7A5C3D52327699A00B80991 /* BindableTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A5C3D42327699A00B80991 /* BindableTextField.swift */; };
 		F7C9F84422FD462000E8BC19 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7C9F84322FD462000E8BC19 /* AppDelegate.swift */; };
 		F7C9F84922FD462000E8BC19 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F7C9F84722FD462000E8BC19 /* Main.storyboard */; };
 		F7C9F84B22FD462000E8BC19 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F7C9F84A22FD462000E8BC19 /* Assets.xcassets */; };
@@ -66,6 +68,8 @@
 		F7012D9E23241DB900A21887 /* UserAccountService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAccountService.swift; sourceTree = "<group>"; };
 		F7A5C3CD23255CD300B80991 /* ProfileViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		F7A5C3CF2326B2C900B80991 /* Dynamic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dynamic.swift; sourceTree = "<group>"; };
+		F7A5C3D1232742F600B80991 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
+		F7A5C3D42327699A00B80991 /* BindableTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BindableTextField.swift; sourceTree = "<group>"; };
 		F7C9F84022FD462000E8BC19 /* Mooveeze.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mooveeze.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7C9F84322FD462000E8BC19 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F7C9F84822FD462000E8BC19 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -175,8 +179,17 @@
 			isa = PBXGroup;
 			children = (
 				F7A5C3CD23255CD300B80991 /* ProfileViewModel.swift */,
+				F7A5C3D1232742F600B80991 /* LoginViewModel.swift */,
 			);
 			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		F7A5C3D32327697000B80991 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				F7A5C3D42327699A00B80991 /* BindableTextField.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 		F7C9F83722FD462000E8BC19 = {
@@ -208,6 +221,7 @@
 				F7012D76232179A400A21887 /* Coordinators */,
 				F7012D74232179A400A21887 /* Models */,
 				F7012D7C232179A400A21887 /* Services */,
+				F7A5C3D32327697000B80991 /* Views */,
 				F7012D71232179A400A21887 /* Utils */,
 				F7C9F84722FD462000E8BC19 /* Main.storyboard */,
 				F7C9F84A22FD462000E8BC19 /* Assets.xcassets */,
@@ -343,6 +357,7 @@
 				F7C9F84422FD462000E8BC19 /* AppDelegate.swift in Sources */,
 				F7012D952321E87A00A21887 /* LoginViewController.swift in Sources */,
 				F7012D912321BBE000A21887 /* ProfileCoordinator.swift in Sources */,
+				F7A5C3D52327699A00B80991 /* BindableTextField.swift in Sources */,
 				F7012D6F2321799400A21887 /* MovieSummaryTableViewCell.swift in Sources */,
 				F7012D8B23218F3500A21887 /* MoviesCoordinator.swift in Sources */,
 				F7012D8D232190A800A21887 /* CoordinatorConfig.swift in Sources */,
@@ -351,6 +366,7 @@
 				F7012D7E232179A400A21887 /* Constants.swift in Sources */,
 				F7012D992322C1EF00A21887 /* MoviesService.swift in Sources */,
 				F7012D9F23241DBA00A21887 /* UserAccountService.swift in Sources */,
+				F7A5C3D2232742F600B80991 /* LoginViewModel.swift in Sources */,
 				F7012D8F2321AD5000A21887 /* BaseRootNavigationCoordinator.swift in Sources */,
 				F7012D8723217DF200A21887 /* ProfileViewController.swift in Sources */,
 				F7A5C3CE23255CD300B80991 /* ProfileViewModel.swift in Sources */,

@@ -16,17 +16,62 @@ class LoginViewController: UIViewController {
     }
     
     @IBOutlet weak var statusLabel: UILabel!
-    @IBOutlet weak var usernameTextField: UITextField!
-    @IBOutlet weak var passwordTextField: UITextField!
+    @IBOutlet weak var usernameTextField: BindableTextField!
+    @IBOutlet weak var passwordTextField: BindableTextField!
     @IBOutlet weak var loginButton: UIButton!
     
-    var downloadIsInProgress: Bool = false
-    var userService = UserAccountService()
+    //var downloadIsInProgress: Bool = false
+    //var userService = UserAccountService()
 
-    var authToken: String = ""
-    var validatedAuthToken: String = ""
-    var username: String = ""
-    var password: String = ""
+    //var authToken: String = ""
+    //var validatedAuthToken: String = ""
+    //var username: String = ""
+    //var password: String = ""
+    
+    var loginViewModel: LoginViewModel = LoginViewModel()
+    var dynamicUserAuth: DynamicUserAuth? {
+        
+        didSet {
+            guard let dynAuth = dynamicUserAuth else { return }
+            
+            dynAuth.username.bindAndFire {
+                [unowned self] (username: String) in
+                if let text = self.usernameTextField.text, text != username {
+                    dlog("username fired: \(username)")
+                    self.usernameTextField.text = username
+                }
+                
+            }
+            dynAuth.password.bindAndFire {
+                [unowned self] (password: String) in
+                if let text = self.passwordTextField.text, text != password {
+                    dlog("password fired: \(password)")
+                    self.passwordTextField.text = password
+                }
+                
+            }
+            dynAuth.status.bindAndFire {
+                [unowned self] (status: String) in
+                dlog("status fired: \(status)")
+                self.statusLabel.text = status
+                
+            }
+            dynAuth.error.bindAndFire {
+                [unowned self] (error: NSError?) in
+                guard let error = error else { return }
+                
+                self.displayError(error)
+                
+            }
+            dynAuth.sessionId.bindAndFire {
+                [unowned self] (sessionId: String) in
+                dlog("sessionId fired: \(sessionId)")
+                if sessionId.count == 40 {
+                    self.loginDidSucceed?(sessionId)
+                }
+            }
+        }
+    }
     
     var loginDidSucceed: ((String) -> Void)?
     var loginDidErr: ((NSError?) -> Void)?
@@ -34,7 +79,8 @@ class LoginViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        dynamicUserAuth = loginViewModel.dynamicUserAuth
+        bindTextFields()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -46,83 +92,6 @@ class LoginViewController: UIViewController {
         super.viewWillDisappear(animated)
         view.endEditing(true)
     }
-
-    func fetchAuthToken() {
-        
-        if downloadIsInProgress { return }
-        
-        UIApplication.shared.isNetworkActivityIndicatorVisible = true
-        downloadIsInProgress = true
-        
-        userService.fetchAuthToken { [weak self] (token: String?, error: NSError?) in
-            
-            guard let myself = self else { return }
-            myself.downloadIsInProgress = false
-            UIApplication.shared.isNetworkActivityIndicatorVisible = false
-
-            if let foundError = error {
-                myself.loginDidErr?(foundError)
-            }
-            else if let foundToken = token {
-                myself.authToken = foundToken
-                myself.validateAuthToken()
-            }
-            else {
-                myself.loginDidErr?(nil)
-            }
-        }
-    }
-    
-    func validateAuthToken() {
-        
-        if downloadIsInProgress { return }
-        UIApplication.shared.isNetworkActivityIndicatorVisible = true
-        downloadIsInProgress = true
-        
-        userService.validateAuthToken(withAuthToken: authToken, username: username, password: password, completion:
-        { [weak self] (validToken: String?, error: NSError?) in
-            guard let myself = self else { return }
-            myself.downloadIsInProgress = false
-            UIApplication.shared.isNetworkActivityIndicatorVisible = false
-            
-            if let foundError = error {
-                myself.statusLabel.text = foundError.localizedDescription
-            }
-            else if let foundToken = validToken {
-                myself.validatedAuthToken = foundToken
-                myself.createSession()
-            }
-            else {
-                myself.statusLabel.text = "Login Error"
-            }
-            
-        })
-        
-    }
-    
-    func createSession() {
-        
-        if downloadIsInProgress { return }
-        UIApplication.shared.isNetworkActivityIndicatorVisible = true
-        downloadIsInProgress = true
-        
-        userService.createSession(withValidatedToken: validatedAuthToken, completion:
-        { [weak self] (validSessionId: String?, error: NSError?) in
-            guard let myself = self else { return }
-            myself.downloadIsInProgress = false
-            UIApplication.shared.isNetworkActivityIndicatorVisible = false
-            
-            if let foundError = error {
-                myself.loginDidErr?(foundError)
-            }
-            else if let foundSessionId = validSessionId {
-               myself.loginDidSucceed?(foundSessionId)
-            }
-            else {
-                myself.loginDidErr?(nil)
-            }
-        })
-    }
     
     @IBAction func donePressed(_ sender: UIBarButtonItem){
         dlog("")
@@ -133,7 +102,7 @@ class LoginViewController: UIViewController {
         
         if textFieldsDidValidate() {
             
-            self.fetchAuthToken()
+            self.loginViewModel.fetchAuthToken()
         }
     }
     
@@ -145,7 +114,6 @@ class LoginViewController: UIViewController {
             usernameText = usernameText.trimmingCharacters(in: .whitespaces)
             if usernameText.count >= 6 && usernameText.count <= 16 {
                 userNameIsValid = true
-                username = usernameText
             }
             else {
                 statusLabel.text = "Username length must be 6-16"
@@ -161,7 +129,6 @@ class LoginViewController: UIViewController {
             passwordText = passwordText.trimmingCharacters(in: .whitespaces)
             if passwordText.count >= 6 && passwordText.count <= 16 {
                 passwordIsValid = true
-                password = passwordText
             }
             else {
                 statusLabel.text = "Password length must be 6-16"
@@ -189,4 +156,24 @@ extension LoginViewController: UITextFieldDelegate {
         return true
     }
     
+    func bindTextFields() {
+        
+        usernameTextField.bind {
+            [unowned self] (usernameText: String) in
+            dlog("usernameTextField received: \(usernameText)")
+            self.dynamicUserAuth?.username.value = usernameText
+        }
+        passwordTextField.bind {
+            [unowned self] (passwordText: String) in
+            dlog("passwordTextField received: \(passwordText)")
+            self.dynamicUserAuth?.password.value = passwordText
+        }
+    }
+}
+
+extension LoginViewController {
+    
+    func displayError(_ error: NSError) {
+        dynamicUserAuth?.status.value = error.localizedDescription
+    }
 }
