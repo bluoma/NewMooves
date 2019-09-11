@@ -10,11 +10,6 @@ import UIKit
 
 class LoginViewController: UIViewController {
     
-    enum TextFieldTag: Int {
-        case username = 0
-        case password = 1
-    }
-    
     @IBOutlet weak var statusLabel: UILabel!
     @IBOutlet weak var loginButton: UIButton!
     @IBOutlet weak var waitActivityIndicatorView: UIActivityIndicatorView!
@@ -105,41 +100,6 @@ class LoginViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         view.endEditing(true)
-    }
-    
-    func textFieldsDidValidate() -> Bool {
-        var userNameIsValid = false
-        var passwordIsValid = false
-
-        if var usernameText = usernameTextField.text {
-            usernameText = usernameText.trimmingCharacters(in: .whitespaces)
-            if usernameText.count >= 6 && usernameText.count <= 16 {
-                userNameIsValid = true
-            }
-            else {
-                statusLabel.text = "Username length must be 6-16"
-            }
-        }
-        else {
-            statusLabel.text = "Username length must be 6-16"
-        }
-        
-        if !userNameIsValid { return false }
-        
-        if var passwordText = passwordTextField.text {
-            passwordText = passwordText.trimmingCharacters(in: .whitespaces)
-            if passwordText.count >= 6 && passwordText.count <= 16 {
-                passwordIsValid = true
-            }
-            else {
-                statusLabel.text = "Password length must be 6-16"
-            }
-        }
-        else {
-            statusLabel.text = "Password length must be 6-16"
-        }
-        
-        return userNameIsValid && passwordIsValid
     }
 }
 
