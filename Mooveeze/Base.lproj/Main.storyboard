@@ -287,11 +287,17 @@
                                     <constraint firstItem="ea5-kh-bsj" firstAttribute="top" secondItem="br8-xT-lWK" secondAttribute="top" id="YGn-AQ-fwj"/>
                                 </constraints>
                             </view>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="IAY-y1-1eJ">
+                                <rect key="frame" x="188.5" y="429.5" width="37" height="37"/>
+                                <color key="color" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="br8-xT-lWK" firstAttribute="top" secondItem="7lC-jN-YB0" secondAttribute="top" constant="64" id="BWQ-jh-o6K"/>
                             <constraint firstItem="br8-xT-lWK" firstAttribute="centerX" secondItem="SEH-CT-WN1" secondAttribute="centerX" id="Cj6-rW-fxe"/>
+                            <constraint firstItem="IAY-y1-1eJ" firstAttribute="centerY" secondItem="SEH-CT-WN1" secondAttribute="centerY" id="ZMf-fH-4PQ"/>
+                            <constraint firstItem="IAY-y1-1eJ" firstAttribute="centerX" secondItem="SEH-CT-WN1" secondAttribute="centerX" id="aBA-xC-Abl"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="7lC-jN-YB0"/>
                     </view>
@@ -307,6 +313,7 @@
                         <outlet property="passwordTextField" destination="Yl5-1o-0wz" id="IQu-5k-KyO"/>
                         <outlet property="statusLabel" destination="6yH-K8-AVd" id="KMg-Hb-fkY"/>
                         <outlet property="usernameTextField" destination="rd3-Hi-b0k" id="Hi5-W9-80u"/>
+                        <outlet property="waitActivityIndicatorView" destination="IAY-y1-1eJ" id="zAT-xr-e1z"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2oS-U5-5iF" userLabel="First Responder" sceneMemberID="firstResponder"/>

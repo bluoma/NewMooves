@@ -72,26 +72,14 @@ fileprivate class UserAuthViewWrapper: DynamicUserAuth {
         self.error.value = error
     }
     
+    func updateLoginInProgress(_ isLoginInProcess: Bool) {
+        self.isLoginInProcess.value = isLoginInProcess
+    }
 }
 
 class LoginViewModel {
     
-    /*
-     @IBOutlet weak var statusLabel: UILabel!
-     @IBOutlet weak var usernameTextField: UITextField!
-     @IBOutlet weak var passwordTextField: UITextField!
-     @IBOutlet weak var loginButton: UIButton!
-     
-     var downloadIsInProgress: Bool = false
-     var userService = UserAccountService()
-     
-     var authToken: String = ""
-     var validatedAuthToken: String = ""
-     var username: String = ""
-     var password: String = ""
-    */
-    
-    var downloadIsInProgress: Bool = false
+    var networkCallIsActive: Bool = false
     var userService = UserAccountService()
     
     fileprivate var userAuthWrapper: UserAuthViewWrapper = UserAuthViewWrapper()
@@ -105,18 +93,19 @@ class LoginViewModel {
 extension LoginViewModel {
     func fetchAuthToken() {
         
-        if downloadIsInProgress { return }
-        
+        if networkCallIsActive { return }
+        userAuthWrapper.isLoginInProcess.value = true
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
-        downloadIsInProgress = true
+        networkCallIsActive = true
         
         userService.fetchAuthToken {
             [weak self] (token: String?, error: NSError?) in
             guard let myself = self else { return }
-            myself.downloadIsInProgress = false
+            myself.networkCallIsActive = false
             UIApplication.shared.isNetworkActivityIndicatorVisible = false
             
             if let foundError = error {
+                myself.userAuthWrapper.isLoginInProcess.value = false
                 myself.userAuthWrapper.updateError(foundError)
             }
             else if let foundToken = token {
@@ -125,6 +114,7 @@ extension LoginViewModel {
             }
             else {
                 dlog("unknown error")
+                myself.userAuthWrapper.isLoginInProcess.value = false
                 myself.userAuthWrapper.updateLoginSuccess(false)
             }
         }
@@ -132,9 +122,9 @@ extension LoginViewModel {
     
     func validateAuthToken() {
         
-        if downloadIsInProgress { return }
+        if networkCallIsActive { return }
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
-        downloadIsInProgress = true
+        networkCallIsActive = true
         
         let authToken = userAuthWrapper.authToken.value
         let username = userAuthWrapper.username.value
@@ -143,10 +133,11 @@ extension LoginViewModel {
         userService.validateAuthToken(withAuthToken: authToken, username: username, password: password, completion:
         { [weak self] (validToken: String?, error: NSError?) in
             guard let myself = self else { return }
-            myself.downloadIsInProgress = false
+            myself.networkCallIsActive = false
             UIApplication.shared.isNetworkActivityIndicatorVisible = false
             
             if let foundError = error {
+                myself.userAuthWrapper.isLoginInProcess.value = false
                 myself.userAuthWrapper.updateError(foundError)
             }
             else if let foundToken = validToken {
@@ -155,6 +146,7 @@ extension LoginViewModel {
             }
             else {
                 dlog("unknown error")
+                myself.userAuthWrapper.isLoginInProcess.value = false
                 myself.userAuthWrapper.updateLoginSuccess(false)
             }
         })
@@ -163,17 +155,18 @@ extension LoginViewModel {
     func createSession() {
         
         
-        if downloadIsInProgress { return }
+        if networkCallIsActive { return }
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
-        downloadIsInProgress = true
+        networkCallIsActive = true
         let validatedAuthToken = userAuthWrapper.validatedAuthToken.value
 
         userService.createSession(withValidatedToken: validatedAuthToken, completion:
         { [weak self] (validSessionId: String?, error: NSError?) in
             guard let myself = self else { return }
-            myself.downloadIsInProgress = false
+            myself.networkCallIsActive = false
             UIApplication.shared.isNetworkActivityIndicatorVisible = false
-            
+            myself.userAuthWrapper.isLoginInProcess.value = false
+
             if let foundError = error {
                 myself.userAuthWrapper.updateError(foundError)
             }
@@ -188,4 +181,36 @@ extension LoginViewModel {
         
     }
     
+}
+
+//MARK: - validation
+extension LoginViewModel {
+    
+    func textFieldsDidValidate() -> Bool {
+        var userNameIsValid = false
+        var passwordIsValid = false
+        
+        var usernameText = userAuthWrapper.username.value
+        usernameText = usernameText.trimmingCharacters(in: .whitespaces)
+        if usernameText.count >= 6 && usernameText.count <= 16 {
+            userNameIsValid = true
+        }
+        else {
+            userAuthWrapper.status.value = "Username length must be 6-16"
+        }
+        
+        
+        if !userNameIsValid { return false }
+        
+        var passwordText = userAuthWrapper.password.value
+        passwordText = passwordText.trimmingCharacters(in: .whitespaces)
+        if passwordText.count >= 6 && passwordText.count <= 16 {
+            passwordIsValid = true
+        }
+        else {
+            userAuthWrapper.status.value = "Password length must be 6-16"
+        }
+        
+        return userNameIsValid && passwordIsValid
+    }
 }

@@ -16,17 +16,26 @@ class LoginViewController: UIViewController {
     }
     
     @IBOutlet weak var statusLabel: UILabel!
-    @IBOutlet weak var usernameTextField: BindableTextField!
-    @IBOutlet weak var passwordTextField: BindableTextField!
     @IBOutlet weak var loginButton: UIButton!
-    
-    //var downloadIsInProgress: Bool = false
-    //var userService = UserAccountService()
-
-    //var authToken: String = ""
-    //var validatedAuthToken: String = ""
-    //var username: String = ""
-    //var password: String = ""
+    @IBOutlet weak var waitActivityIndicatorView: UIActivityIndicatorView!
+    @IBOutlet weak var usernameTextField: BindableTextField! {
+        didSet {
+            usernameTextField.bind {
+                [unowned self] (usernameText: String) in
+                self.dynamicUserAuth?.username.value = usernameText
+                self.dynamicUserAuth?.status.value = ""
+            }
+        }
+    }
+    @IBOutlet weak var passwordTextField: BindableTextField! {
+        didSet {
+            passwordTextField.bind {
+                [unowned self] (passwordText: String) in
+                self.dynamicUserAuth?.password.value = passwordText
+                self.dynamicUserAuth?.status.value = ""
+            }
+        }
+    }
     
     var loginViewModel: LoginViewModel = LoginViewModel()
     var dynamicUserAuth: DynamicUserAuth? {
@@ -36,38 +45,44 @@ class LoginViewController: UIViewController {
             
             dynAuth.username.bindAndFire {
                 [unowned self] (username: String) in
+                dlog("username fired: \(username)")
                 if let text = self.usernameTextField.text, text != username {
-                    dlog("username fired: \(username)")
                     self.usernameTextField.text = username
                 }
-                
             }
             dynAuth.password.bindAndFire {
                 [unowned self] (password: String) in
+                dlog("password fired: \(password)")
                 if let text = self.passwordTextField.text, text != password {
-                    dlog("password fired: \(password)")
                     self.passwordTextField.text = password
                 }
-                
             }
             dynAuth.status.bindAndFire {
                 [unowned self] (status: String) in
                 dlog("status fired: \(status)")
                 self.statusLabel.text = status
-                
             }
             dynAuth.error.bindAndFire {
                 [unowned self] (error: NSError?) in
                 guard let error = error else { return }
                 
                 self.displayError(error)
-                
             }
             dynAuth.sessionId.bindAndFire {
                 [unowned self] (sessionId: String) in
                 dlog("sessionId fired: \(sessionId)")
                 if sessionId.count == 40 {
                     self.loginDidSucceed?(sessionId)
+                }
+            }
+            dynAuth.isLoginInProcess.bindAndFire {
+                [unowned self] (isLoginInProcess: Bool) in
+                dlog("isLoginInProcess fired: \(isLoginInProcess)")
+                if isLoginInProcess {
+                    self.waitActivityIndicatorView.startAnimating()
+                }
+                else {
+                    self.waitActivityIndicatorView.stopAnimating()
                 }
             }
         }
@@ -80,7 +95,6 @@ class LoginViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         dynamicUserAuth = loginViewModel.dynamicUserAuth
-        bindTextFields()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -91,19 +105,6 @@ class LoginViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         view.endEditing(true)
-    }
-    
-    @IBAction func donePressed(_ sender: UIBarButtonItem){
-        dlog("")
-        self.loginDidCancel?()
-    }
-    
-    @IBAction func loginPressed(_ sender: UIButton) {
-        
-        if textFieldsDidValidate() {
-            
-            self.loginViewModel.fetchAuthToken()
-        }
     }
     
     func textFieldsDidValidate() -> Bool {
@@ -142,38 +143,26 @@ class LoginViewController: UIViewController {
     }
 }
 
-extension LoginViewController: UITextFieldDelegate {
-    
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        
-        if var text = textField.text {
-            text += string
-            if text.count >= 6 {
-                statusLabel.text = "Status: Not Logged In"
-            }
-        }
-        
-        return true
-    }
-    
-    func bindTextFields() {
-        
-        usernameTextField.bind {
-            [unowned self] (usernameText: String) in
-            dlog("usernameTextField received: \(usernameText)")
-            self.dynamicUserAuth?.username.value = usernameText
-        }
-        passwordTextField.bind {
-            [unowned self] (passwordText: String) in
-            dlog("passwordTextField received: \(passwordText)")
-            self.dynamicUserAuth?.password.value = passwordText
-        }
-    }
-}
-
+//MARK: - Actions
 extension LoginViewController {
+    @IBAction func donePressed(_ sender: UIBarButtonItem){
+        dlog("")
+        loginDidCancel?()
+    }
+    
+    @IBAction func loginPressed(_ sender: UIButton) {
+        
+        if loginViewModel.textFieldsDidValidate() {
+            view.endEditing(true)
+            loginViewModel.fetchAuthToken()
+        }
+    }
     
     func displayError(_ error: NSError) {
         dynamicUserAuth?.status.value = error.localizedDescription
     }
 }
+
+
+
+
