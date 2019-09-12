@@ -18,7 +18,7 @@ class MoviesService {
     
     let jsonService = JsonHttpService()
     
-    func fetchMovieList(withType listType: MovieListType, page: Int, completion: @escaping ((MovieResults?, NSError?) -> Void)) {
+    func fetchMovieList(withType listType: MovieListType, page: Int, completion: @escaping ((MovieResults?, Error?) -> Void)) {
         
         var urlString = ""
         
@@ -34,13 +34,14 @@ class MoviesService {
         }
         
         guard let url = URL(string: urlString) else {
-            let error = generateError(withCode: -400, msg: "url error: \(urlString)")
+            let msg = "invalid url: \(urlString)"
+            let error = ServiceError(type: .invalidUrl, code: ServiceErrorCode.parse.rawValue, msg: msg)
             completion(nil, error)
             return
         }
         
         jsonService.doGet(url: url, completion:
-        { [weak self] (data: Data?, response: HTTPURLResponse?, error: NSError?) in
+        { [weak self] (data: Data?, response: HTTPURLResponse?, error: Error?) in
             guard let _ = self else { return }
             
             if error != nil {
@@ -57,28 +58,30 @@ class MoviesService {
                     completion(results, nil)
                 }
                 catch {
-                    completion(nil, error as NSError)
+                    let serviceError = ServiceError(error)
+                    completion(nil, serviceError)
                 }
             }
             else {
-                completion(nil, generateError(withCode: -404, msg: "no data or error"))
+                assert(false, "unknown error")
             }
         })
     }
     
-    func fetchMovieDetail(byId movieId: Int, completion: @escaping ((MovieDetail?, NSError?) -> Void)) {
+    func fetchMovieDetail(byId movieId: Int, completion: @escaping ((MovieDetail?, Error?) -> Void)) {
         
         let baseUrl = Constants.theMovieDbSecureBaseUrl + Constants.theMovieDbMovieDetailPath + "/"
-        let movieDetailUrlString = baseUrl + String(movieId) + "?" + Constants.theMovieDbApiKeyParam
+        let urlString = baseUrl + String(movieId) + "?" + Constants.theMovieDbApiKeyParam
         
-        guard let url = URL(string: movieDetailUrlString) else {
-            let error = generateError(withCode: -400, msg: "url error: \(movieDetailUrlString)")
+        guard let url = URL(string: urlString) else {
+            let msg = "invalid url: \(urlString)"
+            let error = ServiceError(type: .invalidUrl, code: ServiceErrorCode.parse.rawValue, msg: msg)
             completion(nil, error)
             return
         }
         
         jsonService.doGet(url: url, completion:
-        { [weak self] (data: Data?, response: HTTPURLResponse?, error: NSError?) in
+        { [weak self] (data: Data?, response: HTTPURLResponse?, error: Error?) in
             guard let _ = self else { return }
             
             if error != nil {
@@ -93,28 +96,30 @@ class MoviesService {
                     completion(detail, nil)
                 }
                 catch {
-                    completion(nil, error as NSError)
+                    let serviceError = ServiceError(error)
+                    completion(nil, serviceError)
                 }
             }
             else {
-                completion(nil, generateError(withCode: -404, msg: "no data or error"))
+                assert(false, "unknown error")
             }
         })
     }
     
-    func fetchMovieVideos(byId movieId: Int, completion: @escaping (([MovieVideo], NSError?) -> Void)) {
+    func fetchMovieVideos(byId movieId: Int, completion: @escaping (([MovieVideo], Error?) -> Void)) {
         
         let baseUrl = Constants.theMovieDbSecureBaseUrl + Constants.theMovieDbMovieDetailPath + "/"
-        let movieVideoUrlString = baseUrl + String(movieId) + Constants.theMovieDbMovieVideoPath + "?" + Constants.theMovieDbApiKeyParam
+        let urlString = baseUrl + String(movieId) + Constants.theMovieDbMovieVideoPath + "?" + Constants.theMovieDbApiKeyParam
         
-        guard let url = URL(string: movieVideoUrlString) else {
-            let error = generateError(withCode: -400, msg: "url error: \(movieVideoUrlString)")
+        guard let url = URL(string: urlString) else {
+            let msg = "invalid url: \(urlString)"
+            let error = ServiceError(type: .invalidUrl, code: ServiceErrorCode.parse.rawValue, msg: msg)
             completion([], error)
             return
         }
         
         jsonService.doGet(url: url, completion:
-        { [weak self] (data: Data?, response: HTTPURLResponse?, error: NSError?) in
+        { [weak self] (data: Data?, response: HTTPURLResponse?, error: Error?) in
             guard let _ = self else { return }
             
             if error != nil {
@@ -130,11 +135,12 @@ class MoviesService {
                     completion(videoResuls.videos, nil)
                 }
                 catch {
-                    completion([], error as NSError)
+                    let serviceError = ServiceError(error)
+                    completion([], serviceError)
                 }
             }
             else {
-                completion([], generateError(withCode: -404, msg: "no data or error"))
+               assert(false, "unknown error")
             }
         })
     }

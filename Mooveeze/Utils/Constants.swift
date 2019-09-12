@@ -27,11 +27,6 @@ public func dlog(_ message: String, _ filePath: String = #file, _ functionName: 
     
 }
 
-public func generateError(withCode code: Int, msg: String, method: String = #function) -> NSError {
-    let error = NSError(domain: "Mooveeze.\(method)", code: code, userInfo: [NSLocalizedDescriptionKey: msg])
-    return error
-}
-
 public func loadSessionId() {
     if let val = UserDefaults.standard.string(forKey: "sessionId") {
         Constants.sessionId = val
@@ -41,6 +36,11 @@ public func loadSessionId() {
 public func saveSessionId(_ seshId: String) {
     Constants.sessionId = seshId
     UserDefaults.standard.setValue(seshId, forKey: "sessionId")
+}
+
+public func deleteSessionId(_ seshId: String) {
+    Constants.sessionId = nil
+    UserDefaults.standard.setValue(nil, forKey: "sessionId")
 }
 
 public func userIsLoggedIn() -> Bool {

@@ -135,7 +135,7 @@
                                                     <action selector="loginButtonPressed:" destination="CJB-zT-oZO" eventType="touchUpInside" id="OmF-vR-VFc"/>
                                                 </connections>
                                             </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1bN-f8-jZN">
+                                            <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1bN-f8-jZN">
                                                 <rect key="frame" x="0.0" y="128" width="207" height="52"/>
                                                 <state key="normal" title="Create account on TMDb"/>
                                                 <connections>
@@ -170,6 +170,18 @@
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cIh-Ph-lS4">
+                                        <rect key="frame" x="106" y="180" width="154" height="30"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="154" id="rCO-ik-xTY"/>
+                                            <constraint firstAttribute="height" constant="30" id="sBw-FL-Q22"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                        <state key="normal" title="Logout"/>
+                                        <connections>
+                                            <action selector="logoutButtonPressed:" destination="CJB-zT-oZO" eventType="touchUpInside" id="3UB-rv-rmj"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
@@ -177,14 +189,22 @@
                                     <constraint firstAttribute="trailing" secondItem="1Jd-5q-ii6" secondAttribute="trailing" constant="8" id="E8k-Sd-ekQ"/>
                                     <constraint firstItem="Xo1-v1-Fzw" firstAttribute="top" secondItem="FX4-L5-dnS" secondAttribute="top" constant="24" id="ECS-MQ-7X2"/>
                                     <constraint firstItem="Xo1-v1-Fzw" firstAttribute="leading" secondItem="FX4-L5-dnS" secondAttribute="leading" constant="12" id="Ge3-kN-Tx9"/>
+                                    <constraint firstItem="cIh-Ph-lS4" firstAttribute="centerX" secondItem="FX4-L5-dnS" secondAttribute="centerX" id="Hab-42-Br0"/>
                                     <constraint firstItem="1Jd-5q-ii6" firstAttribute="top" secondItem="FX4-L5-dnS" secondAttribute="top" constant="24" id="Lp8-gq-seI"/>
+                                    <constraint firstAttribute="bottom" secondItem="cIh-Ph-lS4" secondAttribute="bottom" constant="30" id="WzY-Nb-ZeS"/>
                                     <constraint firstItem="1Jd-5q-ii6" firstAttribute="leading" secondItem="Xo1-v1-Fzw" secondAttribute="trailing" constant="12" id="qnJ-7f-t4z"/>
                                 </constraints>
                             </view>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="31a-bL-pYQ">
+                                <rect key="frame" x="188.5" y="429.5" width="37" height="37"/>
+                                <color key="color" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="FX4-L5-dnS" firstAttribute="leading" secondItem="eq0-4I-WHa" secondAttribute="leading" constant="24" id="0bM-4p-bYE"/>
+                            <constraint firstItem="31a-bL-pYQ" firstAttribute="centerX" secondItem="q91-EL-pfw" secondAttribute="centerX" id="CkN-Bm-T3N"/>
+                            <constraint firstItem="31a-bL-pYQ" firstAttribute="centerY" secondItem="q91-EL-pfw" secondAttribute="centerY" id="a5v-lj-13C"/>
                             <constraint firstItem="nae-hM-Ka2" firstAttribute="centerY" secondItem="q91-EL-pfw" secondAttribute="centerY" id="lWq-5m-AV3"/>
                             <constraint firstItem="nae-hM-Ka2" firstAttribute="centerX" secondItem="q91-EL-pfw" secondAttribute="centerX" id="sXI-Jy-1Jl"/>
                             <constraint firstItem="eq0-4I-WHa" firstAttribute="trailing" secondItem="FX4-L5-dnS" secondAttribute="trailing" constant="24" id="tda-nM-GWn"/>
@@ -195,7 +215,9 @@
                     <connections>
                         <outlet property="createAccountButton" destination="1bN-f8-jZN" id="113-oB-EMb"/>
                         <outlet property="emptyStateView" destination="nae-hM-Ka2" id="A2e-av-54O"/>
+                        <outlet property="loadingActivityIndicatorView" destination="31a-bL-pYQ" id="FR7-tB-gVf"/>
                         <outlet property="loginButton" destination="Mv1-6D-cel" id="ZDH-Zj-R2A"/>
+                        <outlet property="logoutButton" destination="cIh-Ph-lS4" id="v5E-dp-hCq"/>
                         <outlet property="profileContainer" destination="FX4-L5-dnS" id="zq7-yR-ZUY"/>
                         <outlet property="statusLabel" destination="S9b-Rs-eBc" id="0Vb-nl-wlQ"/>
                         <outlet property="userAvatar" destination="Xo1-v1-Fzw" id="gCq-7E-oEZ"/>
@@ -226,20 +248,20 @@
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="line" placeholder="Username" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="rd3-Hi-b0k">
+                                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="line" placeholder="Username" textAlignment="center" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="rd3-Hi-b0k" customClass="BindableTextField" customModule="Mooveeze" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="62.5" width="240" height="53"/>
                                                 <nil key="textColor"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                <textInputTraits key="textInputTraits"/>
+                                                <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no" textContentType="username"/>
                                                 <connections>
                                                     <outlet property="delegate" destination="QED-nG-hEK" id="CXX-aD-jG7"/>
                                                 </connections>
                                             </textField>
-                                            <textField opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="line" placeholder="Password" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Yl5-1o-0wz">
+                                            <textField opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="line" placeholder="Password" textAlignment="center" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="Yl5-1o-0wz" customClass="BindableTextField" customModule="Mooveeze" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="124.5" width="240" height="53.5"/>
                                                 <nil key="textColor"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                <textInputTraits key="textInputTraits"/>
+                                                <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no" textContentType="password"/>
                                                 <connections>
                                                     <outlet property="delegate" destination="QED-nG-hEK" id="Qrh-4d-kRX"/>
                                                 </connections>
@@ -265,11 +287,17 @@
                                     <constraint firstItem="ea5-kh-bsj" firstAttribute="top" secondItem="br8-xT-lWK" secondAttribute="top" id="YGn-AQ-fwj"/>
                                 </constraints>
                             </view>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="IAY-y1-1eJ">
+                                <rect key="frame" x="188.5" y="429.5" width="37" height="37"/>
+                                <color key="color" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="br8-xT-lWK" firstAttribute="top" secondItem="7lC-jN-YB0" secondAttribute="top" constant="64" id="BWQ-jh-o6K"/>
                             <constraint firstItem="br8-xT-lWK" firstAttribute="centerX" secondItem="SEH-CT-WN1" secondAttribute="centerX" id="Cj6-rW-fxe"/>
+                            <constraint firstItem="IAY-y1-1eJ" firstAttribute="centerY" secondItem="SEH-CT-WN1" secondAttribute="centerY" id="ZMf-fH-4PQ"/>
+                            <constraint firstItem="IAY-y1-1eJ" firstAttribute="centerX" secondItem="SEH-CT-WN1" secondAttribute="centerX" id="aBA-xC-Abl"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="7lC-jN-YB0"/>
                     </view>
@@ -285,6 +313,7 @@
                         <outlet property="passwordTextField" destination="Yl5-1o-0wz" id="IQu-5k-KyO"/>
                         <outlet property="statusLabel" destination="6yH-K8-AVd" id="KMg-Hb-fkY"/>
                         <outlet property="usernameTextField" destination="rd3-Hi-b0k" id="Hi5-W9-80u"/>
+                        <outlet property="waitActivityIndicatorView" destination="IAY-y1-1eJ" id="zAT-xr-e1z"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2oS-U5-5iF" userLabel="First Responder" sceneMemberID="firstResponder"/>

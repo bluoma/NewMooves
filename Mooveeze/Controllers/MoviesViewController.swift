@@ -113,7 +113,7 @@ class MoviesViewController: UIViewController {
         beginDownload()
         
         moviesService.fetchMovieList(withType: movieListType, page: page, completion:
-        { [weak self] (movieResults: MovieResults?, error: NSError?) in
+        { [weak self] (movieResults: MovieResults?, error: Error?) in
             guard let myself = self else { return }
             
             myself.endDownload()
@@ -252,8 +252,7 @@ extension MoviesViewController: UITableViewDataSource
                         
                         guard let mycell = cell else { return }
                         
-                        if let image: UIImage = response.value
-                        {
+                        if let image: UIImage = response.value {
                             if imageUrlString == mycell.moviePosterUrlString {
                                 //if response == nil, image came from cache
                                 mycell.movieThumbnailImageView.alpha = 0.0

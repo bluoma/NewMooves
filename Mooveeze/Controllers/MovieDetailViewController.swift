@@ -26,13 +26,33 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
     var dateFormatter = DateFormatter()
     var movie: Movie!
     let moviesService = MoviesService()
+    var viewModel: MovieDetailViewModel!
     
     var didSelectVideo: ((Int, Movie) -> Void)?
     
+    var dynamicMovieDetail: DynamicMovieDetail? {
+        
+        didSet {
+            guard let dynDetail = dynamicMovieDetail else { return }
+            
+            dynDetail.movieId.bindAndFire {
+                [unowned self] (movieId: Int) in
+                dlog("movieId bindAndFire: \(movieId)")
+
+            }
+        }
+        
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
-
+        
+        guard let foundMovie = movie else {
+            assert(false, "no movie found in viewDidLoad")
+            return
+        }
+        viewModel = MovieDetailViewModel(movie: foundMovie)
+        
         self.title = movie.title
         
         titleLabel.text = ""
@@ -66,8 +86,7 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
                         guard let myself = self else { return }
                         dlog("got imagewrapper: \(type(of: response)), response: \(response)")
                         
-                        if let image: UIImage = response.value
-                        {
+                        if let image: UIImage = response.value {
                             myself.backdropImageView.alpha = 0.0;
                             myself.backdropImageView.image = image
                             UIView.animate(withDuration: 0.3, animations:
@@ -161,7 +180,7 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
         
         moviesService.fetchMovieDetail(byId: movie.movieId, completion:
-        { [weak self] (detail: MovieDetail?, error: NSError?) -> Void in
+        { [weak self] (detail: MovieDetail?, error: Error?) -> Void in
             
             UIApplication.shared.isNetworkActivityIndicatorVisible = false
             guard let myself = self else { return }
@@ -181,7 +200,7 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
         
         moviesService.fetchMovieVideos(byId: movie.movieId, completion:
-        { [weak self] (videos: [MovieVideo], error: NSError?) -> Void in
+        { [weak self] (videos: [MovieVideo], error: Error?) -> Void in
             
             UIApplication.shared.isNetworkActivityIndicatorVisible = false
             guard let myself = self else { return }

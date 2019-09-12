@@ -8,7 +8,12 @@
 
 import Foundation
 
-typealias JsonHttpServiceCompletionHandler = (Data?, HTTPURLResponse?, NSError?) -> Void
+typealias JsonHttpServiceCompletionHandler = (Data?, HTTPURLResponse?, Error?) -> Void
+
+enum HTTPMethod: String {
+    case get = "GET"
+    case post = "POST"
+}
 
 class JsonHttpService {
     
@@ -27,7 +32,7 @@ class JsonHttpService {
         completion: @escaping JsonHttpServiceCompletionHandler) {
     
         var request = URLRequest(url: url)
-        request.httpMethod = "GET"
+        request.httpMethod = HTTPMethod.get.rawValue
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         
         let task = send(request: request, completion: completion)
@@ -40,7 +45,7 @@ class JsonHttpService {
         completion: @escaping JsonHttpServiceCompletionHandler) {
         
         var request = URLRequest(url: url)
-        request.httpMethod = "POST"
+        request.httpMethod = HTTPMethod.post.rawValue
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         
@@ -50,9 +55,10 @@ class JsonHttpService {
             let task = send(request: request, completion: completion)
             task.resume()
         }
-        catch let jerr as NSError {
-            dlog(String(describing: jerr))
-            completion(nil, nil, jerr)
+        catch {
+            dlog(String(describing: error))
+            let serviceError = ServiceError(type: .invalidRequest, code: ServiceErrorCode.parse.rawValue, msg: error.localizedDescription)
+            completion(nil, nil, serviceError)
         }
     }
     
@@ -60,65 +66,60 @@ class JsonHttpService {
     fileprivate func send(request: URLRequest, completion: @escaping JsonHttpServiceCompletionHandler) -> URLSessionDataTask {
         
         let dataTask = session.dataTask(with: request, completionHandler:
-        { (data: Data?, response: URLResponse?, error: Error?) -> Void in
+        { [weak self] (data: Data?, response: URLResponse?, error: Error?) -> Void in
             
-            var returnedError: NSError?
-            var dataActual: Data?
-            var statusCode: Int = 0;
-            var contentType: String = ""
-            var httpResp: HTTPURLResponse?
-            
-            //called once at the end
-            defer {
-                DispatchQueue.main.async {
-                    completion(dataActual, httpResp, returnedError)
-                }
-            }
+            guard let myself = self else { return }
             
             guard let localResp = response as? HTTPURLResponse else {
-                returnedError = generateError(withCode: -404, msg: "unknown response type")
+                let error = ServiceError(type: .invalidResponse, code: ServiceErrorCode.notFound.rawValue, msg: "unknown response type")
+                myself.returnToMain(nil, nil, error, completion)
                 return
             }
             
-            //for the defer block above
-            httpResp = localResp
-            
-            if let conType = localResp.allHeaderFields["Content-Type"] as? String {
-                contentType = conType
-            }
-            statusCode = localResp.statusCode
+            let contentType = localResp.allHeaderFields["Content-Type"] as? String ?? ""
+            let statusCode = localResp.statusCode
             dlog("responseUrl: \(String(describing: localResp.url))")
             dlog("responseCode: \(statusCode)")
+            dlog("contentType: \(contentType)")
             
             if let foundError = error {
                 dlog("error: \(foundError)")
-                returnedError = foundError as NSError
+                myself.returnToMain(nil, nil, ServiceError(foundError), completion)
             }
             else if statusCode >= 400 && statusCode <= 600 {
-                var errDesc = HTTPURLResponse.localizedString(forStatusCode: statusCode)
+                var msg = HTTPURLResponse.localizedString(forStatusCode: statusCode)
                 //maybe it's a nice server
                 if let foundData = data, let errStr = String(data: foundData, encoding: .utf8) {
-                    errDesc = errStr
+                    msg = errStr
                 }
-                returnedError = generateError(withCode: statusCode, msg: errDesc)
+                let error = ServiceError(type: .httpServer, code: statusCode, msg: msg)
+                myself.returnToMain(nil, nil, error, completion)
             }
             else if let foundData = data {
-                if (contentType.contains("json")) {
-                    dataActual = foundData //success
+                if (contentType.contains("json")) { //success
+                    myself.returnToMain(foundData, localResp, nil, completion)
                 }
                 else {
-                    let errString = "contentType is not json: \(contentType)"
-                    dlog(errString)
-                    returnedError = generateError(withCode: -400, msg: errString)
+                    let msg = "contentType is not json: \(contentType)"
+                    dlog(msg)
+                    let error = ServiceError(type: .invalidData, code: ServiceErrorCode.parse.rawValue, msg: msg)
+                    myself.returnToMain(nil, nil, error, completion)
                 }
             }
             else {
-                let errString = "unknown error"
-                dlog(errString)
-                returnedError = generateError(withCode: -600, msg: errString)
+                let msg = "unknown error"
+                dlog(msg)
+                let error = ServiceError(type: .unknown, code: ServiceErrorCode.unknown.rawValue, msg: msg)
+                myself.returnToMain(nil, nil, error, completion)
             }
         })
         
         return dataTask
+    }
+    
+    fileprivate func returnToMain(_ data: Data?, _ resp: HTTPURLResponse?, _ error: Error?, _ completion: @escaping JsonHttpServiceCompletionHandler) {
+        DispatchQueue.main.async {
+            completion(data, resp, error)
+        }
     }
 }
