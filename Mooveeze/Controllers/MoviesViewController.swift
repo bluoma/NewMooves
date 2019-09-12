@@ -113,7 +113,7 @@ class MoviesViewController: UIViewController {
         beginDownload()
         
         moviesService.fetchMovieList(withType: movieListType, page: page, completion:
-        { [weak self] (movieResults: MovieResults?, error: NSError?) in
+        { [weak self] (movieResults: MovieResults?, error: Error?) in
             guard let myself = self else { return }
             
             myself.endDownload()

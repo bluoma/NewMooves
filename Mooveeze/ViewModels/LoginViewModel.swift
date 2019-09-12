@@ -18,7 +18,7 @@ protocol DynamicUserAuth {
     var sessionId: Dynamic<String> { get }
     var status: Dynamic<String> { get }
     var loginSuccess: Dynamic<Bool> { get }
-    var error: Dynamic<NSError?> { get }
+    var error: Dynamic<Error?> { get }
     //view state
     var isLoginInProcess: Dynamic<Bool> { get }
     
@@ -33,7 +33,7 @@ fileprivate class UserAuthViewWrapper: DynamicUserAuth {
     var sessionId: Dynamic<String>
     var status: Dynamic<String>
     var loginSuccess: Dynamic<Bool>
-    var error: Dynamic<NSError?>
+    var error: Dynamic<Error?>
 
     //view state
     var isLoginInProcess: Dynamic<Bool>
@@ -68,7 +68,7 @@ fileprivate class UserAuthViewWrapper: DynamicUserAuth {
         self.loginSuccess.value = success
     }
     
-    func updateError(_ error: NSError?) {
+    func updateError(_ error: Error?) {
         self.error.value = error
     }
     
@@ -99,7 +99,7 @@ extension LoginViewModel {
         networkCallIsActive = true
         
         userService.fetchAuthToken {
-            [weak self] (token: String?, error: NSError?) in
+            [weak self] (token: String?, error: Error?) in
             guard let myself = self else { return }
             myself.networkCallIsActive = false
             UIApplication.shared.isNetworkActivityIndicatorVisible = false
@@ -131,7 +131,7 @@ extension LoginViewModel {
         let password = userAuthWrapper.password.value
         
         userService.validateAuthToken(withAuthToken: authToken, username: username, password: password, completion:
-        { [weak self] (validToken: String?, error: NSError?) in
+        { [weak self] (validToken: String?, error: Error?) in
             guard let myself = self else { return }
             myself.networkCallIsActive = false
             UIApplication.shared.isNetworkActivityIndicatorVisible = false
@@ -161,7 +161,7 @@ extension LoginViewModel {
         let validatedAuthToken = userAuthWrapper.validatedAuthToken.value
 
         userService.createSession(withValidatedToken: validatedAuthToken, completion:
-        { [weak self] (validSessionId: String?, error: NSError?) in
+        { [weak self] (validSessionId: String?, error: Error?) in
             guard let myself = self else { return }
             myself.networkCallIsActive = false
             UIApplication.shared.isNetworkActivityIndicatorVisible = false

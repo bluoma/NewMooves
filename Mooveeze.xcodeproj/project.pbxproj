@@ -37,6 +37,7 @@
 		F7C9F84922FD462000E8BC19 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F7C9F84722FD462000E8BC19 /* Main.storyboard */; };
 		F7C9F84B22FD462000E8BC19 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F7C9F84A22FD462000E8BC19 /* Assets.xcassets */; };
 		F7C9F84E22FD462000E8BC19 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F7C9F84C22FD462000E8BC19 /* LaunchScreen.storyboard */; };
+		F7D7AEF6232990440072AB55 /* ServiceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7D7AEF5232990440072AB55 /* ServiceError.swift */; };
 		F7DFBB8622FD5E9F00E03277 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = F7DFBB8522FD5E9E00E03277 /* README.md */; };
 		F7DFBB8C22FE2AD200E03277 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7DFBB8B22FE2AD200E03277 /* WebKit.framework */; };
 /* End PBXBuildFile section */
@@ -76,6 +77,7 @@
 		F7C9F84A22FD462000E8BC19 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F7C9F84D22FD462000E8BC19 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F7C9F84F22FD462000E8BC19 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F7D7AEF5232990440072AB55 /* ServiceError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceError.swift; sourceTree = "<group>"; };
 		F7DFBB8522FD5E9E00E03277 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		F7DFBB8B22FE2AD200E03277 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -126,6 +128,7 @@
 				F7012D72232179A400A21887 /* Constants.swift */,
 				F7012D73232179A400A21887 /* AppearanceManager.swift */,
 				F7012D9A232303ED00A21887 /* DateFormatter.swift */,
+				F7D7AEF5232990440072AB55 /* ServiceError.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -359,6 +362,7 @@
 				F7012D912321BBE000A21887 /* ProfileCoordinator.swift in Sources */,
 				F7A5C3D52327699A00B80991 /* BindableTextField.swift in Sources */,
 				F7012D6F2321799400A21887 /* MovieSummaryTableViewCell.swift in Sources */,
+				F7D7AEF6232990440072AB55 /* ServiceError.swift in Sources */,
 				F7012D8B23218F3500A21887 /* MoviesCoordinator.swift in Sources */,
 				F7012D8D232190A800A21887 /* CoordinatorConfig.swift in Sources */,
 				F7012D932321D66100A21887 /* UserProfile.swift in Sources */,

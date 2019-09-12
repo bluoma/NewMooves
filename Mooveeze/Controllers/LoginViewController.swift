@@ -58,7 +58,7 @@ class LoginViewController: UIViewController {
                 self.statusLabel.text = status
             }
             dynAuth.error.bindAndFire {
-                [unowned self] (error: NSError?) in
+                [unowned self] (error: Error?) in
                 guard let error = error else { return }
                 
                 self.displayError(error)
@@ -118,8 +118,14 @@ extension LoginViewController {
         }
     }
     
-    func displayError(_ error: NSError) {
-        dynamicUserAuth?.status.value = error.localizedDescription
+    func displayError(_ error: Error) {
+        if error is ServiceError {
+            let serviceError = error as! ServiceError
+            dynamicUserAuth?.status.value = serviceError.msg
+        }
+        else {
+            dynamicUserAuth?.status.value = error.localizedDescription
+        }
     }
 }
 

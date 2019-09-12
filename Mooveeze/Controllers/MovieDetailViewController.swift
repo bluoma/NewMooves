@@ -160,7 +160,7 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
         
         moviesService.fetchMovieDetail(byId: movie.movieId, completion:
-        { [weak self] (detail: MovieDetail?, error: NSError?) -> Void in
+        { [weak self] (detail: MovieDetail?, error: Error?) -> Void in
             
             UIApplication.shared.isNetworkActivityIndicatorVisible = false
             guard let myself = self else { return }
@@ -180,7 +180,7 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
         
         moviesService.fetchMovieVideos(byId: movie.movieId, completion:
-        { [weak self] (videos: [MovieVideo], error: NSError?) -> Void in
+        { [weak self] (videos: [MovieVideo], error: Error?) -> Void in
             
             UIApplication.shared.isNetworkActivityIndicatorVisible = false
             guard let myself = self else { return }

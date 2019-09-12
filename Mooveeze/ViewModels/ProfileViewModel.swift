@@ -146,7 +146,7 @@ extension ProfileViewModel {
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
         userProfileWrapper.updateProfileIsLoading(true)
         userService.fetchUserProfile(withSessionId: foundSessionId, completion:
-        { [weak self] (profile: UserProfile?, error: NSError?) -> Void in
+        { [weak self] (profile: UserProfile?, error: Error?) -> Void in
             
             UIApplication.shared.isNetworkActivityIndicatorVisible = false
             guard let myself = self else { return }
