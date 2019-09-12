@@ -2,6 +2,8 @@
 
 **Mooveeze** is a movies app using the [The Movie Database API](http://docs.themoviedb.apiary.io/). { now https://developers.themoviedb.org/3 }
 
+An app I wrote in 2016 to learn swift at Codepath camp. 
+Took a look recently and decided to update it to a simple hand-rolled MVVM pattern.
 
 ## User Stories
 
@@ -22,6 +24,7 @@ The following **optional** features are implemented:
 - [ ] For the large poster, load the low-res image first, switch to high-res when complete.
 - [x] Customize the highlight and selection effect of the cell.
 - [x] Customize the navigation bar.
+- [x] Login existing TMDb users.
 
 The following **additional** features are implemented:
 
