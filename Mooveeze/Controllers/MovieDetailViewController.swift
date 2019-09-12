@@ -26,13 +26,33 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
     var dateFormatter = DateFormatter()
     var movie: Movie!
     let moviesService = MoviesService()
+    var viewModel: MovieDetailViewModel!
     
     var didSelectVideo: ((Int, Movie) -> Void)?
     
+    var dynamicMovieDetail: DynamicMovieDetail? {
+        
+        didSet {
+            guard let dynDetail = dynamicMovieDetail else { return }
+            
+            dynDetail.movieId.bindAndFire {
+                [unowned self] (movieId: Int) in
+                dlog("movieId bindAndFire: \(movieId)")
+
+            }
+        }
+        
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
-
+        
+        guard let foundMovie = movie else {
+            assert(false, "no movie found in viewDidLoad")
+            return
+        }
+        viewModel = MovieDetailViewModel(movie: foundMovie)
+        
         self.title = movie.title
         
         titleLabel.text = ""

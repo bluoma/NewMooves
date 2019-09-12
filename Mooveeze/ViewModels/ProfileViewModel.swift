@@ -9,15 +9,7 @@
 import UIKit
 import Alamofire
 import AlamofireImage
-/*
- let avatar: Avatar
- let profileId: Int
- let language: String
- let region: String
- let fullname: String
- let includeAdult: Bool
- let username: String
- */
+
 protocol DynamicUserProfile {
     //profile object
     var profileId: Dynamic<Int> { get }
@@ -31,18 +23,18 @@ protocol DynamicUserProfile {
     func resetProfile()
 }
 
-fileprivate class UserProfileViewWrapper: DynamicUserProfile {
+fileprivate class UserProfileViewModelWrapper: DynamicUserProfile {
    
     //profile object
-    var profileId: Dynamic<Int>
-    var username: Dynamic<String>
-    var fullname: Dynamic<String>
-    var userAvatar: Dynamic<UIImage?>
+    let profileId: Dynamic<Int>
+    let username: Dynamic<String>
+    let fullname: Dynamic<String>
+    let userAvatar: Dynamic<UIImage?>
     //view state
-    var isProfileLoading: Dynamic<Bool>
-    var isEmptyState: Dynamic<Bool>
+    let isProfileLoading: Dynamic<Bool>
+    let isEmptyState: Dynamic<Bool>
     
-    init(_ profile: UserProfile? = nil) {
+    init(profile: UserProfile?) {
         let defaultImage = UIImage(named: "profile_icon")
         if let profile = profile {
             profileId = Dynamic(profile.profileId)
@@ -105,21 +97,9 @@ fileprivate class UserProfileViewWrapper: DynamicUserProfile {
 
 class ProfileViewModel {
     
-    
-    /*
-     @IBOutlet weak var statusLabel: UILabel!
-     @IBOutlet weak var emptyStateView: UIView!
-     @IBOutlet weak var loginButton: UIButton!
-     @IBOutlet weak var createAccountButton: UIButton!
-     @IBOutlet weak var profileContainer: UIView!
-     @IBOutlet weak var userAvatar: UIImageView!
-     @IBOutlet weak var usernameLabel: UILabel!
-    */
-    
     fileprivate var userService = UserAccountService()
     fileprivate var downloadIsInProgress: Bool = false
-    fileprivate var userProfile: UserProfile?
-    fileprivate var userProfileWrapper: UserProfileViewWrapper = UserProfileViewWrapper()
+    fileprivate var userProfileWrapper: UserProfileViewModelWrapper = UserProfileViewModelWrapper(profile: nil)
     
     var dynamicUserProfile: DynamicUserProfile {
         get {
@@ -128,7 +108,6 @@ class ProfileViewModel {
     }
     
     fileprivate func updateDynamicProfile(profile: UserProfile) {
-        self.userProfile = profile
         userProfileWrapper.updateProfile(profile)
         let grId = profile.avatar.gravatar.hash
         fetchUserGravatar(with: grId)

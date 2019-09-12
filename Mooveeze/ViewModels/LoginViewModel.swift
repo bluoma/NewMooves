@@ -24,7 +24,7 @@ protocol DynamicUserAuth {
     
 }
 
-fileprivate class UserAuthViewWrapper: DynamicUserAuth {
+fileprivate class UserAuthViewModelWrapper: DynamicUserAuth {
     
     var authToken: Dynamic<String>
     var username: Dynamic<String>
@@ -82,7 +82,7 @@ class LoginViewModel {
     var networkCallIsActive: Bool = false
     var userService = UserAccountService()
     
-    fileprivate var userAuthWrapper: UserAuthViewWrapper = UserAuthViewWrapper()
+    fileprivate var userAuthWrapper: UserAuthViewModelWrapper = UserAuthViewModelWrapper()
     
     var dynamicUserAuth: DynamicUserAuth {
         return userAuthWrapper
