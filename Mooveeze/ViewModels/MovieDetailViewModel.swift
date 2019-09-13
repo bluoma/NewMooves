@@ -23,14 +23,14 @@ protocol DynamicMovieDetail {
     var voteCount: Dynamic<Int> { get }
     var video: Dynamic<Bool> { get }
     var voteAverage: Dynamic<Double> { get }
-    var genreIds: Dynamic<[Int]> { get }
-    
-    //movie model properties set manually
-    var movieDetail: Dynamic<MovieDetail?> { get }
+    //movie model properties calculated
+    var selectedGenre: Dynamic<String> { get }
+    //movie model detail properties set manually if detail nil
+    var tagline: Dynamic<String> { get }
+    var runtime: Dynamic<Int> { get }
+    var homepage: Dynamic<String> { get }
     //var movieVideos: [MovieVideo] { get }
     
-    //movie model properties calculated
-    var genreNames: Dynamic<[String]> { get }
 }
 
 fileprivate class MovieDetailViewModelWrapper: DynamicMovieDetail {
@@ -48,14 +48,14 @@ fileprivate class MovieDetailViewModelWrapper: DynamicMovieDetail {
     let voteCount: Dynamic<Int>
     let video: Dynamic<Bool>
     let voteAverage: Dynamic<Double>
-    let genreIds: Dynamic<[Int]>
-    
-    //movie model properties set manually
-    let movieDetail: Dynamic<MovieDetail?>
-    //let movieVideos: [MovieVideo]
-    
     //movie model properties calculated
-    let genreNames: Dynamic<[String]>
+    let selectedGenre: Dynamic<String>
+    
+    //movie model detail properties set manually if detail nil
+    let tagline: Dynamic<String>
+    let runtime: Dynamic<Int>
+    let homepage: Dynamic<String>
+    //let movieVideos: [MovieVideo]
     
     init(movie: Movie?) {
         if let movie = movie {
@@ -72,9 +72,23 @@ fileprivate class MovieDetailViewModelWrapper: DynamicMovieDetail {
             voteCount = Dynamic(movie.voteCount)
             video = Dynamic(movie.video)
             voteAverage = Dynamic(movie.voteAverage)
-            genreIds = Dynamic(movie.genreIds)
-            movieDetail = Dynamic(movie.movieDetail)
-            genreNames = Dynamic(movie.genreNames)
+            if (movie.genreNames.count > 0) {
+                selectedGenre = Dynamic(movie.genreNames[0])
+            }
+            else {
+                selectedGenre = Dynamic("")
+            }
+            //flatten the detail if present
+            if let detail = movie.movieDetail {
+                tagline = Dynamic(detail.tagline)
+                runtime = Dynamic(detail.runtime)
+                homepage = Dynamic(detail.homepage)
+            }
+            else {
+                tagline = Dynamic("")
+                runtime = Dynamic(0)
+                homepage = Dynamic("")
+            }
         }
         else {
             movieId = Dynamic(-1)
@@ -90,11 +104,18 @@ fileprivate class MovieDetailViewModelWrapper: DynamicMovieDetail {
             voteCount = Dynamic(0)
             video = Dynamic(false)
             voteAverage = Dynamic(0.0)
-            genreIds = Dynamic([])
-            movieDetail = Dynamic(nil)
-            genreNames = Dynamic([])
+            selectedGenre = Dynamic("")
+            tagline = Dynamic("")
+            runtime = Dynamic(0)
+            homepage = Dynamic("")
         }
         
+    }
+    
+    func update(withDetail detail: MovieDetail) {
+        tagline.value = detail.tagline
+        runtime.value = detail.runtime
+        homepage.value = detail.homepage
     }
 }
 
@@ -111,6 +132,10 @@ class MovieDetailViewModel {
     init(movie: Movie) {
         
         movieDetailWrapper = MovieDetailViewModelWrapper(movie: movie)
+    }
+    
+    deinit {
+        dlog("deinit")
     }
     
 }

@@ -35,13 +35,53 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
         didSet {
             guard let dynDetail = dynamicMovieDetail else { return }
             
-            dynDetail.movieId.bindAndFire {
-                [unowned self] (movieId: Int) in
-                dlog("movieId bindAndFire: \(movieId)")
-
+            dynDetail.title.bindAndFire {
+                [unowned self] (movieTitle: String) in
+                dlog("title bind: \(movieTitle)")
+                self.title = movieTitle
+            }
+            dynDetail.overview.bindAndFire {
+                [unowned self] (overview: String) in
+                dlog("overview bind: \(overview)")
+                self.overviewLabel.text = overview
+                self.overviewLabel.sizeToFit()
+            }
+            dynDetail.selectedGenre.bindAndFire {
+                [unowned self] (selectedGenre: String) in
+                dlog("selectedGenre bind: \(selectedGenre)")
+                self.genreLabel.text = selectedGenre
+            }
+            dynDetail.voteAverage.bindAndFire {
+                [unowned self] (voteAverage: Double) in
+                self.ratingLabel.text = String(voteAverage) + " / 10.00"
+            }
+            dynDetail.releaseDate.bindAndFire {
+                [unowned self] (releaseDate: Date) in
+                dlog("releaseDate bind: \(releaseDate)")
+                self.releaseDateLabel.text = self.dateFormatter.string(from: releaseDate)
+            }
+            dynDetail.tagline.bindAndFire {
+                [unowned self] (tagline: String) in
+                dlog("tagline bind: \(tagline)")
+                self.titleLabel.text = tagline
+            }
+            dynDetail.runtime.bindAndFire {
+                [unowned self] (runtime: Int) in
+                if runtime > 0 {
+                    let hours = runtime / 60
+                    let minutes = runtime % 60
+                    let runttimeString = "\(hours) hr \(minutes) min"
+                    self.runningTimeLabel.text = runttimeString
+                }
+                else {
+                    self.runningTimeLabel.text = ""
+                }
             }
         }
-        
+    }
+    
+    deinit {
+        dlog("deinit")
     }
     
     override func viewDidLoad() {
@@ -51,32 +91,19 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
             assert(false, "no movie found in viewDidLoad")
             return
         }
-        viewModel = MovieDetailViewModel(movie: foundMovie)
-        
-        self.title = movie.title
-        
-        titleLabel.text = ""
-        runningTimeLabel.text = ""
-        ratingLabel.text = ""
-        genreLabel.text = ""
-        runningTimeLabel.text = ""
-        releaseDateLabel.text = ""
-        
-        overviewLabel.text = movie.overview
-        overviewLabel.sizeToFit()
-        
-        ratingLabel.text = String(movie.voteAverage) + " / 10.00"
         dateFormatter.dateStyle = .medium
-        releaseDateLabel.text = dateFormatter.string(from: movie.releaseDate)
+
+        viewModel = MovieDetailViewModel(movie: foundMovie)
+        dynamicMovieDetail = viewModel.dynamicMovieDetail
         
         
         contentScrollView.contentSize = CGSize(width: contentScrollView.frame.size.width, height: bottomContainerView.frame.origin.y + bottomContainerView.frame.size.height)
         
-        if let posterPath = movie.posterPath, posterPath.count > 0  {
+        if let posterPath = foundMovie.posterPath, posterPath.count > 0  {
             let imageUrlString = Constants.theMovieDbSecureBaseImageUrl + "/" + Constants.poster_sizes[4] + posterPath
             if let imageUrl = URL(string: imageUrlString) {
                 let defaultImage = UIImage(named: "default_poster_image.png")
-                let urlRequest: URLRequest = URLRequest(url:imageUrl)
+                let urlRequest: URLRequest = URLRequest(url: imageUrl)
                 
                 backdropImageView.af_setImage(
                     withURLRequest: urlRequest,
@@ -161,18 +188,34 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
     }
         
     //MARK: - UIScrollViewDelegate
+    /*
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        //dlog("contentSize: \(scrollView.contentSize), contentOffset: \(scrollView.contentOffset)")
+        if scrollView === videosTableView {
+            dlog("tableView contentSize: \(scrollView.contentSize), contentOffset: \(scrollView.contentOffset)")
+        }
+        else {
+            dlog("contentSize: \(scrollView.contentSize), contentOffset: \(scrollView.contentOffset)")
+        }
     }
     
     func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        dlog("contentSize: \(scrollView.contentSize), contentOffset: \(scrollView.contentOffset)")
+        if scrollView === videosTableView {
+            dlog("tableView contentSize: \(scrollView.contentSize), contentOffset: \(scrollView.contentOffset)")
+        }
+        else {
+            dlog("contentSize: \(scrollView.contentSize), contentOffset: \(scrollView.contentOffset)")
+        }
     }
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        dlog("contentSize: \(scrollView.contentSize), contentOffset: \(scrollView.contentOffset)")
+        if scrollView === videosTableView {
+            dlog("tableView contentSize: \(scrollView.contentSize), contentOffset: \(scrollView.contentOffset)")
+        }
+        else {
+            dlog("contentSize: \(scrollView.contentSize), contentOffset: \(scrollView.contentOffset)")
+        }
     }
-    
+    */
     
     //MARK: - Network
     func fetchMovieDetail() {
@@ -185,13 +228,15 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
             UIApplication.shared.isNetworkActivityIndicatorVisible = false
             guard let myself = self else { return }
             
-            if error != nil {
-                dlog("err: \(String(describing: error))")
+            if let detail = detail {
                 myself.movie.movieDetail = detail
                 myself.displayMovieDetails(detail: detail)
             }
+            else if let error = error {
+                dlog("err: \(String(describing: error))")
+            }
             else {
-                myself.movie.movieDetail = detail
+                assert(false, "error and detail are nil")
             }
         })
     }
@@ -216,28 +261,29 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
     }
     
     func displayMovieDetails(detail: MovieDetail?) -> Void {
-        
-        guard let details = detail else {
+        dlog("")
+        guard let detail = detail else {
             //TODO handle empty state
             return
         }
         
-        if details.runtime > 0 {
-            let hours = details.runtime / 60
-            let minutes = details.runtime % 60
-            let runttimeString = "\(hours) hr \(minutes) min"
-            runningTimeLabel.text = runttimeString
+        dynamicMovieDetail?.runtime.value = detail.runtime
+        dynamicMovieDetail?.tagline.value = detail.tagline
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            [weak self] in
+            guard let myself = self else { return }
+            myself.scrollToView(myself.contentScrollView, target: myself.bottomContainerView, animated: true)
         }
         
-        if details.tagline.count > 0 {
-            titleLabel.alpha = 0.0;
-            titleLabel.text = details.tagline
-            UIView.animate(withDuration: 0.3, animations: { () -> Void in
-                self.titleLabel.alpha = 1.0
-            })
-        }
-        if movie.genreNames.count > 0 {
-            genreLabel.text = movie.genreNames.first
+    }
+    
+    func scrollToView(_ scrollView: UIScrollView, target: UIView, animated: Bool) {
+        if let originView = target.superview {
+            // Get the Y position of your child view
+            let childStartPoint = originView.convert(target.frame.origin, to: scrollView)
+            // Scroll to a rectangle starting at the Y of your subview, with a height of the scrollview
+            scrollView.scrollRectToVisible(CGRect(x: 0, y: childStartPoint.y, width: 1, height: scrollView.frame.height), animated: animated)
         }
     }
 }

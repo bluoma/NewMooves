@@ -139,8 +139,7 @@ extension ProfileViewModel {
                 myself.updateDynamicProfile(profile: foundProfile)
             }
             else {
-                dlog("no error, no profile...?")
-                myself.userProfileWrapper.updateProfileIsLoading(false)
+                 assert(false, "error and profile are nil")
             }
         })
     }

@@ -113,9 +113,7 @@ extension LoginViewModel {
                 myself.validateAuthToken()
             }
             else {
-                dlog("unknown error")
-                myself.userAuthWrapper.isLoginInProcess.value = false
-                myself.userAuthWrapper.updateLoginSuccess(false)
+                assert(false, "error and token are nil")
             }
         }
     }
@@ -145,9 +143,7 @@ extension LoginViewModel {
                 myself.createSession()
             }
             else {
-                dlog("unknown error")
-                myself.userAuthWrapper.isLoginInProcess.value = false
-                myself.userAuthWrapper.updateLoginSuccess(false)
+                assert(false, "error and token are nil")
             }
         })
     }
@@ -174,8 +170,7 @@ extension LoginViewModel {
                 myself.userAuthWrapper.updateSessionId(foundSessionId)
             }
             else {
-                dlog("unknown error")
-                myself.userAuthWrapper.updateLoginSuccess(false)
+                assert(false, "error and token are nil")
             }
         })
         
