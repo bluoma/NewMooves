@@ -72,10 +72,16 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
                     let minutes = runtime % 60
                     let runttimeString = "\(hours) hr \(minutes) min"
                     self.runningTimeLabel.text = runttimeString
+                    self.displayMovieDetails()
                 }
                 else {
                     self.runningTimeLabel.text = ""
                 }
+            }
+            dynDetail.backdropImage.bindAndFire {
+                [unowned self] (image: UIImage?) in
+                dlog("backdropImage bind: \(String(describing: image))")
+                self.backdropImageView.image = image
             }
         }
     }
@@ -96,57 +102,14 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
         viewModel = MovieDetailViewModel(movie: foundMovie)
         dynamicMovieDetail = viewModel.dynamicMovieDetail
         
-        
         contentScrollView.contentSize = CGSize(width: contentScrollView.frame.size.width, height: bottomContainerView.frame.origin.y + bottomContainerView.frame.size.height)
         
-        if let posterPath = foundMovie.posterPath, posterPath.count > 0  {
-            let imageUrlString = Constants.theMovieDbSecureBaseImageUrl + "/" + Constants.poster_sizes[4] + posterPath
-            if let imageUrl = URL(string: imageUrlString) {
-                let defaultImage = UIImage(named: "default_poster_image.png")
-                let urlRequest: URLRequest = URLRequest(url: imageUrl)
-                
-                backdropImageView.af_setImage(
-                    withURLRequest: urlRequest,
-                    placeholderImage: defaultImage,
-                    completion:
-                    { [weak self] (response: DataResponse<UIImage>) in
-                        guard let myself = self else { return }
-                        dlog("got imagewrapper: \(type(of: response)), response: \(response)")
-                        
-                        if let image: UIImage = response.value {
-                            myself.backdropImageView.alpha = 0.0;
-                            myself.backdropImageView.image = image
-                            UIView.animate(withDuration: 0.3, animations:
-                            { () -> Void in
-                                myself.backdropImageView.alpha = 1.0
-                            })
-                        }
-                        else {
-                            dlog("response is not a uiimage")
-                        }
-                    }
-                )
-            }
-            else {
-                dlog("bad url for image: \(imageUrlString)")
-                let defaultImage = UIImage(named: "default_poster_image.png")
-                self.backdropImageView.image = defaultImage
-            }
-        }
-        else {
-            dlog("no url for posterPath: \(String(describing: movie.posterPath))")
-            let defaultImage = UIImage(named: "default_poster_image.png")
-            self.backdropImageView.image = defaultImage
+        viewModel.fetchBackdropImage()
+        
+        if movie.movieDetail == nil {
+            viewModel.fetchMovieDetail()
         }
         
-        
-        
-        if let movieDetails = movie.movieDetail {
-            displayMovieDetails(detail: movieDetails)
-        }
-        else {
-            fetchMovieDetail()
-        }
         self.videosTableView.backgroundColor = .clear
         self.videosTableView.separatorStyle = .singleLine
         self.videosTableView.separatorColor  = .white
@@ -187,60 +150,6 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
         // Dispose of any resources that can be recreated.
     }
         
-    //MARK: - UIScrollViewDelegate
-    /*
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if scrollView === videosTableView {
-            dlog("tableView contentSize: \(scrollView.contentSize), contentOffset: \(scrollView.contentOffset)")
-        }
-        else {
-            dlog("contentSize: \(scrollView.contentSize), contentOffset: \(scrollView.contentOffset)")
-        }
-    }
-    
-    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        if scrollView === videosTableView {
-            dlog("tableView contentSize: \(scrollView.contentSize), contentOffset: \(scrollView.contentOffset)")
-        }
-        else {
-            dlog("contentSize: \(scrollView.contentSize), contentOffset: \(scrollView.contentOffset)")
-        }
-    }
-    
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        if scrollView === videosTableView {
-            dlog("tableView contentSize: \(scrollView.contentSize), contentOffset: \(scrollView.contentOffset)")
-        }
-        else {
-            dlog("contentSize: \(scrollView.contentSize), contentOffset: \(scrollView.contentOffset)")
-        }
-    }
-    */
-    
-    //MARK: - Network
-    func fetchMovieDetail() {
-        
-        UIApplication.shared.isNetworkActivityIndicatorVisible = true
-        
-        moviesService.fetchMovieDetail(byId: movie.movieId, completion:
-        { [weak self] (detail: MovieDetail?, error: Error?) -> Void in
-            
-            UIApplication.shared.isNetworkActivityIndicatorVisible = false
-            guard let myself = self else { return }
-            
-            if let detail = detail {
-                myself.movie.movieDetail = detail
-                myself.displayMovieDetails(detail: detail)
-            }
-            else if let error = error {
-                dlog("err: \(String(describing: error))")
-            }
-            else {
-                assert(false, "error and detail are nil")
-            }
-        })
-    }
-    
     func fetchMovieVideos() {
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
         
@@ -260,20 +169,15 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
         })
     }
     
-    func displayMovieDetails(detail: MovieDetail?) -> Void {
+    func displayMovieDetails() {
         dlog("")
-        guard let detail = detail else {
-            //TODO handle empty state
-            return
-        }
-        
-        dynamicMovieDetail?.runtime.value = detail.runtime
-        dynamicMovieDetail?.tagline.value = detail.tagline
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             [weak self] in
             guard let myself = self else { return }
-            myself.scrollToView(myself.contentScrollView, target: myself.bottomContainerView, animated: true)
+            
+            let childStartPoint = myself.contentScrollView.convert(myself.bottomContainerView.frame.origin, to: myself.contentScrollView)
+            myself.contentScrollView.scrollRectToVisible(CGRect(x: 0, y: childStartPoint.y, width: 1, height: myself.contentScrollView.frame.height), animated: true)
         }
         
     }
