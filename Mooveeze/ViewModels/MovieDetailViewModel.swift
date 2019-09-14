@@ -16,7 +16,7 @@ protocol DynamicMovieDetail {
     var title: Dynamic<String> { get }
     var adult: Dynamic<Bool> { get }
     var overview:  Dynamic<String> { get }
-    var releaseDate: Dynamic<Date> { get }
+    var releaseDate: Dynamic<String> { get }
     var originalTitle:  Dynamic<String> { get }
     var originalLanguage: Dynamic<String> { get }
     var posterPath: Dynamic<String?> { get }
@@ -29,7 +29,7 @@ protocol DynamicMovieDetail {
     var selectedGenre: Dynamic<String> { get }
     //movie model detail properties set manually if detail nil
     var tagline: Dynamic<String> { get }
-    var runtime: Dynamic<Int> { get }
+    var runtimeString: Dynamic<String> { get }
     var homepage: Dynamic<String> { get }
     //var movieVideos: [MovieVideo] { get }
     
@@ -41,7 +41,7 @@ fileprivate class MovieDetailViewModelWrapper: DynamicMovieDetail {
     let title: Dynamic<String>
     let adult: Dynamic<Bool>
     let overview: Dynamic<String>
-    let releaseDate: Dynamic<Date>
+    let releaseDate: Dynamic<String>
     let originalTitle: Dynamic<String>
     let originalLanguage: Dynamic<String>
     let posterPath: Dynamic<String?>
@@ -55,19 +55,23 @@ fileprivate class MovieDetailViewModelWrapper: DynamicMovieDetail {
     
     //movie model detail properties set manually if detail nil
     let tagline: Dynamic<String>
-    let runtime: Dynamic<Int>
+    let runtimeString: Dynamic<String>
     let homepage: Dynamic<String>
     //let movieVideos: [MovieVideo]
     
     init(movie: Movie?) {
         let defaultImage = UIImage(named: "default_poster_image.png")
-
+        
         if let movie = movie {
+            
             movieId = Dynamic(movie.movieId)
             title = Dynamic(movie.title)
             adult = Dynamic(movie.adult)
             overview = Dynamic(movie.overview)
-            releaseDate = Dynamic(movie.releaseDate)
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateStyle = .medium
+            let releaseDateString = dateFormatter.string(from: movie.releaseDate)
+            releaseDate = Dynamic(releaseDateString)
             originalTitle = Dynamic(movie.originalTitle)
             originalLanguage = Dynamic(movie.originalLanguage)
             posterPath = Dynamic(movie.posterPath)
@@ -85,12 +89,12 @@ fileprivate class MovieDetailViewModelWrapper: DynamicMovieDetail {
             //flatten the detail if present
             if let detail = movie.movieDetail {
                 tagline = Dynamic(detail.tagline)
-                runtime = Dynamic(detail.runtime)
+                runtimeString = Dynamic(MovieDetailViewModelWrapper.runtimeToString(detail.runtime))
                 homepage = Dynamic(detail.homepage)
             }
             else {
                 tagline = Dynamic("")
-                runtime = Dynamic(0)
+                runtimeString = Dynamic("")
                 homepage = Dynamic("")
             }
         }
@@ -99,7 +103,7 @@ fileprivate class MovieDetailViewModelWrapper: DynamicMovieDetail {
             title = Dynamic("")
             adult = Dynamic(false)
             overview = Dynamic("")
-            releaseDate = Dynamic(Date())
+            releaseDate = Dynamic("")
             originalTitle = Dynamic("")
             originalLanguage = Dynamic("")
             posterPath = Dynamic(nil)
@@ -110,16 +114,26 @@ fileprivate class MovieDetailViewModelWrapper: DynamicMovieDetail {
             voteAverage = Dynamic(0.0)
             selectedGenre = Dynamic("")
             tagline = Dynamic("")
-            runtime = Dynamic(0)
+            runtimeString = Dynamic("")
             homepage = Dynamic("")
         }
         
     }
     
-    func update(withDetail detail: MovieDetail) {
+    fileprivate func update(withDetail detail: MovieDetail) {
         tagline.value = detail.tagline
-        runtime.value = detail.runtime
+        runtimeString.value = MovieDetailViewModelWrapper.runtimeToString(detail.runtime)
         homepage.value = detail.homepage
+    }
+    
+    fileprivate static func runtimeToString(_ runningTime: Int) -> String {
+        
+        guard runningTime > 0  else { return "" }
+        let hours =  runningTime / 60
+        let minutes =  runningTime % 60
+        let runtimeString = "\(hours) hr \(minutes) min"
+            
+        return runtimeString
     }
 }
 
@@ -128,6 +142,7 @@ class MovieDetailViewModel {
     fileprivate let moviesService = MoviesService()
     fileprivate var movieDetailWrapper: MovieDetailViewModelWrapper
     fileprivate let movie: Movie
+    
     var dynamicMovieDetail: DynamicMovieDetail {
         get {
             return movieDetailWrapper

@@ -23,7 +23,6 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var runningTimeLabel: UILabel!
     @IBOutlet weak var videosTableView: UITableView!
 
-    var dateFormatter = DateFormatter()
     var movie: Movie!
     let moviesService = MoviesService()
     var viewModel: MovieDetailViewModel!
@@ -56,26 +55,20 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
                 self.ratingLabel.text = String(voteAverage) + " / 10.00"
             }
             dynDetail.releaseDate.bindAndFire {
-                [unowned self] (releaseDate: Date) in
+                [unowned self] (releaseDate: String) in
                 dlog("releaseDate bind: \(releaseDate)")
-                self.releaseDateLabel.text = self.dateFormatter.string(from: releaseDate)
+                self.releaseDateLabel.text = releaseDate
             }
             dynDetail.tagline.bindAndFire {
                 [unowned self] (tagline: String) in
                 dlog("tagline bind: \(tagline)")
                 self.titleLabel.text = tagline
             }
-            dynDetail.runtime.bindAndFire {
-                [unowned self] (runtime: Int) in
-                if runtime > 0 {
-                    let hours = runtime / 60
-                    let minutes = runtime % 60
-                    let runttimeString = "\(hours) hr \(minutes) min"
-                    self.runningTimeLabel.text = runttimeString
+            dynDetail.runtimeString.bindAndFire {
+                [unowned self] (runtimeString: String) in
+                if !runtimeString.isEmpty {
+                    self.runningTimeLabel.text = runtimeString
                     self.displayMovieDetails()
-                }
-                else {
-                    self.runningTimeLabel.text = ""
                 }
             }
             dynDetail.backdropImage.bindAndFire {
@@ -97,7 +90,6 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
             assert(false, "no movie found in viewDidLoad")
             return
         }
-        dateFormatter.dateStyle = .medium
 
         viewModel = MovieDetailViewModel(movie: foundMovie)
         dynamicMovieDetail = viewModel.dynamicMovieDetail
