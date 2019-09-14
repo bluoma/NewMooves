@@ -15,8 +15,7 @@ class MovieVideoWebViewController: UIViewController {
 
     @IBOutlet var videoWebView: WKWebView!
 
-    var movie: Movie!
-    var videoIndex: Int = 0
+    //injected by coordinator
     var videoViewModel: MovieVideoViewModel!
     
     var dynamicMovieVideo: DynamicMovieVideo? {
@@ -38,13 +37,6 @@ class MovieVideoWebViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        guard let foundMovie = movie, !foundMovie.movieVideos.isEmpty else {
-            assert(false, "no movie found in viewDidLoad")
-            return
-        }
-        
-        let video: MovieVideo = movie.movieVideos[videoIndex]
-        videoViewModel = MovieVideoViewModel(movieVideo: video)
         dynamicMovieVideo = videoViewModel.dynamicMovieVideo
         
     }

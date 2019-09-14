@@ -79,7 +79,7 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
         }
     }
     
-    var didSelectVideo: ((Int, Movie) -> Void)?
+    var didSelectVideo: ((MovieVideo) -> Void)?
     
     deinit {
         dlog("deinit")
@@ -212,9 +212,8 @@ extension MovieDetailViewController: UITableViewDelegate
         dlog("row: \(indexPath.row)")
         tableView.deselectRow(at: indexPath, animated: true)
         
-        let movie = viewModel.getMovie()
-        movie.movieVideos = movieVideos
-        self.didSelectVideo?(indexPath.row, movie)
+        let movieVideo = movieVideos[indexPath.row]
+        self.didSelectVideo?(movieVideo)
     }
     
 }

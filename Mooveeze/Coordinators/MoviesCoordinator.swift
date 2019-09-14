@@ -42,15 +42,14 @@ class MoviesCoordinator: BaseRootNavigationCoordinator {
         navigationController.show(detailVc, sender: self)
     }
     
-    func detailViewControllerDidSelectVideo(index: Int, movie: Movie) {
-        dlog("summary: \(movie)")
+    func detailViewControllerDidSelectVideo(_ movieVideo: MovieVideo) {
+        dlog("video: \(movieVideo)")
         
         guard let videoVc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: String(describing: MovieVideoWebViewController.self)) as? MovieVideoWebViewController else {
             fatalError()
         }
         
-        videoVc.movie = movie
-        videoVc.videoIndex = index
+        videoVc.videoViewModel = MovieVideoViewModel(movieVideo: movieVideo)
         navigationController.show(videoVc, sender: self)
     }
 }

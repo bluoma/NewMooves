@@ -150,13 +150,8 @@ class MovieDetailViewModel {
     }
     
     init(movie: Movie) {
-        
-        movieDetailWrapper = MovieDetailViewModelWrapper(movie: movie)
         self.movie = movie
-    }
-    
-    func getMovie() -> Movie {
-        return movie
+        movieDetailWrapper = MovieDetailViewModelWrapper(movie: movie)
     }
     
     //MARK: - Network

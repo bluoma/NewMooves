@@ -8,19 +8,6 @@
 
 import Foundation
 
-/*
- 
- 
-let videoId: String
-let language: String //"iso_639_1"
-let region: String   //"iso_3166_1"
-let key: String
-let name: String
-let site: String
-let size: Int
-let type: String
-  */
-
 protocol DynamicMovieVideo {
     
     var videoId: Dynamic<String> { get }
