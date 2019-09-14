@@ -23,12 +23,12 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var runningTimeLabel: UILabel!
     @IBOutlet weak var videosTableView: UITableView!
 
-    var movie: Movie!
+    
     let moviesService = MoviesService()
+    //refactor to viewmodel
+    var movieVideos: [MovieVideo] = []
+    //injected by coordinator
     var viewModel: MovieDetailViewModel!
-    
-    var didSelectVideo: ((Int, Movie) -> Void)?
-    
     var dynamicMovieDetail: DynamicMovieDetail? {
         
         didSet {
@@ -79,6 +79,8 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
         }
     }
     
+    var didSelectVideo: ((Int, Movie) -> Void)?
+    
     deinit {
         dlog("deinit")
     }
@@ -86,21 +88,8 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        guard let foundMovie = movie else {
-            assert(false, "no movie found in viewDidLoad")
-            return
-        }
-
-        viewModel = MovieDetailViewModel(movie: foundMovie)
-        dynamicMovieDetail = viewModel.dynamicMovieDetail
-        
         contentScrollView.contentSize = CGSize(width: contentScrollView.frame.size.width, height: bottomContainerView.frame.origin.y + bottomContainerView.frame.size.height)
         
-        viewModel.fetchBackdropImage()
-        
-        if movie.movieDetail == nil {
-            viewModel.fetchMovieDetail()
-        }
         
         self.videosTableView.backgroundColor = .clear
         self.videosTableView.separatorStyle = .singleLine
@@ -113,10 +102,12 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
         blurView.frame = self.videosTableView.bounds
         blurView.alpha = 0.75
         self.videosTableView.backgroundView = blurView
+    
+        dynamicMovieDetail = viewModel.dynamicMovieDetail
         
-        if movie.movieVideos.isEmpty {
-            fetchMovieVideos()
-        }
+        viewModel.fetchBackdropImage()
+        viewModel.fetchMovieDetail()
+        fetchMovieVideos()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -143,9 +134,13 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
     }
         
     func fetchMovieVideos() {
+        
+        if !movieVideos.isEmpty { return }
+        guard let movieId = dynamicMovieDetail?.movieId.value else { return }
+        
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
         
-        moviesService.fetchMovieVideos(byId: movie.movieId, completion:
+        moviesService.fetchMovieVideos(byId: movieId, completion:
         { [weak self] (videos: [MovieVideo], error: Error?) -> Void in
             
             UIApplication.shared.isNetworkActivityIndicatorVisible = false
@@ -155,7 +150,7 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
                 dlog("err: \(String(describing: error))")
             }
             else {
-                myself.movie.movieVideos = videos
+                myself.movieVideos = videos
                 myself.videosTableView.reloadData()
             }
         })
@@ -187,7 +182,7 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
 //MARK: - UITableViewDataSource
 extension MovieDetailViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return movie.movieVideos.count
+        return movieVideos.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -197,7 +192,7 @@ extension MovieDetailViewController: UITableViewDataSource {
                 return UITableViewCell()
         }
         
-        let video = movie.movieVideos[indexPath.row]
+        let video = movieVideos[indexPath.row]
         
         videoCell.videoSiteLabel.text = video.site + " " + video.type
         videoCell.videoTitleLabel.text = video.name
@@ -217,7 +212,9 @@ extension MovieDetailViewController: UITableViewDelegate
         dlog("row: \(indexPath.row)")
         tableView.deselectRow(at: indexPath, animated: true)
         
-        self.didSelectVideo?(indexPath.row, self.movie)
+        let movie = viewModel.getMovie()
+        movie.movieVideos = movieVideos
+        self.didSelectVideo?(indexPath.row, movie)
     }
     
 }

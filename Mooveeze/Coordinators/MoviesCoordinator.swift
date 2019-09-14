@@ -37,7 +37,7 @@ class MoviesCoordinator: BaseRootNavigationCoordinator {
         guard let detailVc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: String(describing: MovieDetailViewController.self)) as? MovieDetailViewController else {
             fatalError()
         }
-        detailVc.movie = movie
+        detailVc.viewModel = MovieDetailViewModel(movie: movie)
         detailVc.didSelectVideo = detailViewControllerDidSelectVideo
         navigationController.show(detailVc, sender: self)
     }

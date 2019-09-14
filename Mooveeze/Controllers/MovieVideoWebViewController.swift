@@ -43,12 +43,9 @@ class MovieVideoWebViewController: UIViewController {
             return
         }
         
-        if !foundMovie.movieVideos.isEmpty
-        {
-            let video: MovieVideo = movie.movieVideos[videoIndex]
-            
-            videoViewModel = MovieVideoViewModel(movieVideo: video)
-            dynamicMovieVideo = videoViewModel.dynamicMovieVideo
-        }
+        let video: MovieVideo = movie.movieVideos[videoIndex]
+        videoViewModel = MovieVideoViewModel(movieVideo: video)
+        dynamicMovieVideo = videoViewModel.dynamicMovieVideo
+        
     }
 }

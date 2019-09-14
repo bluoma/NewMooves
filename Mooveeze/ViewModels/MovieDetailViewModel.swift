@@ -155,8 +155,14 @@ class MovieDetailViewModel {
         self.movie = movie
     }
     
+    func getMovie() -> Movie {
+        return movie
+    }
+    
     //MARK: - Network
     func fetchMovieDetail() {
+        
+        if movie.movieDetail != nil { return }
         
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
         
