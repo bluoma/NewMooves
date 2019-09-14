@@ -31,7 +31,7 @@ protocol DynamicMovieDetail {
     var tagline: Dynamic<String> { get }
     var runtimeString: Dynamic<String> { get }
     var homepage: Dynamic<String> { get }
-    //var movieVideos: [MovieVideo] { get }
+    var videosLoaded: Dynamic<Bool> { get }
     
 }
 
@@ -57,7 +57,7 @@ fileprivate class MovieDetailViewModelWrapper: DynamicMovieDetail {
     let tagline: Dynamic<String>
     let runtimeString: Dynamic<String>
     let homepage: Dynamic<String>
-    //let movieVideos: [MovieVideo]
+    let videosLoaded: Dynamic<Bool>
     
     init(movie: Movie?) {
         let defaultImage = UIImage(named: "default_poster_image.png")
@@ -97,6 +97,7 @@ fileprivate class MovieDetailViewModelWrapper: DynamicMovieDetail {
                 runtimeString = Dynamic("")
                 homepage = Dynamic("")
             }
+            videosLoaded = Dynamic(false)
         }
         else {
             movieId = Dynamic(-1)
@@ -116,6 +117,7 @@ fileprivate class MovieDetailViewModelWrapper: DynamicMovieDetail {
             tagline = Dynamic("")
             runtimeString = Dynamic("")
             homepage = Dynamic("")
+            videosLoaded = Dynamic(false)
         }
         
     }
@@ -142,6 +144,12 @@ class MovieDetailViewModel {
     fileprivate let moviesService = MoviesService()
     fileprivate var movieDetailWrapper: MovieDetailViewModelWrapper
     fileprivate let movie: Movie
+    fileprivate var movieVideoViewModels: [MovieVideoViewModel] = []
+    
+    init(movie: Movie) {
+        self.movie = movie
+        movieDetailWrapper = MovieDetailViewModelWrapper(movie: movie)
+    }
     
     var dynamicMovieDetail: DynamicMovieDetail {
         get {
@@ -149,10 +157,34 @@ class MovieDetailViewModel {
         }
     }
     
-    init(movie: Movie) {
-        self.movie = movie
-        movieDetailWrapper = MovieDetailViewModelWrapper(movie: movie)
+    var selectedMovie: Movie {
+        return movie
     }
+    
+    var videoCellCount: Int {
+        return movieVideoViewModels.count
+    }
+    
+    func videoCellViewModel(at indexPath: IndexPath ) -> MovieVideoViewModel {
+        if indexPath.row >= movieVideoViewModels.count {
+            assert(false, "mvvm array oob: \(indexPath)")
+        }
+        return movieVideoViewModels[indexPath.row]
+    }
+    
+    func selectedMovieVideo(at indexPath: IndexPath) -> MovieVideo? {
+        var movieVideo: MovieVideo?
+        
+        if indexPath.row < movie.movieVideos.count {
+            movieVideo = movie.movieVideos[indexPath.row]
+        }
+        else {
+            assert(false, "mvv array oob: \(indexPath)")
+        }
+        
+        return movieVideo
+    }
+    
     
     //MARK: - Network
     func fetchMovieDetail() {
@@ -179,6 +211,46 @@ class MovieDetailViewModel {
             }
         })
     }
+    
+    func fetchMovieVideos() {
+        
+        if !movie.movieVideos.isEmpty {
+            self.movieVideoViewModels = []
+            for video in movie.movieVideos {
+                let vm = MovieVideoViewModel(movieVideo: video)
+                self.movieVideoViewModels.append(vm)
+            }
+            DispatchQueue.main.async {
+                self.movieDetailWrapper.videosLoaded.value = true
+            }
+            return
+        }
+        
+        UIApplication.shared.isNetworkActivityIndicatorVisible = true
+        let movieId = movie.movieId
+        
+        moviesService.fetchMovieVideos(byId: movieId, completion:
+        { [weak self] (videos: [MovieVideo], error: Error?) -> Void in
+            
+            UIApplication.shared.isNetworkActivityIndicatorVisible = false
+            guard let myself = self else { return }
+            
+            if error != nil {
+                dlog("err: \(String(describing: error))")
+                myself.movieDetailWrapper.videosLoaded.value = false
+            }
+            else {
+                myself.movie.movieVideos = videos
+                myself.movieVideoViewModels = []
+                for video in videos {
+                    let vm = MovieVideoViewModel(movieVideo: video)
+                    myself.movieVideoViewModels.append(vm)
+                }
+                myself.movieDetailWrapper.videosLoaded.value = true
+            }
+        })
+    }
+    
     
     func fetchBackdropImage() {
         guard let posterPath = movie.posterPath, posterPath.count > 0 else { return }

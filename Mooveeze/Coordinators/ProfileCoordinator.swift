@@ -21,9 +21,8 @@ class ProfileCoordinator: BaseRootNavigationCoordinator {
         profileViewController = vc
         
         super.init(withNavVc: navVc, config: config)
-        //let viewModel = ProfileViewModel()
-        //viewModel.dynamicUserProfileDidUpdate = profileViewController.userProfileDidUpdate
-        //profileViewController.profileViewModel = viewModel
+        let viewModel = ProfileViewModel()
+        profileViewController.profileViewModel = viewModel
         profileViewController.title = config.vcTitle
         profileViewController.didSelectLogin = profileViewControllerDidSelectLogin
         profileViewController.didSelectCreateAccount = profileViewControllerDidSelectCreateAccount
@@ -38,6 +37,7 @@ class ProfileCoordinator: BaseRootNavigationCoordinator {
             fatalError()
         }
         vc.title = "Login to the Movie Db"
+        vc.loginViewModel = LoginViewModel()
         vc.loginDidSucceed = loginViewControllerDidSucceed
         vc.loginDidCancel = loginViewControllerDidCancel
         vc.loginDidErr = loginViewControllerDidError

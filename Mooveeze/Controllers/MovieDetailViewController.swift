@@ -25,8 +25,6 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
 
     
     let moviesService = MoviesService()
-    //refactor to viewmodel
-    var movieVideos: [MovieVideo] = []
     //injected by coordinator
     var viewModel: MovieDetailViewModel!
     var dynamicMovieDetail: DynamicMovieDetail? {
@@ -76,6 +74,12 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
                 dlog("backdropImage bind: \(String(describing: image))")
                 self.backdropImageView.image = image
             }
+            dynDetail.videosLoaded.bindAndFire {
+                [unowned self] (videosLoaded: Bool) in
+                if videosLoaded {
+                    self.videosTableView.reloadData()
+                }
+            }
         }
     }
     
@@ -107,7 +111,7 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
         
         viewModel.fetchBackdropImage()
         viewModel.fetchMovieDetail()
-        fetchMovieVideos()
+        viewModel.fetchMovieVideos()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -131,29 +135,6 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
-    }
-        
-    func fetchMovieVideos() {
-        
-        if !movieVideos.isEmpty { return }
-        guard let movieId = dynamicMovieDetail?.movieId.value else { return }
-        
-        UIApplication.shared.isNetworkActivityIndicatorVisible = true
-        
-        moviesService.fetchMovieVideos(byId: movieId, completion:
-        { [weak self] (videos: [MovieVideo], error: Error?) -> Void in
-            
-            UIApplication.shared.isNetworkActivityIndicatorVisible = false
-            guard let myself = self else { return }
-            
-            if error != nil {
-                dlog("err: \(String(describing: error))")
-            }
-            else {
-                myself.movieVideos = videos
-                myself.videosTableView.reloadData()
-            }
-        })
     }
     
     func displayMovieDetails() {
@@ -182,7 +163,7 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
 //MARK: - UITableViewDataSource
 extension MovieDetailViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return movieVideos.count
+        return viewModel.videoCellCount
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -192,10 +173,9 @@ extension MovieDetailViewController: UITableViewDataSource {
                 return UITableViewCell()
         }
         
-        let video = movieVideos[indexPath.row]
-        
-        videoCell.videoSiteLabel.text = video.site + " " + video.type
-        videoCell.videoTitleLabel.text = video.name
+        let videoViewModel = viewModel.videoCellViewModel(at: indexPath)
+        videoCell.videoSiteLabel.text = videoViewModel.dynamicMovieVideo.site.value + " " + videoViewModel.dynamicMovieVideo.type.value
+        videoCell.videoTitleLabel.text = videoViewModel.dynamicMovieVideo.name.value
         
         return videoCell
     }
@@ -212,8 +192,9 @@ extension MovieDetailViewController: UITableViewDelegate
         dlog("row: \(indexPath.row)")
         tableView.deselectRow(at: indexPath, animated: true)
         
-        let movieVideo = movieVideos[indexPath.row]
-        self.didSelectVideo?(movieVideo)
+        if let movieVideo = viewModel.selectedMovieVideo(at: indexPath) {
+            self.didSelectVideo?(movieVideo)
+        }
     }
     
 }
