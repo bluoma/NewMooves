@@ -10,7 +10,7 @@ import UIKit
 import Alamofire
 import AlamofireImage
 
-class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
+class MovieViewController: UIViewController, UIScrollViewDelegate {
     
     @IBOutlet weak var backdropImageView: UIImageView!
     @IBOutlet weak var titleLabel: UILabel!
@@ -23,14 +23,13 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var runningTimeLabel: UILabel!
     @IBOutlet weak var videosTableView: UITableView!
 
-    
     let moviesService = MoviesService()
     //injected by coordinator
-    var viewModel: MovieDetailViewModel!
-    var dynamicMovieDetail: DynamicMovieDetail? {
+    var viewModel: MovieViewModel!
+    var dynamicMovie: DynamicMovie? {
         
         didSet {
-            guard let dynDetail = dynamicMovieDetail else { return }
+            guard let dynDetail = dynamicMovie else { return }
             
             dynDetail.title.bindAndFire {
                 [unowned self] (movieTitle: String) in
@@ -107,7 +106,7 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
         blurView.alpha = 0.75
         self.videosTableView.backgroundView = blurView
     
-        dynamicMovieDetail = viewModel.dynamicMovieDetail
+        dynamicMovie = viewModel.dynamicMovie
         
         viewModel.fetchBackdropImage()
         viewModel.fetchMovieDetail()
@@ -161,7 +160,7 @@ class MovieDetailViewController: UIViewController, UIScrollViewDelegate {
 }
 
 //MARK: - UITableViewDataSource
-extension MovieDetailViewController: UITableViewDataSource {
+extension MovieViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel.videoCellCount
     }
@@ -174,15 +173,14 @@ extension MovieDetailViewController: UITableViewDataSource {
         }
         
         let videoViewModel = viewModel.videoCellViewModel(at: indexPath)
-        videoCell.videoSiteLabel.text = videoViewModel.dynamicMovieVideo.site.value + " " + videoViewModel.dynamicMovieVideo.type.value
-        videoCell.videoTitleLabel.text = videoViewModel.dynamicMovieVideo.name.value
+        videoCell.dynamicMovieVideo = videoViewModel.dynamicMovieVideo
         
         return videoCell
     }
 }
 
 //MARK: - UITableViewDataDelegate
-extension MovieDetailViewController: UITableViewDelegate
+extension MovieViewController: UITableViewDelegate
 {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 64.0

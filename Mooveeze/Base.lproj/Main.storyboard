@@ -320,10 +320,10 @@
             </objects>
             <point key="canvasLocation" x="1176.8115942028987" y="744.64285714285711"/>
         </scene>
-        <!--MovieDetailViewController-->
+        <!--MovieViewController-->
         <scene sceneID="U80-GZ-9Ww">
             <objects>
-                <viewController restorationIdentifier="MovieDetailViewController" storyboardIdentifier="MovieDetailViewController" extendedLayoutIncludesOpaqueBars="YES" id="Kvi-CK-HHs" userLabel="MovieDetailViewController" customClass="MovieDetailViewController" customModule="Mooveeze" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController restorationIdentifier="MovieViewController" storyboardIdentifier="MovieViewController" extendedLayoutIncludesOpaqueBars="YES" id="Kvi-CK-HHs" userLabel="MovieViewController" customClass="MovieViewController" customModule="Mooveeze" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="4Mu-0B-nIz">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

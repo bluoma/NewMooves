@@ -24,6 +24,13 @@ class MoviesCoordinator: BaseRootNavigationCoordinator {
         moviesViewController.title = config.vcTitle
         if let listType: MovieListType = MovieListType(rawValue: config.vcIndex) {
             moviesViewController.movieListType = listType
+            let viewModel = MoviesViewModel(withType: listType)
+            vc.moviesViewModel = viewModel
+        }
+        else {
+            dlog("no listType specified in config")
+            let viewModel = MoviesViewModel(withType: .nowPlaying)
+            vc.moviesViewModel = viewModel
         }
         navVc.viewControllers.append(moviesViewController)
         moviesViewController.didSelectMovieDetail = moviesViewControllerDidSelectMovieDetail
@@ -34,10 +41,10 @@ class MoviesCoordinator: BaseRootNavigationCoordinator {
     func moviesViewControllerDidSelectMovieDetail(movie: Movie) {
         dlog("movie: \(movie)")
         
-        guard let detailVc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: String(describing: MovieDetailViewController.self)) as? MovieDetailViewController else {
+        guard let detailVc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: String(describing: MovieViewController.self)) as? MovieViewController else {
             fatalError()
         }
-        detailVc.viewModel = MovieDetailViewModel(movie: movie)
+        detailVc.viewModel = MovieViewModel(movie: movie)
         detailVc.didSelectVideo = detailViewControllerDidSelectVideo
         navigationController.show(detailVc, sender: self)
     }
