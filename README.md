@@ -9,7 +9,7 @@ also handle fetching and posting of data as well as state managment.
 Flow coordinators are used to off-load the view controllers from managing transitions
 and having 'knowledge' about other view controllers. Flow coordinators also inject
 the view models into their corresponding controllers. The view models don't really
-'know' or care that they live inside of view controllers.
+'know' or care that they live inside of view controllers, which facilitates re-use and testing.
 
 
 ## User Stories
