@@ -23,7 +23,7 @@ class JsonHttpService {
         let urlconfig = URLSessionConfiguration.default
         urlconfig.timeoutIntervalForRequest = 12
         urlconfig.timeoutIntervalForResource = 12
-        //urlconfig.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
+        urlconfig.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
         self.session = URLSession(configuration: urlconfig, delegate: nil, delegateQueue: nil)
     }
     
@@ -33,7 +33,7 @@ class JsonHttpService {
     
         var request = URLRequest(url: url)
         request.httpMethod = HTTPMethod.get.rawValue
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        //request.setValue("application/json", forHTTPHeaderField: "Accept")
         
         let task = send(request: request, completion: completion)
         task.resume()
@@ -47,7 +47,7 @@ class JsonHttpService {
         var request = URLRequest(url: url)
         request.httpMethod = HTTPMethod.post.rawValue
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        //request.setValue("application/json", forHTTPHeaderField: "Accept")
         
         do {
             let data = try JSONSerialization.data(withJSONObject: postBody, options: .prettyPrinted)

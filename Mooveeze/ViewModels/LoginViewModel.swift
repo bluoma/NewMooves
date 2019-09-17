@@ -9,74 +9,6 @@
 import Foundation
 import UIKit
 
-protocol DynamicUserAuth {
-    //auth fields
-    var authToken: Dynamic<String> { get }
-    var username: Dynamic<String> { get }
-    var password: Dynamic<String> { get }
-    var validatedAuthToken: Dynamic<String> { get }
-    var sessionId: Dynamic<String> { get }
-    var status: Dynamic<String> { get }
-    var loginSuccess: Dynamic<Bool> { get }
-    var error: Dynamic<Error?> { get }
-    //view state
-    var isLoginInProcess: Dynamic<Bool> { get }
-    
-}
-
-fileprivate class UserAuthViewModelWrapper: DynamicUserAuth {
-    
-    var authToken: Dynamic<String>
-    var username: Dynamic<String>
-    var password: Dynamic<String>
-    var validatedAuthToken: Dynamic<String>
-    var sessionId: Dynamic<String>
-    var status: Dynamic<String>
-    var loginSuccess: Dynamic<Bool>
-    var error: Dynamic<Error?>
-
-    //view state
-    var isLoginInProcess: Dynamic<Bool>
-    
-    init() {
-        authToken = Dynamic("")
-        username = Dynamic("")
-        password = Dynamic("")
-        validatedAuthToken = Dynamic("")
-        sessionId = Dynamic("")
-        status = Dynamic("Not logged in")
-        error = Dynamic(nil)
-        loginSuccess = Dynamic(false)
-
-        isLoginInProcess = Dynamic(false)
-        
-    }
-    
-    func updateAuthToken(_ authToken: String) {
-        self.authToken.value = authToken
-    }
-    
-    func updateValidatedAuthToken(_ validatedAuthToken: String) {
-        self.validatedAuthToken.value = validatedAuthToken
-    }
-    
-    func updateSessionId(_ sessionId: String) {
-        self.sessionId.value = sessionId
-    }
-    
-    func updateLoginSuccess(_ success: Bool) {
-        self.loginSuccess.value = success
-    }
-    
-    func updateError(_ error: Error?) {
-        self.error.value = error
-    }
-    
-    func updateLoginInProgress(_ isLoginInProcess: Bool) {
-        self.isLoginInProcess.value = isLoginInProcess
-    }
-}
-
 class LoginViewModel {
     
     var networkCallIsActive: Bool = false
@@ -113,9 +45,7 @@ extension LoginViewModel {
                 myself.validateAuthToken()
             }
             else {
-                dlog("unknown error")
-                myself.userAuthWrapper.isLoginInProcess.value = false
-                myself.userAuthWrapper.updateLoginSuccess(false)
+                assert(false, "error and token are nil")
             }
         }
     }
@@ -145,9 +75,7 @@ extension LoginViewModel {
                 myself.createSession()
             }
             else {
-                dlog("unknown error")
-                myself.userAuthWrapper.isLoginInProcess.value = false
-                myself.userAuthWrapper.updateLoginSuccess(false)
+                assert(false, "error and token are nil")
             }
         })
     }
@@ -174,8 +102,7 @@ extension LoginViewModel {
                 myself.userAuthWrapper.updateSessionId(foundSessionId)
             }
             else {
-                dlog("unknown error")
-                myself.userAuthWrapper.updateLoginSuccess(false)
+                assert(false, "error and token are nil")
             }
         })
         

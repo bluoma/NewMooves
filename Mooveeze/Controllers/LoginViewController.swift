@@ -31,8 +31,8 @@ class LoginViewController: UIViewController {
             }
         }
     }
-    
-    var loginViewModel: LoginViewModel = LoginViewModel()
+    //injected by coordinator
+    var loginViewModel: LoginViewModel!
     var dynamicUserAuth: DynamicUserAuth? {
         
         didSet {

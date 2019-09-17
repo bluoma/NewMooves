@@ -14,7 +14,7 @@ struct MovieDetail: Codable, CustomStringConvertible, CustomDebugStringConvertib
     
     let tagline: String
     let runtime: Int
-    let homepage: String
+    let homepage: String?
     
     enum CodingKeys: String, CodingKey {
         case tagline

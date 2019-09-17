@@ -15,24 +15,58 @@ class MoviesViewController: UIViewController {
     @IBOutlet weak var moviesTableView: UITableView!
     @IBOutlet weak var moviesSearchBar: UISearchBar!
     
-    let moviesService = MoviesService()
-    var moviesArray: [Movie] = []
-    var filteredMoviesArray: [Movie] = []
     var movieListType: MovieListType = .nowPlaying
     var isNetworkErrorShowing: Bool = false
     var header = UITableViewHeaderFooterView()
-    var searchActive = false
     var moviesRefreshControl: UIRefreshControl!
-    var downloadIsInProgress: Bool = false
-    var totalPages: Int = 0
     var currentPage: Int = 1
-    var totalCount: Int = 0
+    //injected by coordinator
+    var moviesViewModel: MoviesViewModel!
+    var dynamicMoviesState: DynamicMoviesState! {
+        didSet {
+            dynamicMoviesState.searchBarState.bind {
+                [unowned self] (searchBarState: Bool) in
+                dlog("searchState: \(searchBarState)")
+                self.moviesTableView.reloadData()
+            }
+            dynamicMoviesState.movieListPageLoadState.bind {
+                [unowned self] (page: Int) in
+                dlog("pageLoadState: \(page)")
+                self.currentPage = page
+                self.moviesTableView.reloadData()
+            }
+            dynamicMoviesState.downloadDidBegin.bind {
+                [unowned self] (didBegin: Bool) in
+                dlog("didBegin: \(didBegin)")
+                if (didBegin) {
+                    self.beginDownload()
+                }
+            }
+            dynamicMoviesState.downloadDidEnd.bind {
+                [unowned self] (didEnd: Bool) in
+                dlog("didEnd: \(didEnd)")
+                if (didEnd) {
+                    self.endDownload()
+                }
+            }
+            dynamicMoviesState.downloadDidError.bind {
+                [unowned self] (error: Error?) in
+                if error != nil {
+                    self.isNetworkErrorShowing = true
+                    self.moviesTableView.reloadData()
+                }
+                else {
+                    self.isNetworkErrorShowing = false
+                }
+            }
+        }
+    }
     
     var didSelectMovieDetail: ((Movie) -> Void)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        dynamicMoviesState = moviesViewModel.dynamicMoviesState
         moviesRefreshControl = UIRefreshControl()
         moviesRefreshControl.addTarget(self, action: #selector(refreshControlAction(refreshControl:)), for: UIControl.Event.valueChanged)
     
@@ -46,7 +80,7 @@ class MoviesViewController: UIViewController {
         tapRecognizer.numberOfTouchesRequired = 1
         header.addGestureRecognizer(tapRecognizer)
         
-        fetchMovies(page: 1)
+        moviesViewModel.fetchMovies(page: 1)
     }
 
     override func didReceiveMemoryWarning() {
@@ -73,14 +107,13 @@ class MoviesViewController: UIViewController {
     //MARK: - Network
     @objc func refreshControlAction(refreshControl: UIRefreshControl) {
         dlog("");
-        if searchActive {
-            searchActive = false
+        if dynamicMoviesState.searchBarState.value {
             moviesSearchBar.endEditing(true)
-            moviesTableView.reloadData()
+            moviesViewModel.searchIsActive(false)
+            
         }
-        if downloadIsInProgress { return }
         currentPage = 1
-        fetchMovies(page: 1)
+        moviesViewModel.fetchMovies(page: currentPage)
     }
 
     fileprivate func beginDownload() {
@@ -90,60 +123,22 @@ class MoviesViewController: UIViewController {
             moviesTableView.setContentOffset(CGPoint(x: 0, y: -moviesRefreshControl.bounds.height), animated: false)
             moviesRefreshControl.beginRefreshing()
         }
+        self.isNetworkErrorShowing = false
     }
     
     fileprivate func endDownload() {
         moviesRefreshControl.endRefreshing()
         UIApplication.shared.isNetworkActivityIndicatorVisible = false
-        self.isNetworkErrorShowing = false
+        
         if currentPage > 1 {
             self.moviesTableView.tableFooterView = UIView()
         }
-        
-    }
-    
-    fileprivate func fetchMovies(page: Int = 1) {
-        
-        if downloadIsInProgress || searchActive { return }
-        if page > 1 && page >= totalPages { return }
-        
-        isNetworkErrorShowing = false
-        header.textLabel?.text = ""
-        downloadIsInProgress = true
-        beginDownload()
-        
-        moviesService.fetchMovieList(withType: movieListType, page: page, completion:
-        { [weak self] (movieResults: MovieResults?, error: Error?) in
-            guard let myself = self else { return }
-            
-            myself.endDownload()
-            myself.downloadIsInProgress = false
-            
-            if error != nil {
-                dlog("err: \(String(describing: error))")
-                myself.isNetworkErrorShowing = true
-                myself.moviesTableView.reloadData()
-            }
-            else if let results = movieResults {
-                myself.currentPage = page
-                myself.totalCount = results.totalResults
-                myself.totalPages = results.totalPages
-                
-                if myself.currentPage > 1 {
-                    myself.moviesArray += results.movies
-                }
-                else {
-                    myself.moviesArray = results.movies
-                }
-                myself.moviesTableView.reloadData()
-            }
-        })
     }
 }
 
 //MARK: - UITableViewDelegate
-extension MoviesViewController: UITableViewDelegate
-{
+extension MoviesViewController: UITableViewDelegate {
+    
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableView.automaticDimension
     }
@@ -156,21 +151,21 @@ extension MoviesViewController: UITableViewDelegate
         dlog("row: \(indexPath.row)")
         tableView.deselectRow(at: indexPath, animated: true)
         
-        var movie: Movie!
-        if searchActive {
-            movie = filteredMoviesArray[indexPath.row]
+        guard let movie: Movie = moviesViewModel.selectedMovie(at: indexPath) else {
+            dlog("no movie at indexPath: \(indexPath)")
+            return
         }
-        else {
-            movie = moviesArray[indexPath.row]
-        }
+        
         self.didSelectMovieDetail?(movie)
     }
     
+    
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
-        if searchActive { return }
-        
-        if moviesArray.count > 0 && indexPath.row >= moviesArray.count - 1 {
+        if dynamicMoviesState.searchBarState.value { return }
+        let count = moviesViewModel.moviesCount()
+     
+        if count > 0 && indexPath.row >= count - 1 {
             dlog("indexPath: \(indexPath) at end")
             var footerFrame = cell.bounds
             footerFrame.size.height = 44
@@ -184,7 +179,7 @@ extension MoviesViewController: UITableViewDelegate
             footer.addSubview(spinner)
             tableView.tableFooterView = footer
             
-            fetchMovies(page: currentPage + 1)
+            moviesViewModel.fetchMovies(page: currentPage + 1)
         }
         
     }
@@ -198,7 +193,7 @@ extension MoviesViewController: UITableViewDelegate
     
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         dlog("")
-        header.textLabel?.text = "Sorry, there was a network error"
+        header.textLabel?.text = dynamicMoviesState.downloadDidError.value?.localizedDescription
         header.textLabel?.textColor = UIColor.red
         header.textLabel?.font = UIFont.boldSystemFont(ofSize: 12)
         header.textLabel?.textAlignment = NSTextAlignment.center
@@ -210,83 +205,24 @@ extension MoviesViewController: UITableViewDelegate
 }
 
 //MARK: - UITableViewDataSource
-extension MoviesViewController: UITableViewDataSource
-{
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
-    {   if searchActive {
-        return filteredMoviesArray.count
-        }
-        return moviesArray.count
+extension MoviesViewController: UITableViewDataSource {
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        return moviesViewModel.moviesCount()
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
-    {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "MovieSummaryCell") as? MovieSummaryTableViewCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "MovieSummaryCell") as? MovieSummaryTableViewCell,
+            let movieModel = moviesViewModel.selectedMovieViewModel(at: indexPath) else {
             return UITableViewCell()
         }
-        var movieSummary: Movie! = nil
-        if searchActive {
-            movieSummary = filteredMoviesArray[indexPath.row]
-        }
-        else {
-            movieSummary = moviesArray[indexPath.row]
-        }
-        cell.movieThumbnailImageView.image = nil
-        cell.movieTitleLabel.text = movieSummary.title
-        cell.movieOverviewLabel.text = movieSummary.overview
         
-        if let posterPath = movieSummary.posterPath, posterPath.count > 0  {
-            let imageUrlString = Constants.theMovieDbSecureBaseImageUrl + "/" + Constants.poster_sizes[0] + posterPath
-            if let imageUrl = URL(string: imageUrlString) {
-                let defaultImage = UIImage(named: "default_movie_thumbnail.png")
-                
-                let urlRequest: URLRequest = URLRequest(url:imageUrl)
-                cell.moviePosterUrlString = imageUrlString
-                
-                cell.movieThumbnailImageView.af_setImage(
-                    withURLRequest: urlRequest,
-                    placeholderImage: defaultImage,
-                    completion:
-                    { [weak cell] (response: DataResponse<UIImage>) in
-                        
-                        guard let mycell = cell else { return }
-                        
-                        if let image: UIImage = response.value {
-                            if imageUrlString == mycell.moviePosterUrlString {
-                                //if response == nil, image came from cache
-                                mycell.movieThumbnailImageView.alpha = 0.0
-                                mycell.movieThumbnailImageView.image = image
-                                UIView.animate(withDuration: 0.3, animations:
-                                    { () -> Void in
-                                        mycell.movieThumbnailImageView.alpha = 1.0
-                                })
-                            }
-                            else {
-                                let defaultImage = UIImage(named: "default_movie_thumbnail.png")
-                                mycell.movieThumbnailImageView.image = defaultImage
-                                dlog("our cell might have been recycled before the image returned, skip")
-                            }
-                        }
-                        else {
-                            let defaultImage = UIImage(named: "default_movie_thumbnail.png")
-                            mycell.movieThumbnailImageView.image = defaultImage
-                            dlog("response is not a uiimage")
-                        }
-                })
-            }
-            else {
-                dlog("bad url: \(imageUrlString)")
-                let defaultImage = UIImage(named: "default_movie_thumbnail.png")
-                cell.movieThumbnailImageView.image = defaultImage
-            }
-        }
-        else {
-            let defaultImage = UIImage(named: "default_movie_thumbnail.png")
-            cell.movieThumbnailImageView.image = defaultImage
-        }
+        cell.dynamicMovie = movieModel.dynamicMovie
+        movieModel.fetchThumbnailImage()
+        
         return cell
-        
     }
     
     
@@ -300,8 +236,8 @@ extension MoviesViewController: UITableViewDataSource
 }
 
 //MARK: - UIScrollViewDelegate
-extension MoviesViewController: UIScrollViewDelegate
-{
+extension MoviesViewController: UIScrollViewDelegate {
+    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         //dlog("contentSize: \(scrollView.contentSize), contentOffset: \(scrollView.contentOffset)")
     }
@@ -317,49 +253,30 @@ extension MoviesViewController: UIScrollViewDelegate
 }
 
 //MARK: - UISearchBarDelegate
-extension MoviesViewController: UISearchBarDelegate
-{
-    /*
-     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-     dlog("")
-     searchActive = true
-     }
-     */
+extension MoviesViewController: UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         dlog("searchText: \(searchText)")
         
         if searchText.count == 0 {
-            searchActive = false
-            moviesTableView.reloadData()
+            moviesViewModel.searchIsActive(false)
         }
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         dlog("searchBarText: \(String(describing: searchBar.text))")
         searchBar.endEditing(true)
-        
-        filteredMoviesArray = moviesArray.filter({ (movie) -> Bool in
-            if let searchText = searchBar.text {
-                let pattern = "\\b" + searchText + "\\b"
-                let range = movie.overview.range(of: pattern, options: [.caseInsensitive, .regularExpression])
-                return range != nil
-            }
-            return false
-        })
-        //if (filteredMoviesArray.count == 0){
-        //    searchActive = false;
-        //}
-        //else {
-        searchActive = true;
-        //}
-        moviesTableView.reloadData()
+        if let searchBarText = searchBar.text {
+            moviesViewModel.searchIsActive(true, forText: searchBarText)
+        }
+        else {
+            dlog("no search text")
+        }
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         dlog("")
         searchBar.endEditing(true)
-        searchActive = false
-        moviesTableView.reloadData()
+        moviesViewModel.searchIsActive(false)
     }
 }

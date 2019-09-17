@@ -2,8 +2,15 @@
 
 **Mooveeze** is a movies app using the [The Movie Database API](http://docs.themoviedb.apiary.io/). { now https://developers.themoviedb.org/3 }
 
-An app I wrote in 2016 to learn swift at Codepath camp. 
-Took a look recently and decided to update it to a simple hand-rolled MVVM pattern.
+An app I wrote in 2016 to learn swift at Codepath camp. Was a simple MVC app.
+I took a look at it recently and decided to update it to a MVVM pattern with unidirectional binding.
+The view models contain dynamic' model wrappers which do the binding from views to fields. The view models 
+also handle fetching and posting of data as well as state managment. 
+Flow coordinators are used to off-load the view controllers from managing transitions
+and having 'knowledge' about other view controllers. Flow coordinators also inject
+the view models into their corresponding controllers. The view models don't really
+'know' or care that they live inside of view controllers.
+
 
 ## User Stories
 

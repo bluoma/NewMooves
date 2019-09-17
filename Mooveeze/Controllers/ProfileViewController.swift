@@ -22,7 +22,8 @@ class ProfileViewController: UIViewController {
     @IBOutlet weak var logoutButton: UIButton!
     @IBOutlet weak var loadingActivityIndicatorView: UIActivityIndicatorView!
     
-    var profileViewModel: ProfileViewModel = ProfileViewModel()
+    //injected by coordinator
+    var profileViewModel: ProfileViewModel!
     var dynamicUserProfile: DynamicUserProfile? {
         
         didSet {

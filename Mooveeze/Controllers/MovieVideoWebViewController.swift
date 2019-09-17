@@ -9,34 +9,35 @@
 import UIKit
 import WebKit
 
+
+
 class MovieVideoWebViewController: UIViewController {
 
-    var movie: Movie!
-    var videoIndex: Int = 0
     @IBOutlet var videoWebView: WKWebView!
-        
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        if !movie.movieVideos.isEmpty
-        {
-            let video = movie.movieVideos[videoIndex]
-            if let vurl = self.constructVideoUrl(from: video)
-            {
-                self.videoWebView.load(URLRequest(url: vurl))
+
+    //injected by coordinator
+    var videoViewModel: MovieVideoViewModel!
+    
+    var dynamicMovieVideo: DynamicMovieVideo? {
+     
+        didSet {
+            dynamicMovieVideo?.url.bindAndFire {
+                [unowned self] (url: URL?) in
+                if let vurl = url {
+                    let request = URLRequest(url: vurl)
+                    self.videoWebView.load(request)
+                }
+                else {
+                    dlog("no url")
+                }
             }
         }
     }
     
-    fileprivate func constructVideoUrl(from video: MovieVideo) -> URL? {
-        var url: URL? = nil
+    override func viewDidLoad() {
+        super.viewDidLoad()
         
-        if video.site == "YouTube" {
-            let urlString = "https://www.youtube.com/watch?v=\(video.key)"
-            url = URL(string: urlString)
-        }
+        dynamicMovieVideo = videoViewModel.dynamicMovieVideo
         
-        return url
     }
-
 }
