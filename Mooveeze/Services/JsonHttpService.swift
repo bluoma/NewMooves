@@ -13,6 +13,7 @@ typealias JsonHttpServiceCompletionHandler = (Data?, HTTPURLResponse?, Error?) -
 enum HTTPMethod: String {
     case get = "GET"
     case post = "POST"
+    case delete = "DELETE"
 }
 
 class JsonHttpService {
@@ -51,6 +52,29 @@ class JsonHttpService {
         
         do {
             let data = try JSONSerialization.data(withJSONObject: postBody, options: .prettyPrinted)
+            request.httpBody = data
+            let task = send(request: request, completion: completion)
+            task.resume()
+        }
+        catch {
+            dlog(String(describing: error))
+            let serviceError = ServiceError(type: .invalidRequest, code: ServiceErrorCode.parse.rawValue, msg: error.localizedDescription)
+            completion(nil, nil, serviceError)
+        }
+    }
+    
+    func doDelete(
+        url: URL,
+        deleteBody: [String: AnyObject],
+        completion: @escaping JsonHttpServiceCompletionHandler) {
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = HTTPMethod.delete.rawValue
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        //request.setValue("application/json", forHTTPHeaderField: "Accept")
+        
+        do {
+            let data = try JSONSerialization.data(withJSONObject: deleteBody, options: .prettyPrinted)
             request.httpBody = data
             let task = send(request: request, completion: completion)
             task.resume()

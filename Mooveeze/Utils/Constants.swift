@@ -72,6 +72,7 @@ public struct Constants {
     public static let theMovieDbAuthTokenPath = "/authentication/token/new"
     public static let theMovieDbAuthTokenValidationPath = "/authentication/token/validate_with_login"
     public static let theMovieDbNewSessionPath = "/authentication/session/new"
+    public static let theMovieDbDeleteSessionPath = "/authentication/session"
 
     public static let theMovieDbNowPlayingTitle = "Now Playing"
     public static let theMovieDbTopRatedTitle = "Top Rated"

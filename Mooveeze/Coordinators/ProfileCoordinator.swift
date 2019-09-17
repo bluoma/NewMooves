@@ -11,6 +11,7 @@ import UIKit
 class ProfileCoordinator: BaseRootNavigationCoordinator {
     
     unowned var profileViewController: ProfileViewController
+    var registerController: RegisterController?
     
     override init(withNavVc navVc: UINavigationController, config: CoordinatorConfig) {
         
@@ -45,11 +46,7 @@ class ProfileCoordinator: BaseRootNavigationCoordinator {
         let loginModalNav = UINavigationController(rootViewController: vc)
         self.navigationController.present(loginModalNav, animated: true, completion: nil)
     }
-    
-    func profileViewControllerDidSelectCreateAccount() {
-        dlog("")
-    }
-    
+   
     func loginViewControllerDidSucceed(sessionId: String) {
         dlog("sessionId: \(sessionId)")
         saveSessionId(sessionId)
@@ -64,6 +61,33 @@ class ProfileCoordinator: BaseRootNavigationCoordinator {
     func loginViewControllerDidError(error: NSError?) {
         dlog(String(describing: error))
         self.navigationController.dismiss(animated: true, completion: nil)
+    }
+    
+    func profileViewControllerDidSelectCreateAccount() {
+        dlog("")
+        let registerController = RegisterController()
+        self.registerController = registerController
+        let registerModalNav = UINavigationController(rootViewController: registerController.safari)
+        self.navigationController.present(registerModalNav, animated: true, completion: nil)
+    }
+    
+    func registerControllerDidSucceed(sessionId: String) {
+        dlog("sessionId: \(sessionId)")
+        //saveSessionId(sessionId)
+        self.navigationController.dismiss(animated: true, completion: nil)
+        self.registerController = nil
+    }
+    
+    func registerControllerDidCancel() {
+        dlog("")
+        self.navigationController.dismiss(animated: true, completion: nil)
+        self.registerController = nil
+    }
+    
+    func registerControllerDidError(error: NSError?) {
+        dlog(String(describing: error))
+        self.navigationController.dismiss(animated: true, completion: nil)
+        self.registerController = nil
     }
     
 }

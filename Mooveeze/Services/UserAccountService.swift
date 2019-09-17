@@ -185,4 +185,49 @@ class UserAccountService {
             }
         })
     }
+    
+    //validated request_token in body
+    func deleteSession(_ sessionId: String, completion: @escaping ((Bool, Error?) -> Void)) {
+        
+        //post
+        let urlString = Constants.theMovieDbSecureBaseUrl + Constants.theMovieDbDeleteSessionPath + "?" + Constants.theMovieDbApiKeyParam
+        
+        guard let url = URL(string: urlString) else {
+            let msg = "invalid url: \(urlString)"
+            let error = ServiceError(type: .invalidUrl, code: ServiceErrorCode.parse.rawValue, msg: msg)
+            completion(false, error)
+            return
+        }
+        
+        var deleteDict: [String: AnyObject] = [:]
+        deleteDict["session_id"] = sessionId as AnyObject
+        
+        jsonService.doDelete(url: url, deleteBody: deleteDict, completion:
+            { [weak self] (data: Data?, response: HTTPURLResponse?, error: Error?) in
+                guard let _ = self else { return }
+                
+                if error != nil {
+                    dlog("err: \(String(describing: error))")
+                    completion(false, error)
+                }
+                else if let foundData = data {
+                    do {
+                        if let authDict = try JSONSerialization.jsonObject(with: foundData, options: .mutableContainers) as? [String: AnyObject], let success = authDict["success"] as? Bool {
+                            dlog("authDict: \(authDict)")
+                            completion(success, nil)
+                        }
+                        else {
+                            let serviceError = ServiceError(type: .invalidData, code: ServiceErrorCode.parse.rawValue, msg: "json data not a dictionary or no success key")
+                            completion(false, serviceError)                    }
+                    }
+                    catch {
+                        let serviceError = ServiceError(error)
+                        completion(false, serviceError)
+                    }
+                }
+                else {
+                    assert(false, "unknown error")
+                }
+        })
+    }
 }

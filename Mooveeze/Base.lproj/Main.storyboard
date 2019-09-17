@@ -135,7 +135,7 @@
                                                     <action selector="loginButtonPressed:" destination="CJB-zT-oZO" eventType="touchUpInside" id="OmF-vR-VFc"/>
                                                 </connections>
                                             </button>
-                                            <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1bN-f8-jZN">
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1bN-f8-jZN">
                                                 <rect key="frame" x="0.0" y="128" width="207" height="52"/>
                                                 <state key="normal" title="Create account on TMDb"/>
                                                 <connections>

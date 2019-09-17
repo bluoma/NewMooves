@@ -76,6 +76,13 @@ class ProfileViewController: UIViewController {
                     self.profileContainer.isHidden = false
                 }
             }
+            dynProfile.logoutDidComplete.bind {
+                [unowned self] (didComplete: Bool) in
+                dlog("logoutDidComplete: \(didComplete)")
+                if let seshId = Constants.sessionId {
+                    deleteSessionId(seshId)
+                }
+            }
         }
     }
     
@@ -112,9 +119,8 @@ class ProfileViewController: UIViewController {
     
     @IBAction func logoutButtonPressed(_ sender: UIButton) {
         dlog("")
-        if let seshId = Constants.sessionId {
-            dynamicUserProfile?.resetProfile()
-            deleteSessionId(seshId)
+        if let _ = Constants.sessionId {
+            profileViewModel.deleteSession()
         }
     }
     

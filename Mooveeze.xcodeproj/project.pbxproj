@@ -33,6 +33,7 @@
 		F7A5C3D02326B2C900B80991 /* Dynamic.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A5C3CF2326B2C900B80991 /* Dynamic.swift */; };
 		F7A5C3D2232742F600B80991 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A5C3D1232742F600B80991 /* LoginViewModel.swift */; };
 		F7A5C3D52327699A00B80991 /* BindableTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A5C3D42327699A00B80991 /* BindableTextField.swift */; };
+		F7AD453A23313E9000A0FF76 /* RegisterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7AD453923313E9000A0FF76 /* RegisterController.swift */; };
 		F7C9F84422FD462000E8BC19 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7C9F84322FD462000E8BC19 /* AppDelegate.swift */; };
 		F7C9F84922FD462000E8BC19 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F7C9F84722FD462000E8BC19 /* Main.storyboard */; };
 		F7C9F84B22FD462000E8BC19 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F7C9F84A22FD462000E8BC19 /* Assets.xcassets */; };
@@ -78,6 +79,7 @@
 		F7A5C3CF2326B2C900B80991 /* Dynamic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dynamic.swift; sourceTree = "<group>"; };
 		F7A5C3D1232742F600B80991 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		F7A5C3D42327699A00B80991 /* BindableTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BindableTextField.swift; sourceTree = "<group>"; };
+		F7AD453923313E9000A0FF76 /* RegisterController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterController.swift; sourceTree = "<group>"; };
 		F7C9F84022FD462000E8BC19 /* Mooveeze.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mooveeze.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7C9F84322FD462000E8BC19 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F7C9F84822FD462000E8BC19 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -152,7 +154,6 @@
 			children = (
 				F7012D75232179A400A21887 /* MovieModel.swift */,
 				F7012D922321D66100A21887 /* UserProfile.swift */,
-				F7A5C3CF2326B2C900B80991 /* Dynamic.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -176,8 +177,9 @@
 				F7012D79232179A400A21887 /* MoviesViewController.swift */,
 				F7012D7B232179A400A21887 /* MovieViewController.swift */,
 				F7012D7A232179A400A21887 /* MovieVideoWebViewController.swift */,
-				F7012D8623217DF200A21887 /* ProfileViewController.swift */,
 				F7012D942321E87A00A21887 /* LoginViewController.swift */,
+				F7012D8623217DF200A21887 /* ProfileViewController.swift */,
+				F7AD453923313E9000A0FF76 /* RegisterController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -196,10 +198,10 @@
 			isa = PBXGroup;
 			children = (
 				F7A5C3D1232742F600B80991 /* LoginViewModel.swift */,
-				F7A5C3CD23255CD300B80991 /* ProfileViewModel.swift */,
 				F7D7AEF72329D0D50072AB55 /* MovieViewModel.swift */,
 				F7D7AF04232EA6BF0072AB55 /* MoviesViewModel.swift */,
 				F7D7AEF9232C52050072AB55 /* MovieVideoViewModel.swift */,
+				F7A5C3CD23255CD300B80991 /* ProfileViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -255,6 +257,7 @@
 		F7D7AEFB232EA26B0072AB55 /* Dynamics */ = {
 			isa = PBXGroup;
 			children = (
+				F7A5C3CF2326B2C900B80991 /* Dynamic.swift */,
 				F7D7AEFC232EA36E0072AB55 /* DynamicMovie.swift */,
 				F7D7AEFE232EA4040072AB55 /* DynamicUserProfile.swift */,
 				F7D7AF00232EA5A90072AB55 /* DynamicUserAuth.swift */,
@@ -406,6 +409,7 @@
 				F7D7AF05232EA6BF0072AB55 /* MoviesViewModel.swift in Sources */,
 				F7A5C3D2232742F600B80991 /* LoginViewModel.swift in Sources */,
 				F7D7AEFD232EA36E0072AB55 /* DynamicMovie.swift in Sources */,
+				F7AD453A23313E9000A0FF76 /* RegisterController.swift in Sources */,
 				F7012D8F2321AD5000A21887 /* BaseRootNavigationCoordinator.swift in Sources */,
 				F7012D8723217DF200A21887 /* ProfileViewController.swift in Sources */,
 				F7A5C3CE23255CD300B80991 /* ProfileViewModel.swift in Sources */,
