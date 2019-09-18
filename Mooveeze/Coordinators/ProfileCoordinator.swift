@@ -7,11 +7,11 @@
 //
 
 import UIKit
+import SafariServices
 
 class ProfileCoordinator: BaseRootNavigationCoordinator {
     
     unowned var profileViewController: ProfileViewController
-    var registerController: RegisterController?
     
     override init(withNavVc navVc: UINavigationController, config: CoordinatorConfig) {
         
@@ -65,29 +65,56 @@ class ProfileCoordinator: BaseRootNavigationCoordinator {
     
     func profileViewControllerDidSelectCreateAccount() {
         dlog("")
-        let registerController = RegisterController()
-        self.registerController = registerController
-        let registerModalNav = UINavigationController(rootViewController: registerController.safari)
+        
+        guard let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: String(describing: RegisterViewController.self)) as? RegisterViewController else {
+            fatalError()
+        }
+        vc.title = "Create TMDb Account"
+        vc.registerViewModel = RegisterViewModel()
+        vc.registerShouldBrowse = self.registerControllerShouldBrowse
+        vc.registerDidCancel = self.registerControllerDidCancel
+        vc.registerDidErr = self.registerControllerDidError
+        vc.registerDidSucceed = self.registerControllerDidSucceed
+    
+        let registerModalNav = UINavigationController(rootViewController: vc)
         self.navigationController.present(registerModalNav, animated: true, completion: nil)
     }
     
     func registerControllerDidSucceed(sessionId: String) {
         dlog("sessionId: \(sessionId)")
-        //saveSessionId(sessionId)
+        saveSessionId(sessionId)
         self.navigationController.dismiss(animated: true, completion: nil)
-        self.registerController = nil
     }
     
     func registerControllerDidCancel() {
         dlog("")
         self.navigationController.dismiss(animated: true, completion: nil)
-        self.registerController = nil
     }
     
     func registerControllerDidError(error: NSError?) {
         dlog(String(describing: error))
         self.navigationController.dismiss(animated: true, completion: nil)
-        self.registerController = nil
+    }
+    
+    func registerControllerShouldBrowse(_ vc: RegisterViewController, WithAuthToken authToken: String) {
+        
+        let redirectUrlString = "?redirect_to=" + Constants.registerRedirectUrl
+        let urlString = Constants.theMovieDbCreateAccountExternalUrl + authToken + redirectUrlString
+        
+        dlog("url string: \(urlString)")
+        
+        guard let url = URL(string: urlString) else {
+            dlog("url error: \(urlString)")
+            return
+        }
+        let safari = SFSafariViewController(url: url)
+        //let _ = safari.view  //hack around empty screen
+        safari.delegate = vc
+        safari.modalTransitionStyle = .crossDissolve
+        safari.modalPresentationStyle = .overFullScreen
+        let registerModalNav = UINavigationController(rootViewController: safari)
+        vc.present(registerModalNav, animated: true, completion: nil)
+        
     }
     
 }

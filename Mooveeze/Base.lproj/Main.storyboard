@@ -320,6 +320,44 @@
             </objects>
             <point key="canvasLocation" x="1176.8115942028987" y="744.64285714285711"/>
         </scene>
+        <!--Register View Controller-->
+        <scene sceneID="60e-qF-InI">
+            <objects>
+                <viewController storyboardIdentifier="RegisterViewController" id="thO-14-pgd" customClass="RegisterViewController" customModule="Mooveeze" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Biu-eH-eA9">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Status: Starting Registration" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4eT-FL-dxJ">
+                                <rect key="frame" x="36" y="80" width="342" height="20.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="wez-eL-bhZ">
+                                <rect key="frame" x="188.5" y="429.5" width="37" height="37"/>
+                                <color key="color" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </activityIndicatorView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="4eT-FL-dxJ" firstAttribute="leading" secondItem="0ui-Jy-qdU" secondAttribute="leading" constant="36" id="QX8-3k-FYr"/>
+                            <constraint firstItem="0ui-Jy-qdU" firstAttribute="trailing" secondItem="4eT-FL-dxJ" secondAttribute="trailing" constant="36" id="Spt-dK-1A6"/>
+                            <constraint firstItem="wez-eL-bhZ" firstAttribute="centerY" secondItem="Biu-eH-eA9" secondAttribute="centerY" id="drn-TN-jIL"/>
+                            <constraint firstItem="wez-eL-bhZ" firstAttribute="centerX" secondItem="Biu-eH-eA9" secondAttribute="centerX" id="o8G-bL-pCr"/>
+                            <constraint firstItem="4eT-FL-dxJ" firstAttribute="top" secondItem="0ui-Jy-qdU" secondAttribute="top" constant="36" id="wOH-Sb-p5z"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="0ui-Jy-qdU"/>
+                    </view>
+                    <connections>
+                        <outlet property="statusLabel" destination="4eT-FL-dxJ" id="BeQ-Te-FZb"/>
+                        <outlet property="waitActivityIndicatorView" destination="wez-eL-bhZ" id="IXC-KS-pEf"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Z8c-z6-JtT" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2107" y="745"/>
+        </scene>
         <!--MovieViewController-->
         <scene sceneID="U80-GZ-9Ww">
             <objects>
