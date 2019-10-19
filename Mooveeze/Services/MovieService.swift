@@ -13,6 +13,35 @@ class MovieService {
     let jsonService = JsonHttpService()
     let movieDbHttpClient: MovieDbClient = MovieDbClient()
 
+    func fetchMovieListBis(withType listType: MovieListType, page: Int, completion: @escaping ((MovieResults?, Error?) -> Void)) {
+        
+        let remoteRequest = MovieRequest.fetchMovieListRequest(withType: listType, page: page)
+        remoteRequest.successBlock = { (data: Data?, headers: [AnyHashable: Any]) -> Void in
+            
+            if let foundData = data {
+                
+                do {
+                    let decoder = JSONDecoder()
+                    decoder.dateDecodingStrategy = .formatted(DateFormatter.yyyyMMdd)
+                    let results: MovieResults = try decoder.decode(MovieResults.self, from: foundData)
+                    results.movies.forEach { $0.populateGenres() }
+                    completion(results, nil)
+                }
+                catch {
+                    let serviceError = ServiceError(error)
+                    completion(nil, serviceError)
+                }
+            }
+            else {
+                let results = MovieResults(totalResults: 0, totalPages: 0, page: 0, movies: [])
+                completion(results, nil)
+            }
+        }
+        remoteRequest.failureBlock = { (error: Error) -> Void  in
+            completion(nil, error)
+        }
+        remoteRequest.send()
+    }
     
     func fetchMovieList(withType listType: MovieListType, page: Int, completion: @escaping ((MovieResults?, Error?) -> Void)) {
         

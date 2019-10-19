@@ -47,7 +47,7 @@ class HttpClient: RemoteClient {
     }
     
     
-    func buildUrlRequest(withRemoteRequest request: RemoteRequest) -> URLRequest? {
+    override func buildUrlRequest(withRemoteRequest request: RemoteRequest) -> URLRequest? {
         
         var urlRequest: URLRequest?
         

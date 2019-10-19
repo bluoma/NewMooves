@@ -13,7 +13,7 @@ public enum MovieListType: Int {
     case topRated
 }
 
-class MovieRequest: HttpRequest {
+class MovieRequest: JsonHttpRequest, CustomStringConvertible {
     
     override init() {
         super.init()
@@ -57,5 +57,9 @@ class MovieRequest: HttpRequest {
         
         return request
         
+    }
+    
+    var description: String {
+        return "MovieRequest"
     }
 }

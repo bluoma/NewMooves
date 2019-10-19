@@ -8,7 +8,7 @@
 
 import Foundation
 
-class UserAccountRequest: HttpRequest {
+class UserAccountRequest: JsonHttpRequest {
     
     override init() {
         super.init()
@@ -41,9 +41,9 @@ class UserAccountRequest: HttpRequest {
         request.method = HTTPMethod.post.rawValue
         request.appendPath("token/validate_with_login")
         request.contentType = "application/json"
-        request.contentBody["request_token"] = authToken as AnyObject
-        request.contentBody["username"] = username as AnyObject
-        request.contentBody["password"] = password as AnyObject
+        request.contentBody["request_token"] = authToken
+        request.contentBody["username"] = username
+        request.contentBody["password"] = password
 
         return request
     }
@@ -54,7 +54,7 @@ class UserAccountRequest: HttpRequest {
         request.method = HTTPMethod.post.rawValue
         request.appendPath("session/new")
         request.contentType = "application/json"
-        request.contentBody["request_token"] = validatedAuthToken as AnyObject
+        request.contentBody["request_token"] = validatedAuthToken
                
         return request
     }
@@ -65,9 +65,13 @@ class UserAccountRequest: HttpRequest {
         request.method = HTTPMethod.delete.rawValue
         request.appendPath("session")
         request.contentType = "application/json"
-        request.contentBody["session_id"] = Constants.sessionId as AnyObject
+        request.contentBody["session_id"] = Constants.sessionId
         
         return request
    }
     
+    
+    var description: String {
+        return "UserAccountRequest"
+    }
 }

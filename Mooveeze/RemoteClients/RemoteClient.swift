@@ -54,5 +54,8 @@ class RemoteClient {
         return url
     }
     
+    func buildUrlRequest(withRemoteRequest request: RemoteRequest) -> URLRequest? {
+        return nil
+    }
     
 }
