@@ -11,13 +11,12 @@ import Foundation
 
 class NetworkService {
     
-    var clientRequestDict: [String: RemoteClient] = [:]
-    var requestTaskDict: [RemoteRequest: AnyObject] = [:]
-    var jsonService = JsonHttpService()
-    let requestTaskDictLock = NSLock()
+    fileprivate var clientRequestDict: [String: RemoteClient] = [:]
+    fileprivate var requestTaskDict: [RemoteRequest: AnyObject] = [:]
+    fileprivate var jsonService = JsonHttpService()
+    fileprivate let requestTaskDictLock = NSLock()
     
-    init() {
-        
+    fileprivate init() {
         let client = MovieDbClient()
         clientRequestDict[MovieRequest.staticName] = client
         clientRequestDict[UserAccountRequest.staticName] = client

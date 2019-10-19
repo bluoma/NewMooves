@@ -167,13 +167,13 @@
 			path = Utils;
 			sourceTree = "<group>";
 		};
-		F7012D74232179A400A21887 /* Models */ = {
+		F7012D74232179A400A21887 /* RemoteModels */ = {
 			isa = PBXGroup;
 			children = (
 				F7012D75232179A400A21887 /* MovieModel.swift */,
 				F7012D922321D66100A21887 /* UserProfile.swift */,
 			);
-			path = Models;
+			path = RemoteModels;
 			sourceTree = "<group>";
 		};
 		F7012D76232179A400A21887 /* Coordinators */ = {
@@ -202,7 +202,7 @@
 			path = Controllers;
 			sourceTree = "<group>";
 		};
-		F7012D7C232179A400A21887 /* Services */ = {
+		F7012D7C232179A400A21887 /* RemoteServices */ = {
 			isa = PBXGroup;
 			children = (
 				F7012D962322B34700A21887 /* JsonHttpService.swift */,
@@ -210,7 +210,18 @@
 				F79376B3235ADFAF00EF1F4F /* NetworkService.swift */,
 				F7012D9E23241DB900A21887 /* UserAccountService.swift */,
 			);
-			path = Services;
+			path = RemoteServices;
+			sourceTree = "<group>";
+		};
+		F7702D70235B8E0000FA5471 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				F7F48624235A35C5001B73C2 /* RemoteClients */,
+				F7012D74232179A400A21887 /* RemoteModels */,
+				F7F48623235A3247001B73C2 /* RemoteRequests */,
+				F7012D7C232179A400A21887 /* RemoteServices */,
+			);
+			path = Network;
 			sourceTree = "<group>";
 		};
 		F7A5C3CC23255CD300B80991 /* ViewModels */ = {
@@ -262,10 +273,7 @@
 				F7D7AEFB232EA26B0072AB55 /* Dynamics */,
 				F7A5C3CC23255CD300B80991 /* ViewModels */,
 				F7012D76232179A400A21887 /* Coordinators */,
-				F7012D74232179A400A21887 /* Models */,
-				F7F48624235A35C5001B73C2 /* RemoteClients */,
-				F7F48623235A3247001B73C2 /* RemoteRequests */,
-				F7012D7C232179A400A21887 /* Services */,
+				F7702D70235B8E0000FA5471 /* Network */,
 				F7A5C3D32327697000B80991 /* Views */,
 				F7012D71232179A400A21887 /* Utils */,
 				F7C9F84722FD462000E8BC19 /* Main.storyboard */,
