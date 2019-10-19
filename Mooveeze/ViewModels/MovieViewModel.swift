@@ -12,7 +12,7 @@ import AlamofireImage
 
 class MovieViewModel {
     
-    fileprivate let moviesService = MoviesService()
+    fileprivate let moviesService = MovieService()
     fileprivate var movieDetailWrapper: MovieViewModelWrapper
     fileprivate let movie: Movie
     fileprivate var movieVideoViewModels: [MovieVideoViewModel] = []

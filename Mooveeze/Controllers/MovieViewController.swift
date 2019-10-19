@@ -23,7 +23,7 @@ class MovieViewController: UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var runningTimeLabel: UILabel!
     @IBOutlet weak var videosTableView: UITableView!
 
-    let moviesService = MoviesService()
+    let moviesService = MovieService()
     //injected by coordinator
     var viewModel: MovieViewModel!
     var dynamicMovie: DynamicMovie? {
@@ -115,7 +115,7 @@ class MovieViewController: UIViewController, UIScrollViewDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+        dlog("")
         let blur = UIBlurEffect(style: UIBlurEffect.Style.light)
         let blurView = UIVisualEffectView(effect: blur)
         blurView.frame = self.bottomContainerView.bounds
@@ -124,6 +124,12 @@ class MovieViewController: UIViewController, UIScrollViewDelegate {
         self.bottomContainerView.alpha = 0.75
         self.bottomContainerView.layer.cornerRadius = 4
         self.bottomContainerView.layer.masksToBounds = true
+        
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        dlog("")
     }
     
     override func viewWillDisappear(_ animated: Bool) {

@@ -96,7 +96,11 @@ class ProfileViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+        dlog("")
+        handleRefresh()
+    }
+    
+    func handleRefresh() {
         if Constants.sessionId == nil {
             dynamicUserProfile?.isEmptyState.value = true
         }

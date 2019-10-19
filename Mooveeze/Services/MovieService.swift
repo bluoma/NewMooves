@@ -8,39 +8,23 @@
 
 import Foundation
 
-enum MovieListType: Int {
-    
-    case nowPlaying
-    case topRated
-}
-
-class MoviesService {
+class MovieService {
     
     let jsonService = JsonHttpService()
+    let movieDbHttpClient: MovieDbClient = MovieDbClient()
+
     
     func fetchMovieList(withType listType: MovieListType, page: Int, completion: @escaping ((MovieResults?, Error?) -> Void)) {
         
-        var urlString = ""
-        
-        switch listType {
-            
-        case .nowPlaying:
-            let nowPlayingUrlString = Constants.theMovieDbSecureBaseUrl + Constants.theMovieDbNowPlayingPath + "?" + Constants.theMovieDbApiKeyParam + "&page=" + String(page)
-            urlString = nowPlayingUrlString
-            
-        case .topRated:
-            let topRatedUrlString = Constants.theMovieDbSecureBaseUrl + Constants.theMovieDbTopRatedPath + "?" + Constants.theMovieDbApiKeyParam + "&page=" + String(page)
-            urlString = topRatedUrlString
-        }
-        
-        guard let url = URL(string: urlString) else {
-            let msg = "invalid url: \(urlString)"
+        let remoteRequest = MovieRequest.fetchMovieListRequest(withType: listType, page: page)
+        guard let urlRequest = movieDbHttpClient.buildUrlRequest(withRemoteRequest: remoteRequest) else {
+            let msg = "invalid remoteRequest: \(remoteRequest)"
             let error = ServiceError(type: .invalidUrl, code: ServiceErrorCode.parse.rawValue, msg: msg)
             completion(nil, error)
             return
         }
         
-        jsonService.doGet(url: url, completion:
+        jsonService.send(urlRequest: urlRequest, completion:
         { [weak self] (data: Data?, response: HTTPURLResponse?, error: Error?) in
             guard let _ = self else { return }
             
@@ -70,17 +54,14 @@ class MoviesService {
     
     func fetchMovieDetail(byId movieId: Int, completion: @escaping ((MovieDetail?, Error?) -> Void)) {
         
-        let baseUrl = Constants.theMovieDbSecureBaseUrl + Constants.theMovieDbMovieDetailPath + "/"
-        let urlString = baseUrl + String(movieId) + "?" + Constants.theMovieDbApiKeyParam
-        
-        guard let url = URL(string: urlString) else {
-            let msg = "invalid url: \(urlString)"
+        let remoteRequest = MovieRequest.fetchMoviewDetailRequest(withMovieId: String(movieId))
+        guard let urlRequest = movieDbHttpClient.buildUrlRequest(withRemoteRequest: remoteRequest) else {
+            let msg = "invalid remoteRequest: \(remoteRequest)"
             let error = ServiceError(type: .invalidUrl, code: ServiceErrorCode.parse.rawValue, msg: msg)
             completion(nil, error)
             return
         }
-        
-        jsonService.doGet(url: url, completion:
+        jsonService.send(urlRequest: urlRequest, completion:
         { [weak self] (data: Data?, response: HTTPURLResponse?, error: Error?) in
             guard let _ = self else { return }
             
@@ -108,17 +89,15 @@ class MoviesService {
     
     func fetchMovieVideos(byId movieId: Int, completion: @escaping (([MovieVideo], Error?) -> Void)) {
         
-        let baseUrl = Constants.theMovieDbSecureBaseUrl + Constants.theMovieDbMovieDetailPath + "/"
-        let urlString = baseUrl + String(movieId) + Constants.theMovieDbMovieVideoPath + "?" + Constants.theMovieDbApiKeyParam
-        
-        guard let url = URL(string: urlString) else {
-            let msg = "invalid url: \(urlString)"
+        let remoteRequest = MovieRequest.fetchMovieVideosRequest(withMovieId: String(movieId))
+        guard let urlRequest = movieDbHttpClient.buildUrlRequest(withRemoteRequest: remoteRequest) else {
+            let msg = "invalid remoteRequest: \(remoteRequest)"
             let error = ServiceError(type: .invalidUrl, code: ServiceErrorCode.parse.rawValue, msg: msg)
             completion([], error)
             return
         }
         
-        jsonService.doGet(url: url, completion:
+        jsonService.send(urlRequest: urlRequest, completion:
         { [weak self] (data: Data?, response: HTTPURLResponse?, error: Error?) in
             guard let _ = self else { return }
             

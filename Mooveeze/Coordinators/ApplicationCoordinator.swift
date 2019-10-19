@@ -16,7 +16,6 @@ class ApplicationCoordinator {
     
     init() {
         let tabBarController = UITabBarController()
-        
         let index0 = 0
         let index1 = 1
         let index2 = 2
@@ -61,3 +60,11 @@ class ApplicationCoordinator {
 
 }
 
+class ForwardingNavigationController: UINavigationController {
+    
+    
+    override var shouldAutomaticallyForwardAppearanceMethods: Bool {
+        return true
+    }
+    
+}

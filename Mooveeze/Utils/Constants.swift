@@ -73,7 +73,8 @@ public struct Constants {
     public static let theMovieDbAuthTokenValidationPath = "/authentication/token/validate_with_login"
     public static let theMovieDbNewSessionPath = "/authentication/session/new"
     public static let theMovieDbDeleteSessionPath = "/authentication/session"
-    public static let theMovieDbCreateAccountExternalUrl = "https://www.themoviedb.org/authenticate/" //{REQUEST_TOKEN}?redirect_to=http://www.yourapp.com/approved
+    public static let theMovieDbCreateAccountExternalUrl = "https://www.themoviedb.org/authenticate/"
+    //{REQUEST_TOKEN}?redirect_to=http://www.yourapp.com/approved
     
     public static let theMovieDbNowPlayingTitle = "Now Playing"
     public static let theMovieDbTopRatedTitle = "Top Rated"

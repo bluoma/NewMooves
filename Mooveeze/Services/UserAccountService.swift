@@ -12,20 +12,19 @@ import Foundation
 class UserAccountService {
     
     let jsonService = JsonHttpService()
-    
+    let movieDbHttpClient: MovieDbClient = MovieDbClient()
     
     func fetchUserProfile(withSessionId sessionId: String, completion: @escaping ((UserProfile?, Error?) -> Void)) {
         
-        let urlString = Constants.theMovieDbSecureBaseUrl + Constants.theMovieDbProfilePath + "?" + Constants.theMovieDbApiKeyParam + "&" + Constants.theMovieDbSessionKeyName + "=" + sessionId
-        
-        guard let url = URL(string: urlString) else {
-            let msg = "invalid url: \(urlString)"
+        let remoteRequest = UserAccountRequest.fetchUserProfileRequest()
+        guard let urlRequest = movieDbHttpClient.buildUrlRequest(withRemoteRequest: remoteRequest) else {
+            let msg = "invalid remoteRequest: \(remoteRequest)"
             let error = ServiceError(type: .invalidUrl, code: ServiceErrorCode.parse.rawValue, msg: msg)
             completion(nil, error)
             return
         }
         
-        jsonService.doGet(url: url, completion:
+        jsonService.send(urlRequest: urlRequest, completion:
         { [weak self] (data: Data?, response: HTTPURLResponse?, error: Error?) in
             guard let _ = self else { return }
             
@@ -53,65 +52,56 @@ class UserAccountService {
     
     func fetchAuthToken(completion: @escaping ((String?, Error?) -> Void)) {
         
-        let urlString = Constants.theMovieDbSecureBaseUrl + Constants.theMovieDbAuthTokenPath + "?" + Constants.theMovieDbApiKeyParam
-        
-        guard let url = URL(string: urlString) else {
-            let msg = "invalid url: \(urlString)"
+        let remoteRequest: UserAccountRequest = UserAccountRequest.fetchAuthTokenRequest()
+        guard let urlRequest = movieDbHttpClient.buildUrlRequest(withRemoteRequest: remoteRequest) else {
+            let msg = "invalid remoteRequest: \(remoteRequest)"
             let error = ServiceError(type: .invalidUrl, code: ServiceErrorCode.parse.rawValue, msg: msg)
             completion(nil, error)
             return
         }
-        
-        jsonService.doGet(url: url, completion:
+        dlog("sending : \(urlRequest) headers: \n\(String(describing: urlRequest.allHTTPHeaderFields))")
+        jsonService.send(urlRequest: urlRequest, completion:
         { [weak self] (data: Data?, response: HTTPURLResponse?, error: Error?) in
             guard let _ = self else { return }
             
             if error != nil {
-                dlog("err: \(String(describing: error))")
-                completion(nil, error)
-            }
-            else if let foundData = data {
-                do {
-                    if let authDict = try JSONSerialization.jsonObject(with: foundData, options: .mutableContainers) as? [String: AnyObject], let authToken = authDict["request_token"] as? String {
-                        dlog("authDict: \(authDict)")
-                        completion(authToken, nil)
+                    dlog("err: \(String(describing: error))")
+                    completion(nil, error)
+                }
+                else if let foundData = data {
+                    do {
+                        if let authDict = try JSONSerialization.jsonObject(with: foundData, options: .mutableContainers) as? [String: AnyObject], let authToken = authDict["request_token"] as? String {
+                            dlog("authDict: \(authDict)")
+                            completion(authToken, nil)
+                        }
+                        else {
+                            let serviceError = ServiceError(type: .invalidData, code: ServiceErrorCode.parse.rawValue, msg: "json data not a dictionary or no request_token")
+                            completion(nil, serviceError)
+                        }
                     }
-                    else {
-                        let serviceError = ServiceError(type: .invalidData, code: ServiceErrorCode.parse.rawValue, msg: "json data not a dictionary or no request_token")
+                    catch {
+                        let serviceError = ServiceError(error)
                         completion(nil, serviceError)
                     }
                 }
-                catch {
-                    let serviceError = ServiceError(error)
-                    completion(nil, serviceError)
+                else {
+                    assert(false, "unknown error")
                 }
-            }
-            else {
-                assert(false, "unknown error")
-            }
         })
-       
     }
     
     //authtoken plus username and password in body (login)
     func validateAuthToken(withAuthToken authToken: String, username: String, password: String, completion: @escaping ((String?, Error?) -> Void)) {
-        
-        //post
-        let urlString = Constants.theMovieDbSecureBaseUrl + Constants.theMovieDbAuthTokenValidationPath + "?" + Constants.theMovieDbApiKeyParam
-        
-        guard let url = URL(string: urlString) else {
-            let msg = "invalid url: \(urlString)"
+       
+        let remoteRequest: UserAccountRequest = UserAccountRequest.validateAuthTokenRequest(authToken: authToken, username: username, password: password)
+        guard let urlRequest = movieDbHttpClient.buildUrlRequest(withRemoteRequest: remoteRequest) else {
+            let msg = "invalid remoteRequest: \(remoteRequest)"
             let error = ServiceError(type: .invalidUrl, code: ServiceErrorCode.parse.rawValue, msg: msg)
             completion(nil, error)
             return
         }
         
-        var body: [String: AnyObject] = [:]
-        body["username"] = username as AnyObject
-        body["password"] = password as AnyObject
-        body["request_token"] = authToken as AnyObject
-        
-        jsonService.doPost(url: url, postBody: body, completion:
+        jsonService.send(urlRequest: urlRequest, completion:
         { [weak self] (data: Data?, response: HTTPURLResponse?, error: Error?) in
             guard let _ = self else { return }
             
@@ -144,20 +134,16 @@ class UserAccountService {
     //validated request_token in body
     func createSession(withValidatedToken validatedAuthToken: String, completion: @escaping ((String?, Error?) -> Void)) {
         
-        //post
-        let urlString = Constants.theMovieDbSecureBaseUrl + Constants.theMovieDbNewSessionPath + "?" + Constants.theMovieDbApiKeyParam
-    
-        guard let url = URL(string: urlString) else {
-            let msg = "invalid url: \(urlString)"
+        let remoteRequest = UserAccountRequest.creationSessionRequest(withValidatedAuthToken: validatedAuthToken)
+        
+        guard let urlRequest = movieDbHttpClient.buildUrlRequest(withRemoteRequest: remoteRequest) else {
+            let msg = "invalid remoteRequest: \(remoteRequest)"
             let error = ServiceError(type: .invalidUrl, code: ServiceErrorCode.parse.rawValue, msg: msg)
             completion(nil, error)
             return
         }
         
-        var postDict: [String: AnyObject] = [:]
-        postDict["request_token"] = validatedAuthToken as AnyObject
-        
-        jsonService.doPost(url: url, postBody: postDict, completion:
+        jsonService.send(urlRequest: urlRequest, completion:
         { [weak self] (data: Data?, response: HTTPURLResponse?, error: Error?) in
             guard let _ = self else { return }
             
@@ -173,7 +159,8 @@ class UserAccountService {
                     }
                     else {
                         let serviceError = ServiceError(type: .invalidData, code: ServiceErrorCode.parse.rawValue, msg: "json data not a dictionary or no session_id")
-                        completion(nil, serviceError)                    }
+                        completion(nil, serviceError)
+                    }
                 }
                 catch {
                     let serviceError = ServiceError(error)
@@ -186,48 +173,43 @@ class UserAccountService {
         })
     }
     
-    //validated request_token in body
+    //session_id in body
     func deleteSession(_ sessionId: String, completion: @escaping ((Bool, Error?) -> Void)) {
         
-        //post
-        let urlString = Constants.theMovieDbSecureBaseUrl + Constants.theMovieDbDeleteSessionPath + "?" + Constants.theMovieDbApiKeyParam
-        
-        guard let url = URL(string: urlString) else {
-            let msg = "invalid url: \(urlString)"
+        let remoteRequest = UserAccountRequest.deleteSessionRequest()
+        guard let urlRequest = movieDbHttpClient.buildUrlRequest(withRemoteRequest: remoteRequest) else {
+            let msg = "invalid remoteRequest: \(remoteRequest)"
             let error = ServiceError(type: .invalidUrl, code: ServiceErrorCode.parse.rawValue, msg: msg)
             completion(false, error)
             return
         }
         
-        var deleteDict: [String: AnyObject] = [:]
-        deleteDict["session_id"] = sessionId as AnyObject
-        
-        jsonService.doDelete(url: url, deleteBody: deleteDict, completion:
-            { [weak self] (data: Data?, response: HTTPURLResponse?, error: Error?) in
-                guard let _ = self else { return }
-                
-                if error != nil {
-                    dlog("err: \(String(describing: error))")
-                    completion(false, error)
-                }
-                else if let foundData = data {
-                    do {
-                        if let authDict = try JSONSerialization.jsonObject(with: foundData, options: .mutableContainers) as? [String: AnyObject], let success = authDict["success"] as? Bool {
-                            dlog("authDict: \(authDict)")
-                            completion(success, nil)
-                        }
-                        else {
-                            let serviceError = ServiceError(type: .invalidData, code: ServiceErrorCode.parse.rawValue, msg: "json data not a dictionary or no success key")
-                            completion(false, serviceError)                    }
+        jsonService.send(urlRequest: urlRequest, completion:
+        { [weak self] (data: Data?, response: HTTPURLResponse?, error: Error?) in
+            guard let _ = self else { return }
+            
+            if error != nil {
+                dlog("err: \(String(describing: error))")
+                completion(false, error)
+            }
+            else if let foundData = data {
+                do {
+                    if let authDict = try JSONSerialization.jsonObject(with: foundData, options: .mutableContainers) as? [String: AnyObject], let success = authDict["success"] as? Bool {
+                        dlog("authDict: \(authDict)")
+                        completion(success, nil)
                     }
-                    catch {
-                        let serviceError = ServiceError(error)
-                        completion(false, serviceError)
-                    }
+                    else {
+                        let serviceError = ServiceError(type: .invalidData, code: ServiceErrorCode.parse.rawValue, msg: "json data not a dictionary or no success key")
+                        completion(false, serviceError)                    }
                 }
-                else {
-                    assert(false, "unknown error")
+                catch {
+                    let serviceError = ServiceError(error)
+                    completion(false, serviceError)
                 }
+            }
+            else {
+                assert(false, "unknown error")
+            }
         })
     }
 }
