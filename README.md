@@ -13,6 +13,15 @@ the view models into their corresponding controllers. The view models don't real
 Also demonstrates a clean separation of concerns for sending and receiving remote data.
 Multiple clients (e.g. websocket, JSON-RPC) could be added using the same interfaces and layering
 
+for login Test 
+user: emmaroomie
+password: emmaroomie
+
+note: Login VC can freeze when uitextfield becomes first responder due to ios13 simulator bug.
+On simulator, do Edit->Automatically Sync Pasteboard to deselect, followed by Hardware->Restart
+see: https://forums.developer.apple.com/thread/122972
+
+nb: ui is ugly
 
 ## User Stories
 
@@ -54,7 +63,7 @@ Describe any challenges encountered while building the app.
 
 ## License
 
-    Copyright [2016] [Bill Luoma]
+    Copyright [2019] [Bill Luoma]
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
