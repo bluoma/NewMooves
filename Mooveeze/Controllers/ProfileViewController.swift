@@ -77,7 +77,7 @@ class ProfileViewController: UIViewController {
                 }
             }
             dynProfile.logoutDidComplete.bind {
-                [unowned self] (didComplete: Bool) in
+                (didComplete: Bool) in
                 dlog("logoutDidComplete: \(didComplete)")
                 if let seshId = Constants.sessionId {
                     deleteSessionId(seshId)

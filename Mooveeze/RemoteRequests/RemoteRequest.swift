@@ -31,7 +31,7 @@ protocol RequestProtocol: AnyObject {
 }
 
 
-class RemoteRequest: Hashable {
+class RemoteRequest: Hashable, CustomStringConvertible {
     
     var method: String = ""
     var version: String = ""
@@ -76,7 +76,11 @@ class RemoteRequest: Hashable {
         self.resourcePath.append(path)
     }
     
-    @discardableResult func send() -> AnyObject? {
+    var description: String {
+        return "RemoteRequest"
+    }
+    
+    @discardableResult func send() -> Any? {
         return nil
     }
     

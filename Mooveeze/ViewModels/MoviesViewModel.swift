@@ -143,7 +143,7 @@ extension MoviesViewModel {
         downloadIsInProgress = true
         beginDownload()
         
-        moviesService.fetchMovieListBis(withType: movieListType, page: page, completion:
+        moviesService.fetchMovieList(withType: movieListType, page: page, completion:
         { [weak self] (movieResults: MovieResults?, error: Error?) in
             guard let myself = self else { return }
             

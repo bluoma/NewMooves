@@ -12,6 +12,8 @@ enum ServiceErrorCode: Int {
     case parse = -400
     case notFound = -404
     case unknown = -600
+    case invalidClient = -700
+    case invalidRequest = -800
     
 }
 

@@ -14,11 +14,12 @@ enum HTTPMethod: String {
     case delete = "DELETE"
 }
 
+
 typealias JsonHttpServiceCompletionHandler = (Data?, HTTPURLResponse?, Error?) -> Void
 
-class JsonHttpService {
+class JsonHttpService: CustomStringConvertible {
     
-    var session: URLSession!
+    var session: URLSession
     
     init() {
         let urlconfig = URLSessionConfiguration.default
@@ -36,7 +37,7 @@ class JsonHttpService {
         request.httpMethod = HTTPMethod.get.rawValue
         //request.setValue("application/json", forHTTPHeaderField: "Accept")
         
-        let task = send(urlRequest: request, completion: completion)
+        send(urlRequest: request, completion: completion)
     }
     
     func doPost(
@@ -52,7 +53,7 @@ class JsonHttpService {
         do {
             let data = try JSONSerialization.data(withJSONObject: postBody, options: .prettyPrinted)
             request.httpBody = data
-            let task = send(urlRequest: request, completion: completion)
+            send(urlRequest: request, completion: completion)
         }
         catch {
             dlog(String(describing: error))
@@ -74,7 +75,7 @@ class JsonHttpService {
         do {
             let data = try JSONSerialization.data(withJSONObject: deleteBody, options: .prettyPrinted)
             request.httpBody = data
-            let task = send(urlRequest: request, completion: completion)
+            send(urlRequest: request, completion: completion)
         }
         catch {
             dlog(String(describing: error))
@@ -156,5 +157,9 @@ class JsonHttpService {
         DispatchQueue.main.async {
             completion(data, resp, error)
         }
+    }
+    
+    var description: String {
+           return "JsonHttpService"
     }
 }
