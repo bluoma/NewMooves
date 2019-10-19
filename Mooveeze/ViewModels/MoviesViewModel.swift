@@ -39,7 +39,7 @@ class MoviesViewModel {
     }
     
     fileprivate var searchIsActive: Bool = false
-    fileprivate let moviesService = MoviesService()
+    fileprivate let moviesService = MovieService()
     let dynamicMoviesState = DynamicMoviesState()
     var movieListType: MovieListType = .nowPlaying
     fileprivate var downloadIsInProgress: Bool = false

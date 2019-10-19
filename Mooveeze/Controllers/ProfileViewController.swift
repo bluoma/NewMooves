@@ -76,6 +76,13 @@ class ProfileViewController: UIViewController {
                     self.profileContainer.isHidden = false
                 }
             }
+            dynProfile.logoutDidComplete.bind {
+                (didComplete: Bool) in
+                dlog("logoutDidComplete: \(didComplete)")
+                if let seshId = Constants.sessionId {
+                    deleteSessionId(seshId)
+                }
+            }
         }
     }
     
@@ -89,7 +96,11 @@ class ProfileViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+        dlog("")
+        handleRefresh()
+    }
+    
+    func handleRefresh() {
         if Constants.sessionId == nil {
             dynamicUserProfile?.isEmptyState.value = true
         }
@@ -112,9 +123,8 @@ class ProfileViewController: UIViewController {
     
     @IBAction func logoutButtonPressed(_ sender: UIButton) {
         dlog("")
-        if let seshId = Constants.sessionId {
-            dynamicUserProfile?.resetProfile()
-            deleteSessionId(seshId)
+        if let _ = Constants.sessionId {
+            profileViewModel.deleteSession()
         }
     }
     

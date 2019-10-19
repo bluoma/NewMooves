@@ -18,6 +18,7 @@ protocol DynamicUserAuth: class {
     var status: Dynamic<String> { get }
     var loginSuccess: Dynamic<Bool> { get }
     var error: Dynamic<Error?> { get }
+    var redirectUrl: Dynamic<URL?> { get }
     //view state
     var isLoginInProcess: Dynamic<Bool> { get }
     
@@ -33,6 +34,7 @@ class UserAuthViewModelWrapper: DynamicUserAuth {
     var status: Dynamic<String>
     var loginSuccess: Dynamic<Bool>
     var error: Dynamic<Error?>
+    var redirectUrl: Dynamic<URL?>
     
     //view state
     var isLoginInProcess: Dynamic<Bool>
@@ -46,6 +48,7 @@ class UserAuthViewModelWrapper: DynamicUserAuth {
         status = Dynamic("Not logged in")
         error = Dynamic(nil)
         loginSuccess = Dynamic(false)
+        redirectUrl = Dynamic(nil)
         
         isLoginInProcess = Dynamic(false)
         
@@ -73,5 +76,9 @@ class UserAuthViewModelWrapper: DynamicUserAuth {
     
     func updateLoginInProgress(_ isLoginInProcess: Bool) {
         self.isLoginInProcess.value = isLoginInProcess
+    }
+    
+    func updateRedirectUrl(_ redirectUrl: URL) {
+        self.redirectUrl.value = redirectUrl
     }
 }

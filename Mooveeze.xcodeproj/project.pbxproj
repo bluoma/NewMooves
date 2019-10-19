@@ -26,13 +26,17 @@
 		F7012D932321D66100A21887 /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7012D922321D66100A21887 /* UserProfile.swift */; };
 		F7012D952321E87A00A21887 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7012D942321E87A00A21887 /* LoginViewController.swift */; };
 		F7012D972322B34700A21887 /* JsonHttpService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7012D962322B34700A21887 /* JsonHttpService.swift */; };
-		F7012D992322C1EF00A21887 /* MoviesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7012D982322C1EF00A21887 /* MoviesService.swift */; };
+		F7012D992322C1EF00A21887 /* MovieService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7012D982322C1EF00A21887 /* MovieService.swift */; };
 		F7012D9B232303ED00A21887 /* DateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7012D9A232303ED00A21887 /* DateFormatter.swift */; };
 		F7012D9F23241DBA00A21887 /* UserAccountService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7012D9E23241DB900A21887 /* UserAccountService.swift */; };
+		F79376B4235ADFAF00EF1F4F /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F79376B3235ADFAF00EF1F4F /* NetworkService.swift */; };
+		F7A0E212235A823900B46ABA /* MovieRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A0E211235A823900B46ABA /* MovieRequest.swift */; };
 		F7A5C3CE23255CD300B80991 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A5C3CD23255CD300B80991 /* ProfileViewModel.swift */; };
 		F7A5C3D02326B2C900B80991 /* Dynamic.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A5C3CF2326B2C900B80991 /* Dynamic.swift */; };
 		F7A5C3D2232742F600B80991 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A5C3D1232742F600B80991 /* LoginViewModel.swift */; };
 		F7A5C3D52327699A00B80991 /* BindableTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A5C3D42327699A00B80991 /* BindableTextField.swift */; };
+		F7AD453A23313E9000A0FF76 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7AD453923313E9000A0FF76 /* RegisterViewController.swift */; };
+		F7AD453C23317DC400A0FF76 /* RegisterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7AD453B23317DC400A0FF76 /* RegisterViewModel.swift */; };
 		F7C9F84422FD462000E8BC19 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7C9F84322FD462000E8BC19 /* AppDelegate.swift */; };
 		F7C9F84922FD462000E8BC19 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F7C9F84722FD462000E8BC19 /* Main.storyboard */; };
 		F7C9F84B22FD462000E8BC19 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F7C9F84A22FD462000E8BC19 /* Assets.xcassets */; };
@@ -47,6 +51,12 @@
 		F7D7AF05232EA6BF0072AB55 /* MoviesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7D7AF04232EA6BF0072AB55 /* MoviesViewModel.swift */; };
 		F7DFBB8622FD5E9F00E03277 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = F7DFBB8522FD5E9E00E03277 /* README.md */; };
 		F7DFBB8C22FE2AD200E03277 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7DFBB8B22FE2AD200E03277 /* WebKit.framework */; };
+		F7F4861823594FB8001B73C2 /* UserAccountRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F4861723594FB8001B73C2 /* UserAccountRequest.swift */; };
+		F7F4861A2359522E001B73C2 /* RemoteRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F486192359522E001B73C2 /* RemoteRequest.swift */; };
+		F7F4861C23595713001B73C2 /* RemoteClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F4861B23595713001B73C2 /* RemoteClient.swift */; };
+		F7F4861E23596A64001B73C2 /* MovieDbClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F4861D23596A64001B73C2 /* MovieDbClient.swift */; };
+		F7F4862023597AA8001B73C2 /* HttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F4861F23597AA8001B73C2 /* HttpClient.swift */; };
+		F7F48622235A3222001B73C2 /* JsonHttpRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F48621235A3222001B73C2 /* JsonHttpRequest.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -71,13 +81,17 @@
 		F7012D922321D66100A21887 /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
 		F7012D942321E87A00A21887 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		F7012D962322B34700A21887 /* JsonHttpService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JsonHttpService.swift; sourceTree = "<group>"; };
-		F7012D982322C1EF00A21887 /* MoviesService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoviesService.swift; sourceTree = "<group>"; };
+		F7012D982322C1EF00A21887 /* MovieService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieService.swift; sourceTree = "<group>"; };
 		F7012D9A232303ED00A21887 /* DateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatter.swift; sourceTree = "<group>"; };
 		F7012D9E23241DB900A21887 /* UserAccountService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAccountService.swift; sourceTree = "<group>"; };
+		F79376B3235ADFAF00EF1F4F /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
+		F7A0E211235A823900B46ABA /* MovieRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieRequest.swift; sourceTree = "<group>"; };
 		F7A5C3CD23255CD300B80991 /* ProfileViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		F7A5C3CF2326B2C900B80991 /* Dynamic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dynamic.swift; sourceTree = "<group>"; };
 		F7A5C3D1232742F600B80991 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		F7A5C3D42327699A00B80991 /* BindableTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BindableTextField.swift; sourceTree = "<group>"; };
+		F7AD453923313E9000A0FF76 /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
+		F7AD453B23317DC400A0FF76 /* RegisterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewModel.swift; sourceTree = "<group>"; };
 		F7C9F84022FD462000E8BC19 /* Mooveeze.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mooveeze.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7C9F84322FD462000E8BC19 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F7C9F84822FD462000E8BC19 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -94,6 +108,12 @@
 		F7D7AF04232EA6BF0072AB55 /* MoviesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoviesViewModel.swift; sourceTree = "<group>"; };
 		F7DFBB8522FD5E9E00E03277 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		F7DFBB8B22FE2AD200E03277 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		F7F4861723594FB8001B73C2 /* UserAccountRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAccountRequest.swift; sourceTree = "<group>"; };
+		F7F486192359522E001B73C2 /* RemoteRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteRequest.swift; sourceTree = "<group>"; };
+		F7F4861B23595713001B73C2 /* RemoteClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteClient.swift; sourceTree = "<group>"; };
+		F7F4861D23596A64001B73C2 /* MovieDbClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieDbClient.swift; sourceTree = "<group>"; };
+		F7F4861F23597AA8001B73C2 /* HttpClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpClient.swift; sourceTree = "<group>"; };
+		F7F48621235A3222001B73C2 /* JsonHttpRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonHttpRequest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -147,14 +167,13 @@
 			path = Utils;
 			sourceTree = "<group>";
 		};
-		F7012D74232179A400A21887 /* Models */ = {
+		F7012D74232179A400A21887 /* RemoteModels */ = {
 			isa = PBXGroup;
 			children = (
 				F7012D75232179A400A21887 /* MovieModel.swift */,
 				F7012D922321D66100A21887 /* UserProfile.swift */,
-				F7A5C3CF2326B2C900B80991 /* Dynamic.swift */,
 			);
-			path = Models;
+			path = RemoteModels;
 			sourceTree = "<group>";
 		};
 		F7012D76232179A400A21887 /* Coordinators */ = {
@@ -176,30 +195,44 @@
 				F7012D79232179A400A21887 /* MoviesViewController.swift */,
 				F7012D7B232179A400A21887 /* MovieViewController.swift */,
 				F7012D7A232179A400A21887 /* MovieVideoWebViewController.swift */,
-				F7012D8623217DF200A21887 /* ProfileViewController.swift */,
 				F7012D942321E87A00A21887 /* LoginViewController.swift */,
+				F7012D8623217DF200A21887 /* ProfileViewController.swift */,
+				F7AD453923313E9000A0FF76 /* RegisterViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
 		};
-		F7012D7C232179A400A21887 /* Services */ = {
+		F7012D7C232179A400A21887 /* RemoteServices */ = {
 			isa = PBXGroup;
 			children = (
 				F7012D962322B34700A21887 /* JsonHttpService.swift */,
-				F7012D982322C1EF00A21887 /* MoviesService.swift */,
+				F7012D982322C1EF00A21887 /* MovieService.swift */,
+				F79376B3235ADFAF00EF1F4F /* NetworkService.swift */,
 				F7012D9E23241DB900A21887 /* UserAccountService.swift */,
 			);
-			path = Services;
+			path = RemoteServices;
+			sourceTree = "<group>";
+		};
+		F7702D70235B8E0000FA5471 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				F7F48624235A35C5001B73C2 /* RemoteClients */,
+				F7012D74232179A400A21887 /* RemoteModels */,
+				F7F48623235A3247001B73C2 /* RemoteRequests */,
+				F7012D7C232179A400A21887 /* RemoteServices */,
+			);
+			path = Network;
 			sourceTree = "<group>";
 		};
 		F7A5C3CC23255CD300B80991 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
 				F7A5C3D1232742F600B80991 /* LoginViewModel.swift */,
-				F7A5C3CD23255CD300B80991 /* ProfileViewModel.swift */,
 				F7D7AEF72329D0D50072AB55 /* MovieViewModel.swift */,
 				F7D7AF04232EA6BF0072AB55 /* MoviesViewModel.swift */,
 				F7D7AEF9232C52050072AB55 /* MovieVideoViewModel.swift */,
+				F7A5C3CD23255CD300B80991 /* ProfileViewModel.swift */,
+				F7AD453B23317DC400A0FF76 /* RegisterViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -236,13 +269,12 @@
 			children = (
 				F7C9F84322FD462000E8BC19 /* AppDelegate.swift */,
 				F7012D6C2321799400A21887 /* Cells */,
-				F7012D78232179A400A21887 /* Controllers */,
 				F7D7AEFB232EA26B0072AB55 /* Dynamics */,
-				F7A5C3CC23255CD300B80991 /* ViewModels */,
+				F7012D78232179A400A21887 /* Controllers */,
 				F7012D76232179A400A21887 /* Coordinators */,
-				F7012D74232179A400A21887 /* Models */,
-				F7012D7C232179A400A21887 /* Services */,
+				F7702D70235B8E0000FA5471 /* Network */,
 				F7A5C3D32327697000B80991 /* Views */,
+				F7A5C3CC23255CD300B80991 /* ViewModels */,
 				F7012D71232179A400A21887 /* Utils */,
 				F7C9F84722FD462000E8BC19 /* Main.storyboard */,
 				F7C9F84A22FD462000E8BC19 /* Assets.xcassets */,
@@ -255,12 +287,34 @@
 		F7D7AEFB232EA26B0072AB55 /* Dynamics */ = {
 			isa = PBXGroup;
 			children = (
+				F7A5C3CF2326B2C900B80991 /* Dynamic.swift */,
 				F7D7AEFC232EA36E0072AB55 /* DynamicMovie.swift */,
 				F7D7AEFE232EA4040072AB55 /* DynamicUserProfile.swift */,
 				F7D7AF00232EA5A90072AB55 /* DynamicUserAuth.swift */,
 				F7D7AF02232EA5F50072AB55 /* DynamicMovieVideo.swift */,
 			);
 			path = Dynamics;
+			sourceTree = "<group>";
+		};
+		F7F48623235A3247001B73C2 /* RemoteRequests */ = {
+			isa = PBXGroup;
+			children = (
+				F7F48621235A3222001B73C2 /* JsonHttpRequest.swift */,
+				F7A0E211235A823900B46ABA /* MovieRequest.swift */,
+				F7F486192359522E001B73C2 /* RemoteRequest.swift */,
+				F7F4861723594FB8001B73C2 /* UserAccountRequest.swift */,
+			);
+			path = RemoteRequests;
+			sourceTree = "<group>";
+		};
+		F7F48624235A35C5001B73C2 /* RemoteClients */ = {
+			isa = PBXGroup;
+			children = (
+				F7F4861F23597AA8001B73C2 /* HttpClient.swift */,
+				F7F4861D23596A64001B73C2 /* MovieDbClient.swift */,
+				F7F4861B23595713001B73C2 /* RemoteClient.swift */,
+			);
+			path = RemoteClients;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -384,40 +438,50 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F7F4862023597AA8001B73C2 /* HttpClient.swift in Sources */,
 				F7012D80232179A400A21887 /* MovieModel.swift in Sources */,
 				F7012D89232189EF00A21887 /* BaseCoordinator.swift in Sources */,
 				F7C9F84422FD462000E8BC19 /* AppDelegate.swift in Sources */,
 				F7012D952321E87A00A21887 /* LoginViewController.swift in Sources */,
+				F7F48622235A3222001B73C2 /* JsonHttpRequest.swift in Sources */,
 				F7012D912321BBE000A21887 /* ProfileCoordinator.swift in Sources */,
 				F7A5C3D52327699A00B80991 /* BindableTextField.swift in Sources */,
 				F7D7AF01232EA5A90072AB55 /* DynamicUserAuth.swift in Sources */,
+				F7AD453C23317DC400A0FF76 /* RegisterViewModel.swift in Sources */,
 				F7012D6F2321799400A21887 /* MovieSummaryTableViewCell.swift in Sources */,
 				F7D7AEF6232990440072AB55 /* ServiceError.swift in Sources */,
 				F7012D8B23218F3500A21887 /* MoviesCoordinator.swift in Sources */,
+				F7F4861823594FB8001B73C2 /* UserAccountRequest.swift in Sources */,
 				F7012D8D232190A800A21887 /* CoordinatorConfig.swift in Sources */,
 				F7012D932321D66100A21887 /* UserProfile.swift in Sources */,
 				F7012D702321799400A21887 /* MovieDetailVideoTableViewCell.swift in Sources */,
 				F7D7AEF82329D0D50072AB55 /* MovieViewModel.swift in Sources */,
 				F7D7AEFA232C52050072AB55 /* MovieVideoViewModel.swift in Sources */,
 				F7012D7E232179A400A21887 /* Constants.swift in Sources */,
+				F7A0E212235A823900B46ABA /* MovieRequest.swift in Sources */,
 				F7D7AEFF232EA4040072AB55 /* DynamicUserProfile.swift in Sources */,
-				F7012D992322C1EF00A21887 /* MoviesService.swift in Sources */,
+				F79376B4235ADFAF00EF1F4F /* NetworkService.swift in Sources */,
+				F7012D992322C1EF00A21887 /* MovieService.swift in Sources */,
 				F7012D9F23241DBA00A21887 /* UserAccountService.swift in Sources */,
 				F7D7AF05232EA6BF0072AB55 /* MoviesViewModel.swift in Sources */,
 				F7A5C3D2232742F600B80991 /* LoginViewModel.swift in Sources */,
 				F7D7AEFD232EA36E0072AB55 /* DynamicMovie.swift in Sources */,
+				F7AD453A23313E9000A0FF76 /* RegisterViewController.swift in Sources */,
+				F7F4861C23595713001B73C2 /* RemoteClient.swift in Sources */,
 				F7012D8F2321AD5000A21887 /* BaseRootNavigationCoordinator.swift in Sources */,
 				F7012D8723217DF200A21887 /* ProfileViewController.swift in Sources */,
 				F7A5C3CE23255CD300B80991 /* ProfileViewModel.swift in Sources */,
 				F7012D7F232179A400A21887 /* AppearanceManager.swift in Sources */,
 				F7012D9B232303ED00A21887 /* DateFormatter.swift in Sources */,
 				F7012D972322B34700A21887 /* JsonHttpService.swift in Sources */,
+				F7F4861A2359522E001B73C2 /* RemoteRequest.swift in Sources */,
 				F7012D84232179A400A21887 /* MovieViewController.swift in Sources */,
 				F7D7AF03232EA5F50072AB55 /* DynamicMovieVideo.swift in Sources */,
 				F7012D81232179A400A21887 /* ApplicationCoordinator.swift in Sources */,
 				F7A5C3D02326B2C900B80991 /* Dynamic.swift in Sources */,
 				F7012D82232179A400A21887 /* MoviesViewController.swift in Sources */,
 				F7012D83232179A400A21887 /* MovieVideoWebViewController.swift in Sources */,
+				F7F4861E23596A64001B73C2 /* MovieDbClient.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -567,7 +631,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = M96UWZCD49;
 				INFOPLIST_FILE = Mooveeze/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -587,7 +651,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = M96UWZCD49;
 				INFOPLIST_FILE = Mooveeze/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

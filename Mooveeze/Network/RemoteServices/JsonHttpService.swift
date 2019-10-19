@@ -8,16 +8,18 @@
 
 import Foundation
 
-typealias JsonHttpServiceCompletionHandler = (Data?, HTTPURLResponse?, Error?) -> Void
-
 enum HTTPMethod: String {
     case get = "GET"
     case post = "POST"
+    case delete = "DELETE"
 }
 
-class JsonHttpService {
+
+typealias JsonHttpServiceCompletionHandler = (Data?, HTTPURLResponse?, Error?) -> Void
+
+class JsonHttpService: CustomStringConvertible {
     
-    var session: URLSession!
+    var session: URLSession
     
     init() {
         let urlconfig = URLSessionConfiguration.default
@@ -35,8 +37,7 @@ class JsonHttpService {
         request.httpMethod = HTTPMethod.get.rawValue
         //request.setValue("application/json", forHTTPHeaderField: "Accept")
         
-        let task = send(request: request, completion: completion)
-        task.resume()
+        send(urlRequest: request, completion: completion)
     }
     
     func doPost(
@@ -52,8 +53,29 @@ class JsonHttpService {
         do {
             let data = try JSONSerialization.data(withJSONObject: postBody, options: .prettyPrinted)
             request.httpBody = data
-            let task = send(request: request, completion: completion)
-            task.resume()
+            send(urlRequest: request, completion: completion)
+        }
+        catch {
+            dlog(String(describing: error))
+            let serviceError = ServiceError(type: .invalidRequest, code: ServiceErrorCode.parse.rawValue, msg: error.localizedDescription)
+            completion(nil, nil, serviceError)
+        }
+    }
+    
+    func doDelete(
+        url: URL,
+        deleteBody: [String: AnyObject],
+        completion: @escaping JsonHttpServiceCompletionHandler) {
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = HTTPMethod.delete.rawValue
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        //request.setValue("application/json", forHTTPHeaderField: "Accept")
+        
+        do {
+            let data = try JSONSerialization.data(withJSONObject: deleteBody, options: .prettyPrinted)
+            request.httpBody = data
+            send(urlRequest: request, completion: completion)
         }
         catch {
             dlog(String(describing: error))
@@ -63,7 +85,19 @@ class JsonHttpService {
     }
     
     //expects json dictionary as a response
-    fileprivate func send(request: URLRequest, completion: @escaping JsonHttpServiceCompletionHandler) -> URLSessionDataTask {
+    @discardableResult func send(urlRequest request: URLRequest, completion: @escaping JsonHttpServiceCompletionHandler) -> URLSessionDataTask {
+        
+        if let data = request.httpBody {
+            
+            do {
+                let jsonObj = try JSONSerialization.jsonObject(with: data, options: .mutableContainers)
+                dlog("posting jsonObj type: \(type(of: jsonObj)), content: \(jsonObj)")
+            }
+            catch {
+                dlog("error: \(error)")
+            }
+            
+        }
         
         let dataTask = session.dataTask(with: request, completionHandler:
         { [weak self] (data: Data?, response: URLResponse?, error: Error?) -> Void in
@@ -114,6 +148,8 @@ class JsonHttpService {
             }
         })
         
+        dataTask.resume()
+        
         return dataTask
     }
     
@@ -121,5 +157,9 @@ class JsonHttpService {
         DispatchQueue.main.async {
             completion(data, resp, error)
         }
+    }
+    
+    var description: String {
+           return "JsonHttpService"
     }
 }

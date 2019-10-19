@@ -18,6 +18,7 @@ protocol DynamicUserProfile: class {
     //view state
     var isProfileLoading: Dynamic<Bool> { get }
     var isEmptyState: Dynamic<Bool> { get }
+    var logoutDidComplete: Dynamic<Bool> { get }
     
     func resetProfile()
 }
@@ -32,6 +33,7 @@ class UserProfileViewModelWrapper: DynamicUserProfile {
     //view state
     let isProfileLoading: Dynamic<Bool>
     let isEmptyState: Dynamic<Bool>
+    let logoutDidComplete: Dynamic<Bool>
     
     init(profile: UserProfile?) {
         let defaultImage = UIImage(named: "profile_icon")
@@ -42,6 +44,7 @@ class UserProfileViewModelWrapper: DynamicUserProfile {
             userAvatar = Dynamic(defaultImage)
             isProfileLoading = Dynamic(false)
             isEmptyState = Dynamic(false)
+            logoutDidComplete = Dynamic(false)
         }
         else {
             profileId = Dynamic(-1)
@@ -50,7 +53,9 @@ class UserProfileViewModelWrapper: DynamicUserProfile {
             userAvatar = Dynamic(defaultImage)
             isProfileLoading = Dynamic(false)
             isEmptyState = Dynamic(false)
+            logoutDidComplete = Dynamic(false)
         }
+        
     }
     
     func resetProfile() {

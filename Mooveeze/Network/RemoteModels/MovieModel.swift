@@ -23,11 +23,11 @@ struct MovieDetail: Codable, CustomStringConvertible, CustomDebugStringConvertib
     }
     
     var description: String {
-        return "tagline: \(tagline), runningTime: \(runtime), homepage: \(homepage)"
+        return "tagline: \(tagline), runningTime: \(runtime), homepage: \(String(describing: homepage))"
     }
     
     var debugDescription: String {
-        return "tagline: \(tagline), runningTime: \(runtime), homepage: \(homepage)"
+        return "tagline: \(tagline), runningTime: \(runtime), homepage: \(String(describing: homepage))"
     }
 
 }

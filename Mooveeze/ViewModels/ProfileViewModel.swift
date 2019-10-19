@@ -86,4 +86,35 @@ extension ProfileViewModel {
             userProfileWrapper.updateProfileIsLoading(false)
         }
     }
+    
+    
+    func deleteSession() {
+        
+        if downloadIsInProgress { return }
+        guard let seshId = Constants.sessionId else { return }
+        
+        UIApplication.shared.isNetworkActivityIndicatorVisible = true
+        
+        userService.deleteSession(seshId, completion:
+        { [weak self] (success: Bool, error: Error?) in
+            guard let myself = self else { return }
+            myself.downloadIsInProgress = false
+            UIApplication.shared.isNetworkActivityIndicatorVisible = false
+            
+            if let foundError = error {
+                dlog("error logging out: \(foundError)")
+                myself.userProfileWrapper.logoutDidComplete.value = false
+            }
+            else if success {
+                myself.userProfileWrapper.logoutDidComplete.value = true
+            }
+            else {
+                assert(false, "error and return are nil")
+            }
+            DispatchQueue.main.async {
+                myself.userProfileWrapper.resetProfile()
+            }
+        })
+        
+    }
 }

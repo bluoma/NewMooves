@@ -72,7 +72,10 @@ public struct Constants {
     public static let theMovieDbAuthTokenPath = "/authentication/token/new"
     public static let theMovieDbAuthTokenValidationPath = "/authentication/token/validate_with_login"
     public static let theMovieDbNewSessionPath = "/authentication/session/new"
-
+    public static let theMovieDbDeleteSessionPath = "/authentication/session"
+    public static let theMovieDbCreateAccountExternalUrl = "https://www.themoviedb.org/authenticate/"
+    //{REQUEST_TOKEN}?redirect_to=http://www.yourapp.com/approved
+    
     public static let theMovieDbNowPlayingTitle = "Now Playing"
     public static let theMovieDbTopRatedTitle = "Top Rated"
     
@@ -80,6 +83,9 @@ public struct Constants {
 
     public static var sessionId: String? = nil
 
+    public static let registerNotification = "registerNotification"
+    public static let registerRedirectUrl = "mooveeze://com.yothang.mooveeze/register"
+    
     public static let backdropSizes = [
         "w300",
         "w780",
