@@ -15,6 +15,10 @@ class MovieDbClient: HttpClient {
         super.init(withScheme: "https", host: "api.themoviedb.org")
         super.headers["Accept"] = "application/json"
     }
+    
+    override init(withScheme scheme: String, host: String, port: String = "") {
+        super.init(withScheme: scheme, host: host, port: port)
+    }
 
     //very basic auth
     override func buildUrl(withRequest request: RemoteRequest) -> URL? {
@@ -63,4 +67,12 @@ class MovieDbClient: HttpClient {
                 
         return urlRequest
     }
+    
+    override var description: String {
+          return MovieDbClient.staticName
+      }
+      
+      override class var staticName: String {
+          return "MovieDbClient"
+      }
 }

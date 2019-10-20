@@ -12,6 +12,10 @@ class HttpClient: RemoteClient {
 
     var headers: [String: String] = [:]
     
+    override init(withScheme scheme: String, host: String, port: String = "") {
+        super.init(withScheme: scheme, host: host, port: port)
+    }
+    
     override func buildUrl(withRequest request: RemoteRequest) -> URL? {
         
         var url: URL? = nil
@@ -64,4 +68,11 @@ class HttpClient: RemoteClient {
     }
     
 
+    override var description: String {
+        return HttpClient.staticName
+    }
+    
+    override class var staticName: String {
+        return "HttpClient"
+    }
 }

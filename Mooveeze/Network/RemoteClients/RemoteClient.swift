@@ -8,7 +8,7 @@
 
 import Foundation
 
-class RemoteClient {
+class RemoteClient: CustomStringConvertible {
     
     var scheme: String = ""
     var host: String = ""
@@ -56,6 +56,14 @@ class RemoteClient {
     
     func buildUrlRequest(withRemoteRequest request: RemoteRequest) -> URLRequest? {
         return nil
+    }
+    
+    var description: String {
+        return RemoteClient.staticName
+    }
+    
+    class var staticName: String {
+        return "RemoteClient"
     }
     
 }

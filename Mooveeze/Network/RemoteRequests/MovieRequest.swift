@@ -64,7 +64,7 @@ class MovieRequest: JsonHttpRequest {
     }
     
    
-    class var staticName: String {
+    override class var staticName: String {
         return "MovieRequest"
     }
 }

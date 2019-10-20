@@ -74,7 +74,7 @@ class UserAccountRequest: JsonHttpRequest {
         return UserAccountRequest.staticName
     }
     
-    class var staticName: String {
+    override class var staticName: String {
         return "UserAccountRequest"
     }
 }

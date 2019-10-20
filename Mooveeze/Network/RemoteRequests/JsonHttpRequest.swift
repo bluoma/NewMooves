@@ -12,11 +12,15 @@ class JsonHttpRequest: RemoteRequest {
         
     @discardableResult override func send() -> Any? {
         dlog("forwarding to NetworkService.jsonRestSend: \(self)")
-        return NetworkService.shared.jsonRestSend(remoteRequest: self)
+        return NetworkPlatform.shared.jsonRestSend(remoteRequest: self)
     }
     
     override var description: String {
-        return "JsonHttpRequest"
+        return JsonHttpRequest.staticName
+    }
+    
+    override class var staticName: String {
+        return "RemoteRequest"
     }
     
 }

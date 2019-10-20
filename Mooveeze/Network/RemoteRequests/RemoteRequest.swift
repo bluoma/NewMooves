@@ -77,6 +77,10 @@ class RemoteRequest: Hashable, CustomStringConvertible {
     }
     
     var description: String {
+        return RemoteRequest.staticName
+    }
+    
+    class var staticName: String {
         return "RemoteRequest"
     }
     
