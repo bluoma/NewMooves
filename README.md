@@ -1,36 +1,22 @@
 # Project 1 - *Mooveeze*
 
-**Mooveeze** is a movies app using the [The Movie Database API](http://docs.themoviedb.apiary.io/). { now https://developers.themoviedb.org/3 }
+Hi. Here is an iOS test app I wrote in 2016 to learn swift at Codepath camp. It started out as a simple MVC app. It uses The Movie Database API (https://developers.themoviedb.org/3) to display movie metadata and play video previews.
 
-An app I wrote in 2016 to learn swift at Codepath camp. Was a simple MVC app.
-I took a look at it recently and decided to update it to a MVVM pattern with unidirectional binding.
-The view models contain 'dynamic' model wrappers which do the binding from views to fields. 
-The view models also handle fetching and posting of data as well as state managment. 
-Flow coordinators are used to off-load the view controllers from managing transitions
-and having 'knowledge' about other view controllers. Flow coordinators also inject
-the view models into their corresponding controllers. 
+I took a look at it recently and decided to update it to a simple MVVM pattern with unidirectional binding. The view models contain 'dynamic' model wrappers that do the binding from views to data fields. The view models also handle fetching and posting to The Movie Database API as well as state management. Flow coordinators are used to off-load the view controllers from managing transitions and having 'knowledge' about other view controllers. Flow coordinators also inject the view models directly into their corresponding controllers. 
 
 The view models don't really 'know' or care that they live inside of view controllers, 
-which facilitates re-use and testing. For an example of this reusability, see the tableView data source 
-implementation in MoviesViewController. The movie detail view model (MovieViewModel) 
-is used to render summary information for the movie lists; the movie detail view model is also used 
-more fully as the primary view model in MovieViewController. The same reuse pattern can be seen again in 
-MovieVideoViewModel, where it is used to render the video summary cells in MovieViewController
-in the the tableView data source implementation. MovieVideoViewModel is also
-used as the primary view model in MovieVideoWebViewController, which plays the videos.
+which facilitates re-use and testing. For an example of this reusability, see the tableView data source implementation in MoviesViewController. The movie detail view model (MovieViewModel) is used to render summary information for the movie lists; the movie detail view model is also used more fully as the primary view model in MovieViewController. The same reuse pattern can be seen again in MovieVideoViewModel, where it is used to render the video summary cells in MovieViewController in the the tableView data source implementation. MovieVideoViewModel is also used as the primary view model in MovieVideoWebViewController, which plays the videos.
 
-This test project also demonstrates a clean separation of concerns for sending and receiving remote data.
-Multiple clients and transports (e.g. websocket, JSON-RPC) could be added using similar interfaces and layering.
+This test project also demonstrates a clean separation of concerns for sending and receiving remote data. Multiple clients and transports (e.g. websocket, JSON-RPC) could be added using similar interfaces and layering. The key idea to this approach is to cluster retrieval, create and delete calls into services based around model objects. There are two such models (UserAccount and Movie) and two Remote Services that allow the app to fetch and modify movie model and user model objects. Behind the scenes, the RemoteServices delegate their functionality to RemoteRequests. At a certain point in the class hierarchy, the RemoteRequest will call the main NetworkPlatform to send and receive the data based on a transport protocol, in this case restful json over HTTP. The NetworkPlatform will then build a URLRequest with a RemoteClient that knows the server url and other authentication goodies and send the URLRequest. Clients are defined in a plist array in Network.plist. Switching build environments is quite simple using this approach, we just switch on Swift ‘preprocessor’-like #if/#else statements, and load the correct plist for our build environment. RemoteRequests are also mapped to clients in Network.plist, allowing for a flexible run-time lookup.
 
-for login Test 
+For login/logout testing, here is a test user:
 user: emmaroomie
 password: emmaroomie
 
-note: Login VC can freeze when uitextfield becomes first responder due to an ios13 simulator bug.
-On simulator, do Edit->Automatically Sync Pasteboard to deselect, followed by Hardware->Restart
+note: Login VC can freeze when uitextfield becomes first responder due to an ios13 simulator bug. On the simulator, do Edit->Automatically Sync Pasteboard to deselect, followed by Hardware->Restart
 see: https://forums.developer.apple.com/thread/122972
 
-nb: ui is ugly
+nb: The UI is primitive.
 
 ## User Stories
 
