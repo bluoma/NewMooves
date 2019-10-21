@@ -20,7 +20,7 @@ in the the tableView data source implementation. MovieVideoViewModel is also
 used as the primary view model in MovieVideoWebViewController, which plays the videos.
 
 This test project also demonstrates a clean separation of concerns for sending and receiving remote data.
-Multiple clients and transports (e.g. websocket, JSON-RPC) could be added using the same interfaces and layering
+Multiple clients and transports (e.g. websocket, JSON-RPC) could be added using similar interfaces and layering.
 
 for login Test 
 user: emmaroomie
