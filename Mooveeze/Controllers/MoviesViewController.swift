@@ -37,14 +37,14 @@ class MoviesViewController: UIViewController {
             }
             dynamicMoviesState.downloadDidBegin.bind {
                 [unowned self] (didBegin: Bool) in
-                dlog("didBegin: \(didBegin)")
+                //dlog("didBegin: \(didBegin)")
                 if (didBegin) {
                     self.beginDownload()
                 }
             }
             dynamicMoviesState.downloadDidEnd.bind {
                 [unowned self] (didEnd: Bool) in
-                dlog("didEnd: \(didEnd)")
+                //dlog("didEnd: \(didEnd)")
                 if (didEnd) {
                     self.endDownload()
                 }

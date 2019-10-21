@@ -33,18 +33,18 @@ class MovieViewController: UIViewController, UIScrollViewDelegate {
             
             dynDetail.title.bindAndFire {
                 [unowned self] (movieTitle: String) in
-                dlog("title bind: \(movieTitle)")
+                //dlog("title bind: \(movieTitle)")
                 self.title = movieTitle
             }
             dynDetail.overview.bindAndFire {
                 [unowned self] (overview: String) in
-                dlog("overview bind: \(overview)")
+                //dlog("overview bind: \(overview)")
                 self.overviewLabel.text = overview
                 self.overviewLabel.sizeToFit()
             }
             dynDetail.selectedGenre.bindAndFire {
                 [unowned self] (selectedGenre: String) in
-                dlog("selectedGenre bind: \(selectedGenre)")
+                //dlog("selectedGenre bind: \(selectedGenre)")
                 self.genreLabel.text = selectedGenre
             }
             dynDetail.voteAverage.bindAndFire {
@@ -53,12 +53,12 @@ class MovieViewController: UIViewController, UIScrollViewDelegate {
             }
             dynDetail.releaseDate.bindAndFire {
                 [unowned self] (releaseDate: String) in
-                dlog("releaseDate bind: \(releaseDate)")
+                //dlog("releaseDate bind: \(releaseDate)")
                 self.releaseDateLabel.text = releaseDate
             }
             dynDetail.tagline.bindAndFire {
                 [unowned self] (tagline: String) in
-                dlog("tagline bind: \(tagline)")
+                //dlog("tagline bind: \(tagline)")
                 self.titleLabel.text = tagline
             }
             dynDetail.runtimeString.bindAndFire {
@@ -70,7 +70,7 @@ class MovieViewController: UIViewController, UIScrollViewDelegate {
             }
             dynDetail.backdropImage.bindAndFire {
                 [unowned self] (image: UIImage?) in
-                dlog("backdropImage bind: \(String(describing: image))")
+                //dlog("backdropImage bind: \(String(describing: image))")
                 self.backdropImageView.image = image
             }
             dynDetail.videosLoaded.bindAndFire {

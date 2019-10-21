@@ -2,7 +2,6 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15400" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15404"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -30,7 +29,7 @@
                                     </connections>
                                 </searchBar>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" indentationWidth="10" reuseIdentifier="MovieSummaryCell" rowHeight="96" id="SBn-gF-AQh" userLabel="MovieSummaryTVC" customClass="MovieSummaryTableViewCell" customModule="Mooveeze" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" indentationWidth="10" reuseIdentifier="MovieSummaryCell" id="SBn-gF-AQh" userLabel="MovieSummaryTVC" customClass="MovieSummaryTableViewCell" customModule="Mooveeze" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="72" width="414" height="96"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="SBn-gF-AQh" id="P0D-uj-lZd">
@@ -38,7 +37,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ad1-Wd-XrB" userLabel="ThumbIV">
-                                                    <rect key="frame" x="20" y="2" width="92" height="92.5"/>
+                                                    <rect key="frame" x="20" y="4" width="92" height="88"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="92" id="AZL-Zo-PxL"/>
                                                         <constraint firstAttribute="width" constant="92" id="Ity-fe-r9f"/>
@@ -61,13 +60,13 @@
                                             <constraints>
                                                 <constraint firstAttribute="trailing" secondItem="UTi-EX-pac" secondAttribute="trailing" constant="8" id="6tI-Q5-4an"/>
                                                 <constraint firstItem="UTi-EX-pac" firstAttribute="leading" secondItem="ad1-Wd-XrB" secondAttribute="trailing" constant="8" id="7l5-AP-ccM"/>
-                                                <constraint firstItem="ad1-Wd-XrB" firstAttribute="top" secondItem="P0D-uj-lZd" secondAttribute="top" constant="2" id="BqY-Tm-wkl"/>
+                                                <constraint firstItem="ad1-Wd-XrB" firstAttribute="top" secondItem="P0D-uj-lZd" secondAttribute="top" constant="4" id="BqY-Tm-wkl"/>
                                                 <constraint firstItem="h7k-5M-UKo" firstAttribute="top" secondItem="P0D-uj-lZd" secondAttribute="top" constant="20" id="Gs5-Zo-T5b"/>
                                                 <constraint firstAttribute="trailing" secondItem="h7k-5M-UKo" secondAttribute="trailing" constant="8" id="HO2-Hu-46M"/>
                                                 <constraint firstItem="ad1-Wd-XrB" firstAttribute="leading" secondItem="P0D-uj-lZd" secondAttribute="leading" constant="20" id="OeQ-wP-AjE"/>
                                                 <constraint firstItem="h7k-5M-UKo" firstAttribute="leading" secondItem="ad1-Wd-XrB" secondAttribute="trailing" constant="8" id="P5C-xp-qj8"/>
                                                 <constraint firstItem="UTi-EX-pac" firstAttribute="top" secondItem="P0D-uj-lZd" secondAttribute="top" constant="2" id="VuD-nc-iF0"/>
-                                                <constraint firstAttribute="bottom" secondItem="ad1-Wd-XrB" secondAttribute="bottom" constant="1.5" id="dDv-vH-SOF"/>
+                                                <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="ad1-Wd-XrB" secondAttribute="bottom" constant="4" id="dDv-vH-SOF"/>
                                                 <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="h7k-5M-UKo" secondAttribute="bottom" constant="8" id="f0j-Vu-eNo"/>
                                             </constraints>
                                         </tableViewCellContentView>

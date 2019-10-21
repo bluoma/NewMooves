@@ -35,7 +35,7 @@ class ProfileViewController: UIViewController {
             
             dynProfile.username.bindAndFire {
                 [unowned self] (username: String) in
-                dlog("username bindAndFire: \(username)")
+                //dlog("username bindAndFire: \(username)")
                 self.usernameLabel.text = username
                 if username.count > 0 {
                     self.title = username
@@ -46,7 +46,7 @@ class ProfileViewController: UIViewController {
             }
             dynProfile.userAvatar.bindAndFire {
                 [unowned self] (image: UIImage?) in
-                dlog("userAvatar.bindAndFire\(String(describing: image))")
+                //dlog("userAvatar.bindAndFire\(String(describing: image))")
                 self.userAvatar.alpha = 0.0;
                 self.userAvatar.image = image
                 UIView.animate(withDuration: 0.3, animations:
@@ -56,7 +56,7 @@ class ProfileViewController: UIViewController {
             }
             dynProfile.isProfileLoading.bindAndFire {
                 [unowned self] (isProfileLoading: Bool) in
-                dlog("isProfileLoading.bindAndFire: \(isProfileLoading)")
+                //dlog("isProfileLoading.bindAndFire: \(isProfileLoading)")
                 if isProfileLoading {
                     self.loadingActivityIndicatorView.startAnimating()
                 }
@@ -66,7 +66,7 @@ class ProfileViewController: UIViewController {
             }
             dynProfile.isEmptyState.bindAndFire {
                 [unowned self] (isEmptyState: Bool) in
-                dlog("isEmptyState: \(isEmptyState)")
+                //dlog("isEmptyState: \(isEmptyState)")
                 if isEmptyState {
                     self.emptyStateView.isHidden = false
                     self.profileContainer.isHidden = true
