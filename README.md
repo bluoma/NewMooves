@@ -51,12 +51,12 @@ The following **optional** features are implemented:
 - [ ] For the large poster, load the low-res image first, switch to high-res when complete.
 - [x] Customize the highlight and selection effect of the cell.
 - [x] Customize the navigation bar.
-- [x] Login existing TMDb users.
 
 The following **additional** features are implemented:
 
 - [x] Shows movie genre and runtime via json fetch by movie
-
+- [x] Infinite scrolling in movie lists
+- [x] Login/Logout existing TMDb users.
 
 ## Notes
 
