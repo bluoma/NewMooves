@@ -9,7 +9,7 @@
 import Foundation
 
 
-class UserAccountService {
+class UserAccountService: RemoteService {
     
     func fetchUserProfile(withSessionId sessionId: String, completion: @escaping ((UserProfile?, Error?) -> Void)) {
         
@@ -156,5 +156,13 @@ class UserAccountService {
             completion(false, error)
         }
         remoteRequest.send()
+    }
+    
+    override var description: String {
+        return UserAccountService.staticName
+    }
+       
+    override class var staticName: String {
+        return "UserAccountService"
     }
 }

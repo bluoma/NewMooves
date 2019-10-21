@@ -8,7 +8,7 @@
 
 import Foundation
 
-class MovieService {
+class MovieService: RemoteService {
     
     func fetchMovieList(withType listType: MovieListType, page: Int, completion: @escaping ((MovieResults?, Error?) -> Void)) {
         
@@ -89,5 +89,13 @@ class MovieService {
             completion([], error)
         }
         remoteRequest.send()
+    }
+    
+    override var description: String {
+        return MovieService.staticName
+    }
+       
+    override class var staticName: String {
+        return "MovieService"
     }
 }

@@ -19,7 +19,7 @@ class NetworkPlatform {
     fileprivate var remoteClients: [RemoteClient] = []
     fileprivate var requestClientDict: [String: RemoteClient] = [:]
     fileprivate var requestTaskDict: [RemoteRequest: Any] = [:]
-    fileprivate var jsonService = JsonHttpService()
+    fileprivate var jsonTransport = JsonHttpTransport()
     fileprivate let requestTaskDictLock = NSLock()
     
     fileprivate init() {
@@ -129,18 +129,22 @@ class NetworkPlatform {
             return nil
         }
         
-        let task: URLSessionDataTask = jsonService.send(urlRequest: urlRequest, completion:
+        let task: URLSessionDataTask = jsonTransport.send(urlRequest: urlRequest, completion:
         { [weak self] (data: Data?, response: HTTPURLResponse?, error: Error?) in
             
             guard let myself = self else { return }
             
             if let error = error {
-                remoteRequest.failureBlock?(error)
+                DispatchQueue.main.async {
+                    remoteRequest.failureBlock?(error)
+                }
             }
             else {
                 var headers = response?.allHeaderFields ?? [:]
                 headers["statusCode"] = response?.statusCode ?? 0
-                remoteRequest.successBlock?(data, headers)
+                DispatchQueue.main.async {
+                    remoteRequest.successBlock?(data, headers)
+                }
             }
             myself.removeTask(forRequest: remoteRequest)
         })

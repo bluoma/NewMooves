@@ -4,20 +4,29 @@
 
 An app I wrote in 2016 to learn swift at Codepath camp. Was a simple MVC app.
 I took a look at it recently and decided to update it to a MVVM pattern with unidirectional binding.
-The view models contain 'dynamic' model wrappers which do the binding from views to fields. The view models 
-also handle fetching and posting of data as well as state managment. 
+The view models contain 'dynamic' model wrappers which do the binding from views to fields. 
+The view models also handle fetching and posting of data as well as state managment. 
 Flow coordinators are used to off-load the view controllers from managing transitions
 and having 'knowledge' about other view controllers. Flow coordinators also inject
-the view models into their corresponding controllers. The view models don't really
-'know' or care that they live inside of view controllers, which facilitates re-use and testing.
-Also demonstrates a clean separation of concerns for sending and receiving remote data.
-Multiple clients (e.g. websocket, JSON-RPC) could be added using the same interfaces and layering
+the view models into their corresponding controllers. 
+
+The view models don't really 'know' or care that they live inside of view controllers, 
+which facilitates re-use and testing. For an example of this reusability, see the tableView data source 
+implementation in MoviesViewController. The movie detail view model (MovieViewModel) 
+is used to render summary information for the movie lists; the movie detail view model is also used 
+more fully as the primary view model in MovieViewController. The same reuse pattern can be seen again in 
+MovieVideoViewModel, where it is used to render the video summary cells in MovieViewController
+in the the tableView data source implementation. MovieVideoViewModel is also
+used as the primary view model in MovieVideoWebViewController, which plays the videos.
+
+This test project also demonstrates a clean separation of concerns for sending and receiving remote data.
+Multiple clients and transports (e.g. websocket, JSON-RPC) could be added using the same interfaces and layering
 
 for login Test 
 user: emmaroomie
 password: emmaroomie
 
-note: Login VC can freeze when uitextfield becomes first responder due to ios13 simulator bug.
+note: Login VC can freeze when uitextfield becomes first responder due to an ios13 simulator bug.
 On simulator, do Edit->Automatically Sync Pasteboard to deselect, followed by Hardware->Restart
 see: https://forums.developer.apple.com/thread/122972
 

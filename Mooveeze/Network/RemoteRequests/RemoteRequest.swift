@@ -12,25 +12,6 @@ import Foundation
 typealias RequestSuccessBlock = (Data?, [AnyHashable: Any]) -> Void
 typealias RequestFailureBlock = (Error) -> Void
 
-
-protocol RequestProtocol: AnyObject {
-        
-    var method: String { get set }
-    var version: String { get set }
-    var resourcePath: String { get set }
-    var params: [String: String] { get set }
-    var contentType: String { get set }
-    var contentBody: [String: AnyObject] { get set }
-    var requiresSession: Bool { get set }
-    var fullPath: String { get }
-    var successBlock: RequestSuccessBlock? {get set}
-    var failureBlock: RequestFailureBlock? {get set}
-    
-    func appendPath(_ path: String)
-    func send()
-}
-
-
 class RemoteRequest: Hashable, CustomStringConvertible {
     
     var method: String = ""
@@ -76,6 +57,10 @@ class RemoteRequest: Hashable, CustomStringConvertible {
         self.resourcePath.append(path)
     }
     
+    func send() -> Any? {
+        return nil
+    }
+    
     var description: String {
         return RemoteRequest.staticName
     }
@@ -84,9 +69,7 @@ class RemoteRequest: Hashable, CustomStringConvertible {
         return "RemoteRequest"
     }
     
-    @discardableResult func send() -> Any? {
-        return nil
-    }
+   
     
     static func == (lhs: RemoteRequest, rhs: RemoteRequest) -> Bool {
            

@@ -15,9 +15,9 @@ enum HTTPMethod: String {
 }
 
 
-typealias JsonHttpServiceCompletionHandler = (Data?, HTTPURLResponse?, Error?) -> Void
+typealias JsonHttpCompletionHandler = (Data?, HTTPURLResponse?, Error?) -> Void
 
-class JsonHttpService: CustomStringConvertible {
+class JsonHttpTransport: CustomStringConvertible {
     
     var session: URLSession
     
@@ -31,7 +31,7 @@ class JsonHttpService: CustomStringConvertible {
     
     func doGet(
         url: URL,
-        completion: @escaping JsonHttpServiceCompletionHandler) {
+        completion: @escaping JsonHttpCompletionHandler) {
     
         var request = URLRequest(url: url)
         request.httpMethod = HTTPMethod.get.rawValue
@@ -43,7 +43,7 @@ class JsonHttpService: CustomStringConvertible {
     func doPost(
         url: URL,
         postBody: [String: AnyObject],
-        completion: @escaping JsonHttpServiceCompletionHandler) {
+        completion: @escaping JsonHttpCompletionHandler) {
         
         var request = URLRequest(url: url)
         request.httpMethod = HTTPMethod.post.rawValue
@@ -65,7 +65,7 @@ class JsonHttpService: CustomStringConvertible {
     func doDelete(
         url: URL,
         deleteBody: [String: AnyObject],
-        completion: @escaping JsonHttpServiceCompletionHandler) {
+        completion: @escaping JsonHttpCompletionHandler) {
         
         var request = URLRequest(url: url)
         request.httpMethod = HTTPMethod.delete.rawValue
@@ -84,8 +84,8 @@ class JsonHttpService: CustomStringConvertible {
         }
     }
     
-    //expects json dictionary as a response
-    @discardableResult func send(urlRequest request: URLRequest, completion: @escaping JsonHttpServiceCompletionHandler) -> URLSessionDataTask {
+    //expects json Content-Type
+    @discardableResult func send(urlRequest request: URLRequest, completion: @escaping JsonHttpCompletionHandler) -> URLSessionDataTask {
         
         if let data = request.httpBody {
             
@@ -106,7 +106,7 @@ class JsonHttpService: CustomStringConvertible {
             
             guard let localResp = response as? HTTPURLResponse else {
                 let error = ServiceError(type: .invalidResponse, code: ServiceErrorCode.notFound.rawValue, msg: "unknown response type")
-                myself.returnToMain(nil, nil, error, completion)
+                myself.handleCompletion(nil, nil, error, completion)
                 return
             }
             
@@ -118,7 +118,7 @@ class JsonHttpService: CustomStringConvertible {
             
             if let foundError = error {
                 dlog("error: \(foundError)")
-                myself.returnToMain(nil, nil, ServiceError(foundError), completion)
+                myself.handleCompletion(nil, nil, ServiceError(foundError), completion)
             }
             else if statusCode >= 400 && statusCode <= 600 {
                 var msg = HTTPURLResponse.localizedString(forStatusCode: statusCode)
@@ -127,24 +127,24 @@ class JsonHttpService: CustomStringConvertible {
                     msg = errStr
                 }
                 let error = ServiceError(type: .httpServer, code: statusCode, msg: msg)
-                myself.returnToMain(nil, nil, error, completion)
+                myself.handleCompletion(nil, nil, error, completion)
             }
             else if let foundData = data {
                 if (contentType.contains("json")) { //success
-                    myself.returnToMain(foundData, localResp, nil, completion)
+                    myself.handleCompletion(foundData, localResp, nil, completion)
                 }
                 else {
                     let msg = "contentType is not json: \(contentType)"
                     dlog(msg)
                     let error = ServiceError(type: .invalidData, code: ServiceErrorCode.parse.rawValue, msg: msg)
-                    myself.returnToMain(nil, nil, error, completion)
+                    myself.handleCompletion(nil, nil, error, completion)
                 }
             }
             else {
                 let msg = "unknown error"
                 dlog(msg)
                 let error = ServiceError(type: .unknown, code: ServiceErrorCode.unknown.rawValue, msg: msg)
-                myself.returnToMain(nil, nil, error, completion)
+                myself.handleCompletion(nil, nil, error, completion)
             }
         })
         
@@ -153,13 +153,17 @@ class JsonHttpService: CustomStringConvertible {
         return dataTask
     }
     
-    fileprivate func returnToMain(_ data: Data?, _ resp: HTTPURLResponse?, _ error: Error?, _ completion: @escaping JsonHttpServiceCompletionHandler) {
-        DispatchQueue.main.async {
-            completion(data, resp, error)
-        }
+    fileprivate func handleCompletion(_ data: Data?, _ resp: HTTPURLResponse?, _ error: Error?, _ completion: @escaping JsonHttpCompletionHandler) {
+        //DispatchQueue.main.async {
+        completion(data, resp, error)
+        //}
     }
     
     var description: String {
-           return "JsonHttpService"
+        return JsonHttpTransport.staticName
+    }
+    
+    class var staticName: String {
+        return "JsonHttpTransport"
     }
 }

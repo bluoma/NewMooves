@@ -20,7 +20,7 @@ class JsonHttpRequest: RemoteRequest {
     }
     
     override class var staticName: String {
-        return "RemoteRequest"
+        return "JsonHttpRequest"
     }
     
 }

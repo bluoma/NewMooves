@@ -46,21 +46,21 @@ class LoginViewController: UIViewController {
             
             dynAuth.username.bind {
                 [unowned self] (username: String) in
-                dlog("username fired: \(username)")
+                //dlog("username fired: \(username)")
                 if let text = self.usernameTextField.text, text != username {
                     self.usernameTextField.text = username
                 }
             }
             dynAuth.password.bind {
                 [unowned self] (password: String) in
-                dlog("password fired: \(password)")
+                //dlog("password fired: \(password)")
                 if let text = self.passwordTextField.text, text != password {
                     self.passwordTextField.text = password
                 }
             }
             dynAuth.status.bindAndFire {
                 [unowned self] (status: String) in
-                dlog("status fired: \(status)")
+                //dlog("status fired: \(status)")
                 self.statusLabel.text = status
             }
             dynAuth.error.bindAndFire {
@@ -71,14 +71,14 @@ class LoginViewController: UIViewController {
             }
             dynAuth.sessionId.bindAndFire {
                 [unowned self] (sessionId: String) in
-                dlog("sessionId fired: \(sessionId)")
+                //dlog("sessionId fired: \(sessionId)")
                 if sessionId.count == 40 {
                     self.loginDidSucceed?(sessionId)
                 }
             }
             dynAuth.isLoginInProcess.bindAndFire {
                 [unowned self] (isLoginInProcess: Bool) in
-                dlog("isLoginInProcess fired: \(isLoginInProcess)")
+                //dlog("isLoginInProcess fired: \(isLoginInProcess)")
                 if isLoginInProcess {
                     self.waitActivityIndicatorView.startAnimating()
                 }
