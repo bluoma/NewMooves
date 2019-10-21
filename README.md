@@ -44,10 +44,11 @@ The following **additional** features are implemented:
 - [x] Infinite scrolling in movie lists
 - [x] Login/Logout existing TMDb users.
 
-## Notes
+## References
 
-Describe any challenges encountered while building the app.
-
+[Binding](http://five.agency/solving-the-binding-problem-with-swift/)
+[MVVM](https://medium.com/flawless-app-stories/how-to-use-a-model-view-viewmodel-architecture-for-ios-46963c67be1b)
+[Flow Controllers](http://merowing.info/2016/01/improve-your-ios-architecture-with-flowcontrollers/)
 
 ## License
 
