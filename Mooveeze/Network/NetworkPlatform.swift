@@ -18,7 +18,7 @@ class NetworkPlatform {
     
     fileprivate var remoteClients: [RemoteClient] = []
     fileprivate var requestClientDict: [String: RemoteClient] = [:]
-    fileprivate var requestTaskDict: [RemoteRequest: AnyObject] = [:]
+    fileprivate var requestTaskDict: [RemoteRequest: Any] = [:]
     fileprivate var jsonService = JsonHttpService()
     fileprivate let requestTaskDictLock = NSLock()
     
@@ -62,40 +62,31 @@ class NetworkPlatform {
             dlog("Error no plistDict found")
             return
         }
-        if let clients = plistDict["remoteClients"] as? [[String: String]] {
-            for clientDict in clients {
-                
-                if let clientName = clientDict["client"] {
-                    if clientName == MovieDbClient.staticName {
-                        guard let scheme = clientDict["scheme"],
-                            let host = clientDict["host"] else {
-                                dlog("Error no scheme/host for MovieDbClient in plist")
-                                continue
-                        }
-                        let client: MovieDbClient
-                        if let port = clientDict["port"] {
-                            client = MovieDbClient(withScheme: scheme, host: host, port: port)
-                        }
-                        else {
-                            client = MovieDbClient(withScheme: scheme, host: host)
-                        }
-                        remoteClients.append(client)
-                    }
+        
+        guard let clientsArray = plistDict["remoteClients"] as? [[String: String]] else { return }
+        for clientDict in clientsArray {
+            guard let clientName = clientDict["client"] else { continue }
+            //create MovieDbClient
+            if clientName == MovieDbClient.staticName {
+                guard let scheme = clientDict["scheme"], let host = clientDict["host"] else {
+                    dlog("Error no scheme/host for MovieDbClient in plist")
+                    continue
                 }
+                let client: MovieDbClient
+                if let port = clientDict["port"] {
+                    client = MovieDbClient(withScheme: scheme, host: host, port: port)
+                }
+                else {
+                    client = MovieDbClient(withScheme: scheme, host: host)
+                }
+                remoteClients.append(client)
             }
         }
         
-        if let reqClientDict = plistDict["requestClientDict"] as? [String: String] {
-         
-            for (key, val) in reqClientDict {
-                if key == MovieRequest.staticName, let client = remoteClients.first(where: { $0.description == val })
-                {
-                    requestClientDict[key] = client
-                }
-                else if key == UserAccountRequest.staticName, let client = remoteClients.first(where: { $0.description == val })
-                {
-                    requestClientDict[key] = client
-                }
+        guard let reqClientDict = plistDict["requestClientDict"] as? [String: String] else { return }
+        for (key, val) in reqClientDict {
+            if let client = remoteClients.first(where: { $0.description == val }) {
+                requestClientDict[key] = client
             }
         }
     }
@@ -104,7 +95,7 @@ class NetworkPlatform {
         return requestClientDict[name]
     }
     
-    func taskForRequest(_ request: RemoteRequest) -> AnyObject? {
+    func taskForRequest(_ request: RemoteRequest) -> Any? {
         requestTaskDictLock.lock()
         defer {
             requestTaskDictLock.unlock()
