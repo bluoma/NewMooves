@@ -46,9 +46,9 @@ The following **additional** features are implemented:
 
 ## References
 
-[Binding](http://five.agency/solving-the-binding-problem-with-swift/)
-[MVVM](https://medium.com/flawless-app-stories/how-to-use-a-model-view-viewmodel-architecture-for-ios-46963c67be1b)
-[Flow Controllers](http://merowing.info/2016/01/improve-your-ios-architecture-with-flowcontrollers/)
+- [Binding](http://five.agency/solving-the-binding-problem-with-swift/)
+- [MVVM](https://medium.com/flawless-app-stories/how-to-use-a-model-view-viewmodel-architecture-for-ios-46963c67be1b)
+- [Flow Controllers](http://merowing.info/2016/01/improve-your-ios-architecture-with-flowcontrollers/)
 
 ## License
 
