@@ -7,14 +7,21 @@
 //
 
 import Foundation
-import Starscream
 
 class WSClient: RemoteClient {
     
-    lazy var transport: WSTransport = {
-        let wsTransport = WSTransport(withBaseUrl: buildBaseUrl()!)
-        wsTransport.connectBlock = wsTransportDidConnect
-        wsTransport.disconnectBlock = wsTransportDidDisconnect(error:)
+    lazy var transport: RemoteTransport = {
+        var wsTransport: RemoteTransport
+        if #available(iOS 13, *) {
+            wsTransport = WSNativeTransport(withBaseUrl: buildBaseUrl()!)
+            wsTransport.connectBlock = wsTransportDidConnect
+            wsTransport.disconnectBlock = wsTransportDidDisconnect(error:)
+        }
+        else {
+            wsTransport = WSStarscreamTransport(withBaseUrl: buildBaseUrl()!)
+            wsTransport.connectBlock = wsTransportDidConnect
+            wsTransport.disconnectBlock = wsTransportDidDisconnect(error:)
+        }
         return wsTransport
     } ()
     

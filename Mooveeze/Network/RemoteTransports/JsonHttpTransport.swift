@@ -22,6 +22,8 @@ class JsonHttpTransport: RemoteTransport, CustomStringConvertible {
     
     var connectBlock: (() -> Void)?
     var disconnectBlock: ((Error?) -> Void)?
+    var shouldRetryBlock: ((URLRequest, Bool) -> Void)?
+
     
     init() {
         let urlconfig = URLSessionConfiguration.default
@@ -31,8 +33,10 @@ class JsonHttpTransport: RemoteTransport, CustomStringConvertible {
         session = URLSession(configuration: urlconfig, delegate: nil, delegateQueue: nil)
     }
     
-    func connect() {
-    }
+    func connect() { }
+    
+    func disconnect() { }
+
     
     func doGet(
         url: URL,

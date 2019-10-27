@@ -1,5 +1,5 @@
 //
-//  WSTransport.swift
+//  WSStarscreamTransport.swift
 //  MoreClients
 //
 //  Created by Bill on 10/24/19.
@@ -9,17 +9,10 @@
 import Foundation
 import Starscream
 
-enum WSTransportState: String {
-    case connected = "connected"
-    case connecting = "connecting"
-    case disconnected = "disconnected"
-    case disconnecting = "disconnecting"
-}
-
-class WSTransport: RemoteTransport {
+class WSStarscreamTransport: RemoteTransport {
         
     var messageMap: [WSMessage: RemoteTransportCompletionHandler] = [:]
-    var transportState: WSTransportState = .disconnected
+    var transportState: TransportState = .disconnected
     let socket: WebSocket
     
     init(withBaseUrl url: URL) {
@@ -30,7 +23,8 @@ class WSTransport: RemoteTransport {
     
     var connectBlock: (() -> Void)?
     var disconnectBlock: ((Error?) -> Void)?
-    
+    var shouldRetryBlock: ((URLRequest, Bool) -> Void)?
+
     fileprivate func configureWebsocket() {
         socket.respondToPingWithPong = true
         socket.onConnect = webSocketDidConnect

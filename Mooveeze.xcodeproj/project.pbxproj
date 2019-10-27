@@ -42,7 +42,7 @@
 		F7C9F84922FD462000E8BC19 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F7C9F84722FD462000E8BC19 /* Main.storyboard */; };
 		F7C9F84B22FD462000E8BC19 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F7C9F84A22FD462000E8BC19 /* Assets.xcassets */; };
 		F7C9F84E22FD462000E8BC19 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F7C9F84C22FD462000E8BC19 /* LaunchScreen.storyboard */; };
-		F7D5A7C02364B27500A1009C /* WSTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7D5A7BD2364B27400A1009C /* WSTransport.swift */; };
+		F7D5A7C02364B27500A1009C /* WSStarscreamTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7D5A7BD2364B27400A1009C /* WSStarscreamTransport.swift */; };
 		F7D5A7C12364B27500A1009C /* RemoteTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7D5A7BE2364B27500A1009C /* RemoteTransport.swift */; };
 		F7D5A7C22364B27500A1009C /* WSMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7D5A7BF2364B27500A1009C /* WSMessage.swift */; };
 		F7D5A7C42364B28600A1009C /* TestUserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7D5A7C32364B28600A1009C /* TestUserService.swift */; };
@@ -51,6 +51,7 @@
 		F7D5A7CA2364B29C00A1009C /* TestUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7D5A7C92364B29C00A1009C /* TestUser.swift */; };
 		F7D5A7CC2364B2B100A1009C /* WSClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7D5A7CB2364B2B100A1009C /* WSClient.swift */; };
 		F7D5A7CE2364B62100A1009C /* Network.plist in Resources */ = {isa = PBXBuildFile; fileRef = F7D5A7CD2364B62100A1009C /* Network.plist */; };
+		F7D5A7D22366593B00A1009C /* WSNativeTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7D5A7D12366593B00A1009C /* WSNativeTransport.swift */; };
 		F7D7AEF6232990440072AB55 /* ServiceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7D7AEF5232990440072AB55 /* ServiceError.swift */; };
 		F7D7AEF82329D0D50072AB55 /* MovieViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7D7AEF72329D0D50072AB55 /* MovieViewModel.swift */; };
 		F7D7AEFA232C52050072AB55 /* MovieVideoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7D7AEF9232C52050072AB55 /* MovieVideoViewModel.swift */; };
@@ -109,7 +110,7 @@
 		F7C9F84A22FD462000E8BC19 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F7C9F84D22FD462000E8BC19 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F7C9F84F22FD462000E8BC19 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F7D5A7BD2364B27400A1009C /* WSTransport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WSTransport.swift; sourceTree = "<group>"; };
+		F7D5A7BD2364B27400A1009C /* WSStarscreamTransport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WSStarscreamTransport.swift; sourceTree = "<group>"; };
 		F7D5A7BE2364B27500A1009C /* RemoteTransport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteTransport.swift; sourceTree = "<group>"; };
 		F7D5A7BF2364B27500A1009C /* WSMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WSMessage.swift; sourceTree = "<group>"; };
 		F7D5A7C32364B28600A1009C /* TestUserService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestUserService.swift; sourceTree = "<group>"; };
@@ -118,6 +119,7 @@
 		F7D5A7C92364B29C00A1009C /* TestUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestUser.swift; sourceTree = "<group>"; };
 		F7D5A7CB2364B2B100A1009C /* WSClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WSClient.swift; sourceTree = "<group>"; };
 		F7D5A7CD2364B62100A1009C /* Network.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Network.plist; sourceTree = "<group>"; };
+		F7D5A7D12366593B00A1009C /* WSNativeTransport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WSNativeTransport.swift; sourceTree = "<group>"; };
 		F7D7AEF5232990440072AB55 /* ServiceError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceError.swift; sourceTree = "<group>"; };
 		F7D7AEF72329D0D50072AB55 /* MovieViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieViewModel.swift; sourceTree = "<group>"; };
 		F7D7AEF9232C52050072AB55 /* MovieVideoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieVideoViewModel.swift; sourceTree = "<group>"; };
@@ -237,9 +239,10 @@
 		F755B07B235E2034003A5D5D /* RemoteTransports */ = {
 			isa = PBXGroup;
 			children = (
+				F7D5A7D12366593B00A1009C /* WSNativeTransport.swift */,
 				F7D5A7BE2364B27500A1009C /* RemoteTransport.swift */,
 				F7D5A7BF2364B27500A1009C /* WSMessage.swift */,
-				F7D5A7BD2364B27400A1009C /* WSTransport.swift */,
+				F7D5A7BD2364B27400A1009C /* WSStarscreamTransport.swift */,
 				F7012D962322B34700A21887 /* JsonHttpTransport.swift */,
 			);
 			path = RemoteTransports;
@@ -502,7 +505,7 @@
 				F7D7AEFA232C52050072AB55 /* MovieVideoViewModel.swift in Sources */,
 				F7012D7E232179A400A21887 /* Constants.swift in Sources */,
 				F7D5A7C42364B28600A1009C /* TestUserService.swift in Sources */,
-				F7D5A7C02364B27500A1009C /* WSTransport.swift in Sources */,
+				F7D5A7C02364B27500A1009C /* WSStarscreamTransport.swift in Sources */,
 				F7A0E212235A823900B46ABA /* MovieRequest.swift in Sources */,
 				F7D7AEFF232EA4040072AB55 /* DynamicUserProfile.swift in Sources */,
 				F79376B4235ADFAF00EF1F4F /* NetworkPlatform.swift in Sources */,
@@ -517,6 +520,7 @@
 				F7012D8F2321AD5000A21887 /* BaseRootNavigationCoordinator.swift in Sources */,
 				F7012D8723217DF200A21887 /* ProfileViewController.swift in Sources */,
 				F7D5A7C12364B27500A1009C /* RemoteTransport.swift in Sources */,
+				F7D5A7D22366593B00A1009C /* WSNativeTransport.swift in Sources */,
 				F7A5C3CE23255CD300B80991 /* ProfileViewModel.swift in Sources */,
 				F7012D7F232179A400A21887 /* AppearanceManager.swift in Sources */,
 				F7012D9B232303ED00A21887 /* DateFormatter.swift in Sources */,
