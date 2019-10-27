@@ -1,24 +1,27 @@
 //
-//  MoviesClient.swift
-//  Mooveeze
+//  WebSocketClient.swift
+//  MoreClients
 //
-//  Created by Bill on 10/17/19.
+//  Created by Bill on 10/23/19.
 //  Copyright © 2019 Bill. All rights reserved.
 //
 
 import Foundation
+import Starscream
 
-
-class MovieDbClient: HttpClient {
+class WSClient: RemoteClient {
     
-    lazy var transport: JsonHttpTransport = {
-        let jsTransport = JsonHttpTransport()
-        return jsTransport
+    lazy var transport: WSTransport = {
+        let wsTransport = WSTransport(withBaseUrl: buildBaseUrl()!)
+        wsTransport.connectBlock = wsTransportDidConnect
+        wsTransport.disconnectBlock = wsTransportDidDisconnect(error:)
+        return wsTransport
     } ()
     
+    var headers: [String: String] = [:]
+    
     init() {
-        super.init(withScheme: "https", host: "api.themoviedb.org")
-        super.headers["Accept"] = "application/json"
+        super.init(withScheme: "ws", host: "localhost", port: "9704")
         transport.connect()
     }
     
@@ -26,16 +29,39 @@ class MovieDbClient: HttpClient {
         super.init(withScheme: scheme, host: host, port: port)
         transport.connect()
     }
-
-    //very basic auth
+    
     override func buildUrl(withRequest request: RemoteRequest) -> URL? {
-     
-        request.params[Constants.theMovieDbApiKeyName] = Constants.theMovieDbApiKey
-        if request.requiresSession, let sessionId = Constants.sessionId {
-            request.params[Constants.theMovieDbSessionKeyName] = sessionId
+        
+        var url: URL? = nil
+        
+        var components: URLComponents = URLComponents()
+        if !scheme.isEmpty {
+            components.scheme = scheme
+        }
+        if !host.isEmpty {
+            components.host = host
+        }
+        if !port.isEmpty {
+            components.port = Int(port)
+        }
+        if !request.fullPath.isEmpty {
+            components.path = request.fullPath
+        }
+        if !request.params.isEmpty {
+            
+            var items: [URLQueryItem] = []
+            for (name, value) in request.params {
+                let percentEncodedValue = value.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+                let item: URLQueryItem = URLQueryItem(name: name, value: percentEncodedValue)
+                items.append(item)
+            }
+            components.queryItems = items
         }
         
-        return super.buildUrl(withRequest: request)
+        url = components.url
+        dlog("url: \(String(describing: url))")
+        
+        return url
     }
     
     override func buildUrlRequest(withRemoteRequest request: RemoteRequest) -> URLRequest? {
@@ -75,17 +101,28 @@ class MovieDbClient: HttpClient {
         return urlRequest
     }
     
+    fileprivate func wsTransportDidConnect() {
+        dlog("")
+    }
+    
+    fileprivate func wsTransportDidDisconnect(error: Error?) {
+        dlog("error: \(error?.localizedDescription ?? "no error")...")
+        //TODO backoff strategy to reconnect
+        //wsTransport.connect()
+    }
+    
     @discardableResult //forward to transport
     override func send(urlRequest request: URLRequest, completion: @escaping RemoteTransportCompletionHandler) -> Any? {
         return transport.send(urlRequest: request, completion: completion)
     }
     
-    
     override var description: String {
-        return MovieDbClient.staticName
+        return WSClient.staticName
     }
     
     override class var staticName: String {
-        return "MovieDbClient"
+        return "WSClient"
     }
 }
+
+

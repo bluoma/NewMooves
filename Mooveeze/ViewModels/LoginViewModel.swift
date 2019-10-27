@@ -13,6 +13,7 @@ class LoginViewModel {
     
     var networkCallIsActive: Bool = false
     var userService = UserAccountService()
+    var testUserService = TestUserService()
     
     fileprivate var userAuthWrapper: UserAuthViewModelWrapper = UserAuthViewModelWrapper()
     
@@ -23,6 +24,33 @@ class LoginViewModel {
 
 //MARK - Networl
 extension LoginViewModel {
+    
+    
+    func fetchTestUser(byId id: Int) {
+        testUserService.fetchTestUser(withId: id) { (user: TestUser?, error: Error?) in
+            
+            if let err = error {
+                dlog("error: \(String(describing: err))")
+            }
+            else {
+                dlog("user: \(String(describing: user))")
+            }
+        }
+    }
+    
+    func fetchAllTestUsers() {
+        testUserService.fetchTestUsers( completion: { (users: [TestUser], error: Error?) in
+            
+            if let err = error {
+                dlog("error: \(String(describing: err))")
+            }
+            else {
+                dlog("users: \(String(describing: users))")
+            }
+        })
+    }
+    
+    
     func fetchAuthToken() {
         
         if networkCallIsActive { return }

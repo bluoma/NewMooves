@@ -158,11 +158,11 @@ class UserAccountService: RemoteService {
         remoteRequest.send()
     }
     
-    override var description: String {
+    var description: String {
         return UserAccountService.staticName
     }
        
-    override class var staticName: String {
+    class var staticName: String {
         return "UserAccountService"
     }
 }

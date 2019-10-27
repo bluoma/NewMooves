@@ -8,13 +8,8 @@
 
 import Foundation
 
-class RemoteService: CustomStringConvertible {
+protocol RemoteService: CustomStringConvertible {
     
-    var description: String {
-        return RemoteService.staticName
-    }
-    
-    class var staticName: String {
-        return "RemoteService"
-    }
+    static var staticName: String { get }
+   
 }

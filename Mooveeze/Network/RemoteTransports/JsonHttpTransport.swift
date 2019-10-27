@@ -11,27 +11,32 @@ import Foundation
 enum HTTPMethod: String {
     case get = "GET"
     case post = "POST"
+    case put = "PUT"
     case delete = "DELETE"
 }
 
 
-typealias JsonHttpCompletionHandler = (Data?, HTTPURLResponse?, Error?) -> Void
-
-class JsonHttpTransport: CustomStringConvertible {
+class JsonHttpTransport: RemoteTransport, CustomStringConvertible {
     
     var session: URLSession
+    
+    var connectBlock: (() -> Void)?
+    var disconnectBlock: ((Error?) -> Void)?
     
     init() {
         let urlconfig = URLSessionConfiguration.default
         urlconfig.timeoutIntervalForRequest = 12
         urlconfig.timeoutIntervalForResource = 12
         urlconfig.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
-        self.session = URLSession(configuration: urlconfig, delegate: nil, delegateQueue: nil)
+        session = URLSession(configuration: urlconfig, delegate: nil, delegateQueue: nil)
+    }
+    
+    func connect() {
     }
     
     func doGet(
         url: URL,
-        completion: @escaping JsonHttpCompletionHandler) {
+        completion: @escaping RemoteTransportCompletionHandler) {
     
         var request = URLRequest(url: url)
         request.httpMethod = HTTPMethod.get.rawValue
@@ -43,7 +48,7 @@ class JsonHttpTransport: CustomStringConvertible {
     func doPost(
         url: URL,
         postBody: [String: AnyObject],
-        completion: @escaping JsonHttpCompletionHandler) {
+        completion: @escaping RemoteTransportCompletionHandler) {
         
         var request = URLRequest(url: url)
         request.httpMethod = HTTPMethod.post.rawValue
@@ -51,21 +56,21 @@ class JsonHttpTransport: CustomStringConvertible {
         //request.setValue("application/json", forHTTPHeaderField: "Accept")
         
         do {
-            let data = try JSONSerialization.data(withJSONObject: postBody, options: .prettyPrinted)
+            let data = try JSONSerialization.data(withJSONObject: postBody, options: [])
             request.httpBody = data
             send(urlRequest: request, completion: completion)
         }
         catch {
             dlog(String(describing: error))
             let serviceError = ServiceError(type: .invalidRequest, code: ServiceErrorCode.parse.rawValue, msg: error.localizedDescription)
-            completion(nil, nil, serviceError)
+            completion(nil, [:], serviceError)
         }
     }
     
     func doDelete(
         url: URL,
         deleteBody: [String: AnyObject],
-        completion: @escaping JsonHttpCompletionHandler) {
+        completion: @escaping RemoteTransportCompletionHandler) {
         
         var request = URLRequest(url: url)
         request.httpMethod = HTTPMethod.delete.rawValue
@@ -73,19 +78,20 @@ class JsonHttpTransport: CustomStringConvertible {
         //request.setValue("application/json", forHTTPHeaderField: "Accept")
         
         do {
-            let data = try JSONSerialization.data(withJSONObject: deleteBody, options: .prettyPrinted)
+            let data = try JSONSerialization.data(withJSONObject: deleteBody, options: [])
             request.httpBody = data
             send(urlRequest: request, completion: completion)
         }
         catch {
             dlog(String(describing: error))
             let serviceError = ServiceError(type: .invalidRequest, code: ServiceErrorCode.parse.rawValue, msg: error.localizedDescription)
-            completion(nil, nil, serviceError)
+            completion(nil, [:], serviceError)
         }
     }
     
     //expects json Content-Type
-    @discardableResult func send(urlRequest request: URLRequest, completion: @escaping JsonHttpCompletionHandler) -> URLSessionDataTask {
+    @discardableResult
+    func send(urlRequest request: URLRequest, completion: @escaping RemoteTransportCompletionHandler) -> Any? {
         
         if let data = request.httpBody {
             
@@ -153,9 +159,12 @@ class JsonHttpTransport: CustomStringConvertible {
         return dataTask
     }
     
-    fileprivate func handleCompletion(_ data: Data?, _ resp: HTTPURLResponse?, _ error: Error?, _ completion: @escaping JsonHttpCompletionHandler) {
+    fileprivate func handleCompletion(_ data: Data?, _ resp: HTTPURLResponse?, _ error: Error?, _ completion: @escaping RemoteTransportCompletionHandler) {
         //DispatchQueue.main.async {
-        completion(data, resp, error)
+        var headers = resp?.allHeaderFields
+        headers?["statusCode"] = resp?.statusCode ?? 0
+
+        completion(data, headers ?? [:], error)
         //}
     }
     

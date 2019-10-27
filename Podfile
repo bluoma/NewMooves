@@ -7,5 +7,6 @@ target 'Mooveeze' do
 
   # Pods for Mooveeze
 	pod 'AlamofireImage', '~> 3.5'
+  pod 'Starscream', '~> 3.0.2'
 
 end

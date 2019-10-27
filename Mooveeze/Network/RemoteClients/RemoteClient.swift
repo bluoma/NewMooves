@@ -20,6 +20,24 @@ class RemoteClient: CustomStringConvertible {
         self.port = port
     }
     
+    func buildBaseUrl() -> URL? {
+        var url: URL? = nil
+        
+        var components: URLComponents = URLComponents()
+        if !scheme.isEmpty {
+            components.scheme = scheme
+        }
+        if !host.isEmpty {
+            components.host = host
+        }
+        if !port.isEmpty, let foundPort = Int(port) {
+            components.port = foundPort
+        }
+        url = components.url
+        
+        return url
+    }
+    
     func buildUrl(withRequest request: RemoteRequest) -> URL? {
         
         var url: URL? = nil
@@ -55,6 +73,11 @@ class RemoteClient: CustomStringConvertible {
     }
     
     func buildUrlRequest(withRemoteRequest request: RemoteRequest) -> URLRequest? {
+        return nil
+    }
+    
+    @discardableResult
+    func send(urlRequest request: URLRequest, completion: @escaping RemoteTransportCompletionHandler) -> Any? {
         return nil
     }
     
