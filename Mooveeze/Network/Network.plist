@@ -19,6 +19,16 @@
             <key>host</key>
             <string>api.themoviedb.org</string>
         </dict>
+        <dict>
+            <key>client</key>
+            <string>WSClient</string>
+            <key>scheme</key>
+            <string>ws</string>
+            <key>host</key>
+            <string>localhost</string>
+            <key>port</key>
+            <string>9704</string>
+        </dict>
     </array>
     <key>requestClientDict</key>
     <dict>
@@ -26,6 +36,8 @@
         <string>MovieDbClient</string>
         <key>UserAccountRequest</key>
         <string>MovieDbClient</string>
+        <key>TestUserRequest</key>
+        <string>WSClient</string>
     </dict>
     </dict>
 </plist>

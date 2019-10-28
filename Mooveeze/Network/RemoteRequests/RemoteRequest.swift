@@ -14,6 +14,7 @@ typealias RequestFailureBlock = (Error) -> Void
 
 class RemoteRequest: Hashable, CustomStringConvertible {
     
+    let requestId: String = UUID().uuidString
     var method: String = ""
     var version: String = ""
     var resourcePath: String = ""
@@ -69,26 +70,12 @@ class RemoteRequest: Hashable, CustomStringConvertible {
         return "RemoteRequest"
     }
     
-   
-    
     static func == (lhs: RemoteRequest, rhs: RemoteRequest) -> Bool {
-           
-        let eq = lhs.method == rhs.method &&
-            lhs.version == rhs.version &&
-            lhs.fullPath == rhs.fullPath &&
-            lhs.params == rhs.params &&
-            lhs.contentType == rhs.contentType &&
-            lhs.contentBody == rhs.contentBody
-        
+        let eq = lhs.requestId == rhs.requestId
         return eq
     }
        
     func hash(into hasher: inout Hasher) {
-        hasher.combine(method)
-        hasher.combine(version)
-        hasher.combine(fullPath)
-        hasher.combine(params)
-        hasher.combine(contentType)
-        hasher.combine(contentBody)
+        hasher.combine(requestId)
     }
 }

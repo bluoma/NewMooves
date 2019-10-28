@@ -19,20 +19,21 @@ class NetworkPlatform {
     fileprivate var remoteClients: [RemoteClient] = []
     fileprivate var requestClientDict: [String: RemoteClient] = [:]
     fileprivate var requestTaskDict: [RemoteRequest: Any] = [:]
-    fileprivate var jsonTransport = JsonHttpTransport()
     fileprivate let requestTaskDictLock = NSLock()
     
     fileprivate init() {
-        loadNetworkPlist(forEnv: buildEnv)
+        let containers: (array: [RemoteClient], dict: [String: RemoteClient]) = NetworkPlatform.loadNetworkPlist(forEnv: NetworkPlatform.buildEnv)
+        precondition(containers.array.count > 1, "no remote clients")
+        precondition(!containers.dict.isEmpty, "no requst client mapping")
+        remoteClients = containers.array
+        requestClientDict = containers.dict
         dlog("remoteClients: \(remoteClients)")
         dlog("requestClientDict: \(requestClientDict)")
-        precondition(!remoteClients.isEmpty, "no remote clients")
-        precondition(!requestClientDict.isEmpty, "no requst client mapping")
     }
     
     static var shared: NetworkPlatform = NetworkPlatform()
     
-    var buildEnv: BuildEnv {
+    static var buildEnv: BuildEnv {
         #if DEBUG
         let env = BuildEnv.dev
         #elseif RELEASE
@@ -44,7 +45,10 @@ class NetworkPlatform {
     }
     
     
-    fileprivate func loadNetworkPlist(forEnv env: BuildEnv) {
+    fileprivate static func loadNetworkPlist(forEnv env: BuildEnv) -> ([RemoteClient], [String: RemoteClient]){
+        
+        var clients: [RemoteClient] = []
+        var requestMap: [String: RemoteClient] = [:]
         
         let plistName: String
         
@@ -60,10 +64,12 @@ class NetworkPlatform {
         let plistDict = readPropertyList(plistName)
         guard !plistDict.isEmpty else {
             dlog("Error no plistDict found")
-            return
+            return (clients, requestMap)
         }
         
-        guard let clientsArray = plistDict["remoteClients"] as? [[String: String]] else { return }
+        guard let clientsArray = plistDict["remoteClients"] as? [[String: String]] else {
+            return (clients, requestMap)
+        }
         for clientDict in clientsArray {
             guard let clientName = clientDict["client"] else { continue }
             //create MovieDbClient
@@ -79,16 +85,35 @@ class NetworkPlatform {
                 else {
                     client = MovieDbClient(withScheme: scheme, host: host)
                 }
-                remoteClients.append(client)
+                clients.append(client)
+            }
+            //create WSClient
+            if clientName == WSClient.staticName {
+                guard let scheme = clientDict["scheme"], let host = clientDict["host"] else {
+                    dlog("Error no scheme/host for WSClient in plist")
+                    continue
+                }
+                let client: WSClient
+                if let port = clientDict["port"] {
+                    client = WSClient(withScheme: scheme, host: host, port: port)
+                }
+                else {
+                    client = WSClient(withScheme: scheme, host: host)
+                }
+                clients.append(client)
             }
         }
         
-        guard let reqClientDict = plistDict["requestClientDict"] as? [String: String] else { return }
+        guard let reqClientDict = plistDict["requestClientDict"] as? [String: String] else {
+            return (clients, requestMap)
+            
+        }
         for (key, val) in reqClientDict {
-            if let client = remoteClients.first(where: { $0.description == val }) {
-                requestClientDict[key] = client
+            if let client = clients.first(where: { $0.description == val }) {
+                requestMap[key] = client
             }
         }
+        return (clients, requestMap)
     }
     
     func clientForRequest(name: String) -> RemoteClient? {
@@ -103,7 +128,7 @@ class NetworkPlatform {
         return requestTaskDict[request]
     }
     
-    func addTask(_ task: AnyObject, forRequest request: RemoteRequest) {
+    func addTask(_ task: Any, forRequest request: RemoteRequest) {
         requestTaskDictLock.lock()
         requestTaskDict[request] = task
         requestTaskDictLock.unlock()
@@ -115,22 +140,23 @@ class NetworkPlatform {
         requestTaskDictLock.unlock()
     }
     
-    func jsonRestSend(remoteRequest: RemoteRequest) -> Any? {
+    func send(remoteRequest: RemoteRequest) -> Void {
         
         guard let client = clientForRequest(name: remoteRequest.description) else {
             let error = ServiceError(type: .invalidRequest, code: ServiceErrorCode.invalidClient.rawValue, msg: "No client for request \(String(describing: self))")
             remoteRequest.failureBlock?(error)
-            return nil
+            return
         }
         
         guard let urlRequest = client.buildUrlRequest(withRemoteRequest: remoteRequest) else {
             let error = ServiceError(type: .invalidRequest, code: ServiceErrorCode.invalidRequest.rawValue, msg: "No urlRequest from client: \(String(describing: client))")
             remoteRequest.failureBlock?(error)
-            return nil
+            return
         }
-        
-        let task: URLSessionDataTask = jsonTransport.send(urlRequest: urlRequest, completion:
-        { [weak self] (data: Data?, response: HTTPURLResponse?, error: Error?) in
+        //forward to client 
+        let task = client.send(urlRequest: urlRequest, completion:
+        {
+            [weak self] (data: Data?, headers: [AnyHashable: Any], error: Error?) in
             
             guard let myself = self else { return }
             
@@ -140,8 +166,6 @@ class NetworkPlatform {
                 }
             }
             else {
-                var headers = response?.allHeaderFields ?? [:]
-                headers["statusCode"] = response?.statusCode ?? 0
                 DispatchQueue.main.async {
                     remoteRequest.successBlock?(data, headers)
                 }
@@ -149,10 +173,8 @@ class NetworkPlatform {
             myself.removeTask(forRequest: remoteRequest)
         })
         
-        addTask(task, forRequest: remoteRequest)
-        
-        return task
-        
+        if let foundtask = task {
+            addTask(foundtask, forRequest: remoteRequest)
+        }
     }
-    
 }

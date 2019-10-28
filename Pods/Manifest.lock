@@ -2,19 +2,23 @@ PODS:
   - Alamofire (4.8.2)
   - AlamofireImage (3.5.2):
     - Alamofire (~> 4.8)
+  - Starscream (3.0.6)
 
 DEPENDENCIES:
   - AlamofireImage (~> 3.5)
+  - Starscream (~> 3.0.2)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - Alamofire
     - AlamofireImage
+    - Starscream
 
 SPEC CHECKSUMS:
   Alamofire: ae5c501addb7afdbb13687d7f2f722c78734c2d3
   AlamofireImage: 63cfe3baf1370be6c498149687cf6db3e3b00999
+  Starscream: ef3ece99d765eeccb67de105bfa143f929026cf5
 
-PODFILE CHECKSUM: 82f5299d8c19974d34c8805ad3429508b5138a2d
+PODFILE CHECKSUM: 764a5c301fbb58519b912d7b537dfd5c0aa18027
 
 COCOAPODS: 1.7.5

@@ -91,11 +91,11 @@ class MovieService: RemoteService {
         remoteRequest.send()
     }
     
-    override var description: String {
+    var description: String {
         return MovieService.staticName
     }
        
-    override class var staticName: String {
+    class var staticName: String {
         return "MovieService"
     }
 }

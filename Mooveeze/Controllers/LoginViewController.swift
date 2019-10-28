@@ -112,6 +112,16 @@ class LoginViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 3.0) { [weak self] in
+            
+            self?.loginViewModel.fetchTestUser(byId: 3)
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 5.0) { [weak self] in
+            
+            self?.loginViewModel.fetchAllTestUsers()
+        }
     }
 }
 
