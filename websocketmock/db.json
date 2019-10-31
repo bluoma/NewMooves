@@ -1,0 +1,57 @@
+{
+  "api": {
+    "v1": {
+      "ui": {
+        "modalIsOpen": true,
+        "sidebarStyle": "dark"
+      },
+      "users": [
+        {
+          "username": "admin",
+          "email": "admin@example.com",
+          "id": 1,
+          "role": "admin",
+          "gravatar": "https://s.gravatar.com/avatar/c0af81ec569e642517275455609f4c40?s=80"
+        },
+        {
+          "username": "guest",
+          "email": "guest@example.com",
+          "id": 2,
+          "role": "guest",
+          "gravatar": "https://s.gravatar.com/avatar/568ca559077995e89a812dff68afc914?s=80"
+        },
+        {
+          "username": "ray",
+          "email": "ray@example.com",
+          "id": 3,
+          "role": "user",
+          "gravatar": "https://s.gravatar.com/avatar/6684510b49ad1bd74763ed811904b4b8?s=80"
+        }
+      ],
+      "user": {
+				"1": {
+					"username": "admin",
+					"email": "admin@example.com",
+					"id": 1,
+					"role": "admin",
+					"gravatar": "https://s.gravatar.com/avatar/c0af81ec569e642517275455609f4c40?s=80"
+				},
+				"2": {
+					"username": "guest",
+					"email": "guest@example.com",
+					"id": 2,
+					"role": "guest",
+					"gravatar": "https://s.gravatar.com/avatar/568ca559077995e89a812dff68afc914?s=80"
+				},
+				"3": {
+					"username": "ray",
+					"email": "ray@example.com",
+					"id": 3,
+					"role": "user",
+					"gravatar": "https://s.gravatar.com/avatar/6684510b49ad1bd74763ed811904b4b8?s=80"
+				}
+			}
+		}
+	}
+}
+
