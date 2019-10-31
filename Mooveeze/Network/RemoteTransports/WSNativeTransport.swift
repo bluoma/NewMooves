@@ -17,9 +17,9 @@ class WSNativeTransport: NSObject, RemoteTransport {
     
     lazy var session: URLSession = {
         let urlconfig = URLSessionConfiguration.default
-        urlconfig.timeoutIntervalForRequest = 12
-        urlconfig.timeoutIntervalForResource = 12
-        urlconfig.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
+        //urlconfig.timeoutIntervalForRequest = 12
+        //urlconfig.timeoutIntervalForResource = 12
+        //urlconfig.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
         let newSession = URLSession(configuration: urlconfig, delegate: self, delegateQueue: OperationQueue())
         return newSession
     } ()
@@ -48,7 +48,7 @@ class WSNativeTransport: NSObject, RemoteTransport {
     func disconnect() {
         guard transportState == .connected else { return }
         transportState = .disconnecting
-        task.suspend()
+        task.cancel(with: .goingAway, reason: nil)
     }
 
     func receive() {
@@ -66,16 +66,23 @@ class WSNativeTransport: NSObject, RemoteTransport {
                 
             case .failure(let error):
                 dlog("receiveError: \(error)")
+                DispatchQueue.main.async {
+                    self?.disconnect()
+                }
                 
             case .success(let message):
                 
                 switch message {
                     
                 case .string(let text):
-                    myself.websocketDidReceiveText(text: text)
+                    DispatchQueue.main.async {
+                        myself.websocketDidReceiveText(text: text)
+                    }
 
                 case .data(let data):
-                    myself.websocketDidReceiveData(data: data)
+                    DispatchQueue.main.async {
+                        myself.websocketDidReceiveData(data: data)
+                    }
 
                 @unknown default:
                     fatalError()
@@ -160,11 +167,13 @@ class WSNativeTransport: NSObject, RemoteTransport {
             let encoder = JSONEncoder()
             encoder.dateEncodingStrategy = .iso8601
             let serialized = try encoder.encode(message)
-            messageMap[message] = completion //store completion for repsonse
             let wsMessage = URLSessionWebSocketTask.Message.data(serialized)
-            task.send(wsMessage) { (error: Error?) in
+            task.send(wsMessage, completionHandler: { [weak self] (error: Error?) -> Void in
                 dlog("sent: \(error?.localizedDescription ?? "OK")")
-            }
+                if error == nil {
+                    self?.messageMap[message] = completion //store completion for repsonse
+                }
+            })
             return message
         }
         catch {
@@ -174,13 +183,18 @@ class WSNativeTransport: NSObject, RemoteTransport {
         }
     }
     
-    fileprivate func handleCompletion(_ data: Data?, _ resp: HTTPURLResponse?, _ error: Error?, _ completion: @escaping RemoteTransportCompletionHandler) {
-        //DispatchQueue.main.async {
-        var headers = resp?.allHeaderFields
-        headers?["statusCode"] = resp?.statusCode ?? 0
+    func startPinging() {
+        dlog("in")
+        guard transportState == .connected else { return }
+        
+        task.sendPing(pongReceiveHandler: { (error: Error?) -> Void in
+            dlog("sendPing: \(error?.localizedDescription ?? "OK")")
+        })
+        DispatchQueue.main.asyncAfter(deadline: .now() + 20) {
+          self.startPinging()
+        }
+        dlog("out")
 
-        completion(data, headers ?? [:], error)
-        //}
     }
     
     override var description: String {
@@ -197,15 +211,21 @@ extension WSNativeTransport: URLSessionWebSocketDelegate {
     
     func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
         dlog("protocol: \(String(describing: `protocol`))")
-        transportState = .connected
-        receive()
-        connectBlock?()
+        
+        DispatchQueue.main.async{ [weak self] in
+            self?.transportState = .connected
+            self?.receive()
+            self?.connectBlock?()
+            self?.startPinging()
+        }
     }
     
     func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didCloseWith closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
         dlog("closeCode: \(closeCode)")
-        transportState = .disconnected
-        disconnectBlock?(nil)
+        DispatchQueue.main.async{ [weak self] in
+            self?.transportState = .disconnected
+            self?.disconnectBlock?(nil)
+        }
     }
     
 }
